@@ -1,4 +1,4 @@
-*.js linguist-language=JavaScript
-*.css linguist-language=css
-*.html linguist-language=html
+*.js linguist-language=c#
+*.css linguist-language=c#
+*.html linguist-language=c#
 *.cs linguist-language=c#
