@@ -1,8 +1,4 @@
 ﻿using Dapper;
-using SP.StudioCore.Data.Expressions;
-using SP.StudioCore.Data.Provider;
-using SP.StudioCore.Data.Repository;
-using SP.StudioCore.Data.Schema;
 using SP.StudioCore.Types;
 using System;
 using System.Collections.Generic;
@@ -21,6 +17,107 @@ namespace SP.StudioCore.Data
     /// </summary>
     public static class DataExtension
     {
+        private static Dictionary<Type, List<ColumnProperty>> cache = new Dictionary<Type, List<ColumnProperty>>();
+
+        private static object lockObj = new object();
+
+        /// <summary>
+        /// 把表类型存入缓存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private static bool SaveColumnProperty<T>() where T : class, new()
+        {
+            return SaveColumnProperty(typeof(T));
+        }
+
+        private static bool SaveColumnProperty(Type type)
+        {
+            if (cache.ContainsKey(type)) return true;
+            if (!type.HasAttribute<TableAttribute>()) return false;
+            lock (lockObj)
+            {
+                if (cache.ContainsKey(type)) return true;
+                List<ColumnProperty> list = new List<ColumnProperty>();
+                foreach (PropertyInfo property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(t => t.HasAttribute<ColumnAttribute>()))
+                {
+                    list.Add(new ColumnProperty(property));
+                }
+                cache.Add(type, list);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 获取符合条件的属性
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        private static IEnumerable<ColumnProperty> GetProperty<T>(Func<ColumnProperty, bool> condition = null) where T : class, new()
+        {
+            if (!SaveColumnProperty(typeof(T))) return null;
+            if (condition == null) condition = t => true;
+            return cache[typeof(T)].Where(condition);
+        }
+
+        private static IEnumerable<ColumnProperty> GetProperty(Type type, Func<ColumnProperty, bool> condition = null)
+        {
+            if (!SaveColumnProperty(type)) return null;
+            if (condition == null) condition = t => true;
+            return cache[type].Where(condition);
+        }
+
+        /// <summary>
+        /// 获取字段的数据库信息
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static ColumnProperty GetColumn<T, TValue>(this Expression<Func<T, TValue>> field) where T : class, new()
+        {
+            Type type = typeof(T);
+            if (!SaveColumnProperty(type)) return default;
+            return cache[type].FirstOrDefault(t => t.Property.Name == field.ToPropertyInfo().Name);
+        }
+
+        /// <summary>
+        /// 获取主键（实体类）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static ColumnProperty[] GetKey<T>(this T t) where T : class, new()
+        {
+            return GetKey(typeof(T));
+        }
+
+        /// <summary>
+        /// 获取主键（类型）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static ColumnProperty[] GetKey(this Type type)
+        {
+            IEnumerable<ColumnProperty> columns = GetProperty(type, t => t.IsKey);
+            return columns.ToArray();
+        }
+
+        /// <summary>
+        /// 获取查询条件（实体类）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="fields">不指定则使用主键</param>
+        /// <returns></returns>
+        public static Dictionary<ColumnProperty, object> GetCondition<T>(this T obj, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            IEnumerable<ColumnProperty> columns = fields.Length == 0 ?
+                GetProperty<T>(t => t.IsKey) :
+                GetProperty<T>(t => fields.Select(p => p.ToPropertyInfo().Name).Contains(t.Property.Name));
+
+            return columns.ToDictionary(t => t, t => t.Property.GetValue(obj));
+        }
+
         /// <summary>
         /// 获取数据库表名
         /// </summary>
@@ -47,63 +144,6 @@ namespace SP.StudioCore.Data
             return param;
         }
 
-        /// <summary>
-        /// 获取SQL执行操作对象
-        /// </summary>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public static ISqlProvider GetSqlProvider(this DbExecutor db)
-        {
-            return db.DBType switch
-            {
-                DatabaseType.SqlServer => new SqlServerProvider(db),
-                _ => throw new NotSupportedException(db.DBType.ToString())
-            };
-        }
-
-        /// <summary>
-        /// 可写/可读操作
-        /// </summary>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public static IWriteRepository GetWriteRepository(this DbExecutor db)
-        {
-            return db.DBType switch
-            {
-                DatabaseType.SqlServer => new SqlServerProvider(db),
-                _ => throw new NotSupportedException(db.DBType.ToString())
-            };
-        }
-
-        /// <summary>
-        /// 只读操作
-        /// </summary>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public static IReadRepository GetReadRepository(this DbExecutor db)
-        {
-            return db.DBType switch
-            {
-                DatabaseType.SqlServer => new SqlServerProvider(db),
-                _ => throw new NotSupportedException(db.DBType.ToString())
-            };
-        }
-
-        /// <summary>
-        /// 获取表达式解析对象
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="expression">要解析的表达式</param>
-        /// <returns></returns>
-        public static ExpressionCondition GetExpressionCondition(this DbExecutor db, Expression expression)
-        {
-            return db.DBType switch
-            {
-                DatabaseType.SqlServer => new ExpressionCondition(expression),
-                _ => throw new NotSupportedException(db.DBType.ToString())
-            };
-        }
-
         #region ========  数据库操作（增删查改、存在判断） 均为针对单条记录  ========
 
         /// <summary>
@@ -116,11 +156,14 @@ namespace SP.StudioCore.Data
         /// <returns></returns>
         public static T Info<T>(this T obj, DbExecutor db, params Expression<Func<T, object>>[] precate) where T : class, new()
         {
-            SQLResult result = db.GetSqlProvider().Info<T>(obj, precate);
-            DataSet ds = db.GetDataSet(CommandType.Text, result.CommandText, result.Prameters);
+            Dictionary<ColumnProperty, object> condition = obj.GetCondition(precate);
+            string tableName = obj.GetTableName();
+            IEnumerable<ColumnProperty> fields = GetProperty<T>();
+            string sql = $"SELECT { string.Join(",", fields.Select(t => string.Format("[{0}]", t.Name))) } FROM [{tableName}] WHERE { string.Join(" AND ", condition.Select(t => $"[{t.Key.Name}] = @{t.Key.Property.Name}")) }";
+            DataSet ds = db.GetDataSet(CommandType.Text, sql, condition.Select(t => db.NewParam($"@{t.Key.Property.Name}", t.Value)).ToArray());
             if (ds.Tables[0].Rows.Count == 0) return null;
             DataRow dr = ds.Tables[0].Rows[0];
-            foreach (ColumnProperty property in SchemaCache.GetColumns<T>())
+            foreach (ColumnProperty property in fields)
             {
                 property.Property.SetValue(obj, dr[property.Name].GetValue(property.Property.PropertyType));
             }
@@ -158,11 +201,11 @@ namespace SP.StudioCore.Data
             // 要更新的字段
             IEnumerable<ColumnProperty> updateFields =
                 (
-                fields.Length == 0 ? SchemaCache.GetColumns<T>(t => !t.IsKey) : SchemaCache.GetColumns<T>(t => fields.Any(p => p.ToPropertyInfo().Name == t.Property.Name))
+                fields.Length == 0 ? GetProperty<T>(t => !t.IsKey) : GetProperty<T>(t => fields.Any(p => p.ToPropertyInfo().Name == t.Property.Name))
                 ).Where(t => !condition.Select(p => p.Key).Any(p => p.Name == t.Name));
 
             sql += string.Join(",", updateFields.Select(t => $"[{t.Name}] = @{t.Property.Name}"));
-            if (condition.Count != 0)
+            if (condition.Count() != 0)
             {
                 sql += " WHERE " + string.Join(" AND ", condition.Select(t => $"[{t.Key.Name}] = @{t.Key.Property.Name}"));
             }
@@ -191,7 +234,7 @@ namespace SP.StudioCore.Data
         public static bool Add<T>(this T obj, DbExecutor db) where T : class, new()
         {
             // 获取所有要插入的字段
-            var fields = SchemaCache.GetColumns<T>(t => !t.Identity);
+            var fields = GetProperty<T>(t => !t.Identity);
             string sql = $"INSERT INTO [{obj.GetTableName()}]({string.Join(",", fields.Select(t => "[" + t.Name + "]"))}) VALUES({string.Join(",", fields.Select(t => "@" + t.Property.Name))})";
             return db.ExecuteNonQuery(CommandType.Text, sql, obj.GetParameters(fields)) != 0;
         }
@@ -205,7 +248,7 @@ namespace SP.StudioCore.Data
         /// <returns></returns>
         public static bool AddNoIdentity<T>(this T obj, DbExecutor db) where T : class, new()
         {
-            IEnumerable<ColumnProperty> fields = SchemaCache.GetColumns<T>();
+            IEnumerable<ColumnProperty> fields = GetProperty<T>(t => true);
             string sql = $"INSERT INTO [{obj.GetTableName()}]({string.Join(",", fields.Select(t => "[" + t.Name + "]"))}) VALUES({string.Join(",", fields.Select(t => "@" + t.Property.Name))})";
             StringBuilder sb = new StringBuilder();
             if (fields.Any(t => t.Identity))
@@ -229,8 +272,8 @@ namespace SP.StudioCore.Data
         /// <param name="db"></param>
         public static bool AddIdentity<T>(this T obj, DbExecutor db) where T : class, new()
         {
-            var fields = SchemaCache.GetColumns<T>(t => !t.Identity);
-            var identity = SchemaCache.GetColumns<T>(t => t.Identity);
+            var fields = GetProperty<T>(t => !t.Identity);
+            var identity = GetProperty<T>(t => t.Identity);
             if (identity.Count() != 1) throw new Exception("当前表没有自增列");
             string sql = $"INSERT INTO [{obj.GetTableName()}]({string.Join(",", fields.Select(t => "[" + t.Name + "]"))})" +
                 $" VALUES({string.Join(",", fields.Select(t => "@" + t.Property.Name))});SELECT @@IDENTITY;";
@@ -249,7 +292,7 @@ namespace SP.StudioCore.Data
         /// <returns></returns>
         public static bool Delete<T>(this T obj, DbExecutor db) where T : class, new()
         {
-            var fields = SchemaCache.GetColumns<T>(t => t.IsKey);
+            var fields = GetProperty<T>(t => t.IsKey);
             string sql = $"DELETE FROM [{obj.GetTableName()}] WHERE { string.Join(" AND ", fields.Select(t => string.Format("[{0}] = @{1}", t.Name, t.Property.Name))) }";
             return db.ExecuteNonQuery(CommandType.Text, sql, obj.GetParameters(fields)) != 0;
         }
@@ -264,7 +307,7 @@ namespace SP.StudioCore.Data
         /// <returns></returns>
         public static bool Delete<T, TKey>(this DbExecutor db, TKey value) where T : class, new()
         {
-            var fields = SchemaCache.GetColumns<T>(t => t.IsKey);
+            var fields = GetProperty<T>(t => t.IsKey);
             if (fields.Count() != 1)
             {
                 throw new Exception("主键数量不为1");
@@ -292,7 +335,7 @@ namespace SP.StudioCore.Data
         {
             // 要更新的字段
             IEnumerable<ColumnProperty> condition =
-                fields.Length == 0 ? SchemaCache.GetColumns<T>(t => t.IsKey) : SchemaCache.GetColumns<T>(t => fields.Any(p => p.ToPropertyInfo().Name == t.Property.Name));
+                fields.Length == 0 ? GetProperty<T>(t => t.IsKey) : GetProperty<T>(t => fields.Any(p => p.ToPropertyInfo().Name == t.Property.Name));
 
             string sql = $"SELECT 0 FROM [{obj.GetTableName()}] WHERE { string.Join(" AND ", condition.Select(t => string.Format("[{0}] = @{1}", t.Name, t.Property.Name))) }";
             Object result = db.ExecuteScalar(CommandType.Text, sql, obj.GetParameters(condition));
@@ -314,10 +357,10 @@ namespace SP.StudioCore.Data
         {
             // 条件字段
             IEnumerable<ColumnProperty> condition =
-                where.Length == 0 ? SchemaCache.GetColumns<T>(t => t.IsKey) : SchemaCache.GetColumns<T>(t => where.Any(p => p.ToPropertyInfo().Name == t.Property.Name));
+                where.Length == 0 ? GetProperty<T>(t => t.IsKey) : GetProperty<T>(t => where.Any(p => p.ToPropertyInfo().Name == t.Property.Name));
 
-            string sql = $"SELECT TOP 1 [{ SchemaCache.GetColumnProperty(field).Name }] FROM [{obj.GetTableName()}] WHERE { string.Join(" AND ", condition.Select(t => string.Format("[{0}] = @{1}", t.Name, t.Property.Name))) }";
-            object result = db.ExecuteScalar(CommandType.Text, sql, obj.GetParameters(condition));
+            string sql = $"SELECT [{field.GetColumn().Name}] FROM [{obj.GetTableName()}] WHERE { string.Join(" AND ", condition.Select(t => string.Format("[{0}] = @{1}", t.Name, t.Property.Name))) }";
+            Object result = db.ExecuteScalar(CommandType.Text, sql, obj.GetParameters(condition));
             return (TValue)result;
         }
 
@@ -374,6 +417,42 @@ namespace SP.StudioCore.Data
         }
     }
 
+    /// <summary>
+    /// 字段属性
+    /// </summary>
+    public struct ColumnProperty
+    {
+        public ColumnProperty(PropertyInfo property)
+        {
+            this.Property = property;
+            ColumnAttribute column = property.GetAttribute<ColumnAttribute>();
+            DatabaseGeneratedAttribute generate = property.GetAttribute<DatabaseGeneratedAttribute>();
+            KeyAttribute key = property.GetAttribute<KeyAttribute>();
 
+            this.Name = column.Name;
+            this.Identity = generate == null ? false : generate.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity;
+            this.IsKey = key != null;
+        }
+
+        /// <summary>
+        /// 本身的字段属性
+        /// </summary>
+        public PropertyInfo Property;
+
+        /// <summary>
+        /// 数据库的字段名
+        /// </summary>
+        public string Name;
+
+        /// <summary>
+        /// 是否自动编号
+        /// </summary>
+        public bool Identity;
+
+        /// <summary>
+        /// 是否主键
+        /// </summary>
+        public bool IsKey;
+    }
 
 }

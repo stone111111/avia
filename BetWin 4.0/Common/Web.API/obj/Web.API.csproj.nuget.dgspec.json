@@ -1,25 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\泛亚电竞\\svn\\Common\\Web.API\\Web.API.csproj": {}
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\Web.API\\Web.API.csproj": {}
   },
   "projects": {
-    "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
+        "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
         "projectName": "SP.StudioCore",
-        "projectPath": "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
-        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\obj\\",
+        "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
+        "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+        "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -143,26 +142,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\泛亚电竞\\svn\\Common\\Web.API\\Web.API.csproj": {
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\Web.API\\Web.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\泛亚电竞\\svn\\Common\\Web.API\\Web.API.csproj",
+        "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\Web.API\\Web.API.csproj",
         "projectName": "Web.API",
-        "projectPath": "D:\\泛亚电竞\\svn\\Common\\Web.API\\Web.API.csproj",
-        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\泛亚电竞\\svn\\Common\\Web.API\\obj\\",
+        "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\Web.API\\Web.API.csproj",
+        "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+        "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\Web.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -174,8 +172,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
-                "projectPath": "D:\\泛亚电竞\\svn\\Common\\SP.StudioCore\\SP.StudioCore.csproj"
+              "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
+                "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj"
               }
             }
           }
@@ -220,7 +218,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

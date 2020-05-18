@@ -314,7 +314,9 @@ namespace SP.StudioCore.Http
         {
             if (context == null) return null;
             string domain = string.Empty;
-            Regex url = new Regex(@"^(http|https)://(?<Domain>.+?)/", RegexOptions.IgnoreCase);
+            // 高端口是错误的
+            Regex badDomain = new Regex(@":\d{4,5}$");
+            Regex url = new Regex(@"^(http|https)://(?<Domain>.+)/", RegexOptions.IgnoreCase);
             try
             {
                 foreach (string key in new[] { "X-Forwarded-Host", "Ali-Swift-LOG-Host", "Referer", "Host" })
@@ -429,7 +431,7 @@ namespace SP.StudioCore.Http
 
         public static Result ShowError(this HttpContext context, ErrorType type, string error = null, Dictionary<string, object> output = null)
         {
-            if (string.IsNullOrEmpty(error)) error = type.GetDescription(context.GetLanguage());
+            if (string.IsNullOrEmpty(error)) error = type.GetDescription();
             if (output == null)
             {
                 output = new Dictionary<string, object>();

@@ -226,7 +226,7 @@ namespace SP.StudioCore.Web
         }
 
         /// <summary>
-        /// 时间戳转化成为本地时间（秒）
+        /// 时间戳转化成为本地时间
         /// </summary>
         /// <param name="timestamp">时间戳（秒）</param>
         /// <returns></returns>
@@ -243,16 +243,6 @@ namespace SP.StudioCore.Web
         public static long GetTimestamps(DateTime time)
         {
             return (time.ToUniversalTime().Ticks - 621355968000000000) / 10000;
-        }
-
-        /// <summary>
-        /// 时间戳转化成为本地时间（毫秒）
-        /// </summary>
-        /// <param name="timestamp">时间戳（毫秒）</param>
-        /// <returns></returns>
-        public static DateTime GetTimestamps(long timestamp)
-        {
-            return new DateTime(1970, 1, 1).Add(TimeZoneInfo.Local.BaseUtcOffset).AddMilliseconds(timestamp);
         }
 
         /// <summary>

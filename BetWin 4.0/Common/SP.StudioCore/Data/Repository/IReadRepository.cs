@@ -2,141 +2,68 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq.Expressions;
-using System.Data;
 
 namespace SP.StudioCore.Data.Repository
 {
-    /// <summary>
-    /// 只读操作
-    /// </summary>
-    public interface IReadRepository : IProcedureRepository, IRepository
+    public interface IReadRepository
     {
-        #region ========  ReadInfo  ========
-
         /// <summary>
-        /// 条件筛选获取一个值
+        /// 根据ID获取实体
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        T Get<T>(int id);
+        /// <summary>
+        /// 条件筛选获取实体
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        T Get<T>(Expression<Func<T, bool>> expression);
+        /// <summary>
+        /// 条件筛选获取集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        IEnumerable<T> GetAll<T>(Expression<Func<T, bool>> expression);
+        /// <summary>
+        /// 获取所有集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        IEnumerable<T> GetAll<T>();
+        /// <summary>
+        /// 根据ID获取某个字段
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TValue"></typeparam>
-        /// <param name="field">要获取的字段</param>
-        /// <param name="condition">查询条件</param>
+        /// <param name="id"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        TValue ReadInfo<T, TValue>(Expression<Func<T, TValue>> field, Expression<Func<T, bool>> condition) where T : class, new();
-
+        TValue GetValue<T, TValue>(int id, Expression<Func<T, TValue>> value);
         /// <summary>
-        /// 读取单个对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition">查询条件</param>
-        /// <param name="fields">指定要查询的字段</param>
-        /// <returns></returns>
-        T ReadInfo<T>(Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        #endregion
-
-        #region ========  ReadData  ========
-
-        /// <summary>
-        /// 返回一个数据库读取对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition"></param>
-        /// <param name="fields">指定要查询的字段</param>
-        /// <returns></returns>
-        IDataReader ReadData<T>(Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        /// <summary>
-        /// 返回一个不带条件的数据库读取对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fields">指定要查询的字段</param>
-        /// <returns></returns>
-        IDataReader ReadData<T>(params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        #endregion
-
-        #region ========  GetDataSet  ========
-
-        /// <summary>
-        /// 获取DataSet
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="condition"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
-        DataSet GetDataSet<T>(Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        #endregion
-
-        #region ========  ReadList  ========
-
-        /// <summary>
-        /// 使用SQL查询返回一个list（使用 IDataReader 构造）
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="condition">查询条件</param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IEnumerable<T> ReadList<T>(string condition, object parameters = null) where T : class, new();
-
-        /// <summary>
-        /// 查询表的数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition">查询条件</param>
-        /// <param name="fields">指定要返回的字段 不填写为所有</param>
-        /// <returns></returns>
-        IEnumerable<T> ReadList<T>(Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        /// <summary>
-        /// 返回表的所有数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="fields">指定要返回的字段 不填写为所有</param>
-        /// <returns></returns>
-        IEnumerable<T> ReadList<T>(params Expression<Func<T, object>>[] fields) where T : class, new();
-
-        /// <summary>
-        /// 读取数据，使用泛型返回（只返回一列）
+        /// 条件筛选获取某个字段
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TValue"></typeparam>
-        /// <param name="field"></param>
-        /// <param name="condition"></param>
+        /// <param name="expression"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        IEnumerable<TValue> ReadList<T, TValue>(Expression<Func<T, TValue>> field, Expression<Func<T, bool>> condition) where T : class, new();
-
-        #endregion
-
-        #region ========  Exists  ========
-
+        TValue GetValue<T, TValue>(Expression<Func<T, bool>> expression, Expression<Func<T, TValue>> value);
         /// <summary>
-        /// 是否存在数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition">查询条件</param>
-        /// <returns></returns>
-        bool Exists<T>(Expression<Func<T, bool>> condition) where T : class, new();
-
-        /// <summary>
-        /// 整个表内是否存在数据
+        /// 是否存在
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        bool Exists<T>() where T : class, new();
-
+        bool Any<T>();
         /// <summary>
-        /// 根据主键判断是否存在
+        /// 条件搜索是否存在
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="entity"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        bool Exists<T>(T entity) where T : class, new();
-
-        #endregion
-
+        bool Any<T>(Expression<Func<T, bool>> expression);
     }
 }

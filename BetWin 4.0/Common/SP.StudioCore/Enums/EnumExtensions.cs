@@ -1,5 +1,4 @@
 ﻿using SP.StudioCore.API;
-using SP.StudioCore.API.Translates;
 using SP.StudioCore.Types;
 using SP.StudioCore.Utils;
 using SP.StudioCore.Web;

@@ -1,0 +1,8 @@
+{
+  "ConnectionStrings": "server=.\\SQLEXPRESS;uid=sa;pwd=a123456;database=Translate;",
+  // 在线翻译接口
+  "online": {
+    "api": "http://trans.xiaohuaerai.com/trans",
+    "Authorization": "APPCODE c41bf17572a94882800f5c68b89a4a3a"
+  }
+}

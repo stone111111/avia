@@ -1,6 +1,6 @@
 ﻿using Dapper;
+using SP.StudioCore.Data.Attributes;
 using SP.StudioCore.Data.Expressions;
-using SP.StudioCore.Data.Schema;
 using SP.StudioCore.Types;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,6 @@ namespace SP.StudioCore.Data.Extension
     /// <summary>
     /// 数据的表达式方式操作
     /// </summary>
-    [Obsolete("被 Provider.SqlServerProvider 取代")]
     public static class DbExecutorExpression
     {
         /// <summary>
@@ -313,34 +312,6 @@ namespace SP.StudioCore.Data.Extension
         }
 
         /// <summary>
-        /// 使用SQL查询（使用 IDataReader 构造）
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="condition">条件</param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public static List<T> ReadList<T>(this DbExecutor db, string condition, object parameters = null) where T : class, new()
-        {
-            List<T> list = new List<T>();
-            using (IDataReader reader = db.ReadData(CommandType.Text, $"SELECT * FROM [{typeof(T).GetTableName()}] WHERE {condition}", parameters))
-            {
-                try
-                {
-                    while (reader.Read())
-                    {
-                        list.Add((T)Activator.CreateInstance(typeof(T), reader));
-                    }
-                }
-                finally
-                {
-                    if (!reader.IsClosed) reader.Close();
-                }
-            }
-            return list;
-        }
-
-        /// <summary>
         /// 返回表的所有数据（使用 IDataReader 构造）
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -375,9 +346,9 @@ namespace SP.StudioCore.Data.Extension
         /// <param name="db"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public static T ReadInfo<T>(this DbExecutor db, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        public static T ReadInfo<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class, new()
         {
-            using (IDataReader reader = db.ReadData(condition, fields))
+            using (IDataReader reader = db.ReadData(condition))
             {
                 try
                 {

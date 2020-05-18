@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SP.StudioCore.Model;
+using SP.StudioCore.Services;
 using SP.StudioCore.Web;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace SP.StudioCore.Mvc.Startups
 {
@@ -25,8 +29,8 @@ namespace SP.StudioCore.Mvc.Startups
         {
             this.Configure(
                 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
-                // 消息传递注意，此处注入不支持非web环境的消息传递
-                .AddScoped<MessageResult>());
+                .AddScoped<MessageResult>()
+                );
         }
 
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)

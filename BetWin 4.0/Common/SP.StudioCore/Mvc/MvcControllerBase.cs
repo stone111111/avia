@@ -11,26 +11,14 @@ using System.Linq;
 using SP.StudioCore.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
-using SP.StudioCore.Ioc;
-using SP.StudioCore.Data.Repository;
 
 namespace SP.StudioCore.Mvc
 {
     /// <summary>
     /// MVC 控制层基类
     /// </summary>
-    public abstract class MvcControllerBase : ControllerBase
+    public abstract class MvcControllerBase : ControllerBase, IServiceProvider
     {
-        /// <summary>
-        /// 只读数据库
-        /// </summary>
-        protected virtual IReadRepository ReadDB => IocCollection.GetService<IReadRepository>();
-
-        /// <summary>
-        /// 可读/可写数据库（不建议在Controller进行可写操作）
-        /// </summary>
-        protected virtual IWriteRepository WriteDB => IocCollection.GetService<IWriteRepository>();
-
         private Stopwatch Stopwatch { get; }
 
         public MvcControllerBase()
@@ -97,20 +85,18 @@ namespace SP.StudioCore.Mvc
             }
         }
 
-        #region ========  公共Result输出 （Task输出）  ========
+        #region ========  公共Result输出  ========
 
         /// <summary>
         /// 返回对象
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [Obsolete("被 GetContent 取代")]
         protected virtual Task GetResult(object data)
         {
             return new Result(true, this.StopwatchMessage(), data).WriteAsync(this.context);
         }
 
-        [Obsolete("被 GetContent 取代")]
         protected virtual Task GetResult(ContentType type, object data)
         {
             return new Result(type, data).WriteAsync(this.context);
@@ -123,11 +109,10 @@ namespace SP.StudioCore.Mvc
         /// <param name="successMessage"></param>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Obsolete("被 GetContent 取代")]
         protected virtual Task GetResult(bool success, string successMessage = "处理成功", object info = null)
         {
             if (success) return new Result(success, successMessage, info).WriteAsync(HttpContext);
-            string message = this.context.RequestServices.GetService<MessageResult>();
+            string message = this.HttpContext.RequestServices.GetService<MessageResult>();
             if (string.IsNullOrEmpty(message)) message = "发生不可描述的错误";
             return new Result(false, message).WriteAsync(HttpContext);
         }
@@ -135,14 +120,13 @@ namespace SP.StudioCore.Mvc
         /// <summary>
         /// 返回数组
         /// </summary>
-        [Obsolete("被 GetContent 取代")]
         protected virtual Task GetResult<T, TOutput>(IEnumerable<T> list, Converter<T, TOutput> converter = null, Object data = null) where TOutput : class
         {
             string resultData = this.ShowResult(list, converter, data);
             return this.GetResult(resultData);
         }
 
-        [Obsolete("被 GetResultList 取代")]
+
         protected virtual string ShowResult<T, TOutput>(IEnumerable<T> list, Converter<T, TOutput> converter = null, Object data = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -178,10 +162,11 @@ namespace SP.StudioCore.Mvc
             return sb.ToString();
         }
 
+
+
         /// <summary>
         /// 返回排序数组（自带分页）
         /// </summary>
-        [Obsolete("被 GetContent 取代")]
         protected virtual Task GetResult<T, TOutput>(IOrderedQueryable<T> list, Func<T, TOutput> converter = null, object data = null, Action<IEnumerable<T>> action = null) where TOutput : class
         {
             string resultData = this.ShowResult(list, converter, data, action);
@@ -199,7 +184,6 @@ namespace SP.StudioCore.Mvc
         /// <param name="data"></param>
         /// <param name="action">分页数据的前置处理</param>
         /// <returns></returns>
-        [Obsolete("被 GetResultList 取代")]
         protected virtual string ShowResult<T, TOutput>(IOrderedQueryable<T> list, Func<T, TOutput> converter = null, object data = null, Action<IEnumerable<T>> action = null) where TOutput : class
         {
             if (converter == null) converter = t => t as TOutput;
@@ -246,201 +230,20 @@ namespace SP.StudioCore.Mvc
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        [Obsolete("被 GetResultError 取代")]
         protected virtual Task ShowError(string message)
         {
             return new Result(false, message).WriteAsync(HttpContext);
         }
-
-        [Obsolete("被 GetResultError 取代")]
         protected virtual Task ShowError(string message, object info)
         {
             return new Result(false, message, info).WriteAsync(HttpContext);
         }
 
-        #endregion
-
-        #region ========  使用Result输出（使用Content命名）  ========
-
-        /// <summary>
-        /// 输出一个成功的JSON数据
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Result GetResultContent(object data)
+        //共有方法需过滤api，否则swagger出错
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public object GetService(Type serviceType)
         {
-            return new Result(true, this.StopwatchMessage(), data);
-        }
-
-        /// <summary>
-        /// 返回一个自定义类型的内容
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Result GetResultContent(ContentType type, object data)
-        {
-            return new Result(type, data);
-        }
-
-        /// <summary>
-        /// 自动判断成功状态的输出
-        /// </summary>
-        /// <param name="success"></param>
-        /// <param name="successMessage"></param>
-        /// <param name="info">如果状态为成功需要输出的对象</param>
-        /// <returns></returns>
-        protected virtual Result GetResultContent(bool success, string successMessage = "处理成功", object info = null)
-        {
-            if (success) return new Result(success, successMessage, info);
-            string message = this.context.RequestServices.GetService<MessageResult>();
-            if (string.IsNullOrEmpty(message)) message = "发生不可描述的错误";
-            return new Result(false, message);
-        }
-
-        /// <summary>
-        /// 输出一个无分页的列表内容
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TOutput">转换方法</typeparam>
-        /// <param name="list"></param>
-        /// <param name="converter"></param>
-        /// <param name="data">附带输出内容</param>
-        /// <returns></returns>
-        protected virtual string GetResultContent<T, TOutput>(IEnumerable<T> list, Converter<T, TOutput> converter = null, Object data = null)
-        {
-            StringBuilder sb = new StringBuilder();
-            string result = string.Empty;
-
-            if (typeof(TOutput) == typeof(string))
-            {
-                if (converter == null)
-                {
-                    result = string.Concat("[", string.Join(",", list.Select(t => t)), "]");
-                }
-                else
-                {
-                    result = string.Concat("[", string.Join(",", list.Select(t => converter(t))), "]");
-                }
-            }
-            else
-            {
-                if (converter == null)
-                {
-                    result = list.ToJson();
-                }
-                else
-                {
-                    result = list.ToList().ConvertAll(converter).ToJson();
-                }
-            }
-            _ = sb.Append("{")
-                .AppendFormat("\"RecordCount\":{0},", list.Count())
-                  .AppendFormat("\"data\":{0},", data == null ? "null" : data.ToJson())
-                  .AppendFormat("\"list\":{0}", result)
-                .Append("}");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// 返回一个无分页的输出对象
-        /// 包含 RecordCount / list / data
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TOutput"></typeparam>
-        /// <param name="list"></param>
-        /// <param name="converter"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected virtual Result GetResultList<T,TOutput>(IEnumerable<T> list, Converter<T, TOutput> converter = null, Object data = null)
-        {
-            string resultData = this.GetResultContent(list, converter, data);
-            return this.GetResultContent(resultData);
-        }
-
-        /// <summary>
-        /// 生成分页输出
-        /// 包含 RecordCount \ PageIndex \ PageSize
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TOutput"></typeparam>
-        /// <param name="list"></param>
-        /// <param name="converter"></param>
-        /// <param name="data"></param>
-        /// <param name="action">提前对分页内内容的处理方法</param>
-        /// <returns></returns>
-        protected virtual string GetResultContent<T, TOutput>(IOrderedQueryable<T> list, Func<T, TOutput> converter = null, object data = null, Action<IEnumerable<T>> action = null) where TOutput : class
-        {
-            if (converter == null) converter = t => t as TOutput;
-            StringBuilder sb = new StringBuilder();
-            string json = null;
-            IEnumerable<T> query;
-            if (this.PageIndex == 1)
-            {
-                query = list.Take(this.PageSize).ToArray();
-            }
-            else
-            {
-                query = list.Skip((this.PageIndex - 1) * this.PageSize).Take(this.PageSize).ToArray();
-            }
-            action?.Invoke(query);
-            if (converter == null)
-            {
-                json = query.ToJson();
-            }
-            else
-            {
-                if (typeof(TOutput).Name == "String")
-                {
-                    json = string.Concat("[", string.Join(",", query.Select(converter)), "]");
-                }
-                else
-                {
-                    json = query.Select(converter).ToJson();
-                }
-            }
-            _ = sb.Append("{")
-                .AppendFormat("\"RecordCount\":{0},", list.Count())
-                .AppendFormat("\"PageIndex\":{0},", this.PageIndex)
-                .AppendFormat("\"PageSize\":{0},", this.PageSize)
-                .AppendFormat("\"data\":{0}", data == null ? "null" : data.ToJson())
-                .AppendFormat(",\"list\":{0}", json)
-                .Append("}");
-
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// 返回排序数组（自带分页）
-        /// 包含 RecordCount \ PageIndex \ PageSize
-        /// </summary>
-        /// <param name="action">提前对分页内内容的处理方法</param>
-        /// <returns>返回内容JSON</returns>
-        protected virtual Result GetResultList<T, TOutput>(IOrderedQueryable<T> list, Func<T, TOutput> converter = null, object data = null, Action<IEnumerable<T>> action = null) where TOutput : class
-        {
-            string resultData = this.GetResultContent(list, converter, data, action);
-            return this.GetResultContent(resultData);
-        }
-
-        /// <summary>
-        /// 输出一条错误信息
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        protected virtual Result GetResultError(string message)
-        {
-            return new Result(false, message);
-        }
-
-        /// <summary>
-        /// 输出一个附带内容的错误信息
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        protected virtual Result GetResultError(string message, object info)
-        {
-            return new Result(false, message, info);
+            return HttpContext.RequestServices.GetService(serviceType);
         }
 
         #endregion

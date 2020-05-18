@@ -19,7 +19,7 @@ namespace SP.StudioCore.Security
         public static string toMD5(string input, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.UTF8;
-            return toMD5(encoding.GetBytes(input ?? string.Empty));
+            return toMD5(encoding.GetBytes(input));
         }
 
         /// <summary>

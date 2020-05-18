@@ -21,6 +21,16 @@ D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
 D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
 D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\appsettings.json
 D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\web.config
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\web.config
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\appsettings.Development.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\appsettings.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Properties\launchSettings.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.exe
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.deps.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.dev.json
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.dll
+D:\work\avia\avia\BetWin 4.0\Publish\System\netcoreapp3.1\Web.System.pdb
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csprojAssemblyReference.cache
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.Properties.Resources.resources
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.GenerateResource.cache
@@ -29,5 +39,10 @@ D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.Syst
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cache
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfoInputs.cache
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.RazorTargetAssemblyInfo.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CopyComplete
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.Manifest.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.xml
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
 D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.genruntimeconfig.cache

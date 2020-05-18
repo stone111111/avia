@@ -51,11 +51,8 @@ namespace SP.StudioCore.Json
         /// <returns></returns>
         public static T Get<T>(this JObject info, string key)
         {
-            JToken token = info[key];
-            if (token == null || token.GetType() != typeof(JValue)) return default;
-            JValue value = (JValue)token;
-            if (value.Value == null) return default;
-            return value.Value<T>();
+            if (info[key] == null) return default;
+            return info[key].Value<T>();
         }
     }
 }

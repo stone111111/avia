@@ -51,7 +51,7 @@ namespace SP.StudioCore.Web
             if (context == null) return NO_IP;
             string ip = string.Empty;
 
-            string[] keys = new[] { null, "Ali-CDN-Real-IP", "X-Real-IP", "X-Forwarded-IP", "X-Forwarded-For" };
+            string[] keys = new[] { null, "Ali-CDN-Real-IP", "X-Real-IP", "X-Forwarded-For" };
             if (isUserIp) keys[0] = Const.USERIP;
             foreach (string key in keys)
             {

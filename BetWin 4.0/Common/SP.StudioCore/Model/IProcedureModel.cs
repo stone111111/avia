@@ -1,11 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using SP.StudioCore.Types;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -23,35 +20,12 @@ namespace SP.StudioCore.Model
         /// <returns></returns>
         public virtual DynamicParameters ToParameters()
         {
-            _parameters = new DynamicParameters();
-            int site = 0;
-            foreach (PropertyInfo property in this.GetType().GetProperties())
-            {
-                string parameterName = $"@{property.Name}";
-                object value = property.GetValue(this).GetValue(property.PropertyType);
-
-                if (!property.HasAttribute<OutputAttribute>())
-                {
-                    site++;
-                    _parameters.Add(parameterName, value);
-                    continue;
-                }
-                DbType? dbType = null;
-                string type = property.PropertyType.ToString();
-                if (type.Contains("Decimal"))
-                {
-                    dbType = DbType.Decimal;
-                }
-                //DbType? dbType = property.PropertyType.Name switch
-                //{
-                //    "Decimal" => DbType.Decimal,
-                //    _ => null
-                //};
-                _parameters.Add(parameterName, value, dbType, ParameterDirection.Output, site);
-            }
+            _parameters = new DynamicParameters(this);
             return _parameters;
         }
 
+
+        private DbParameter[] _dbParameters;
         public virtual DbParameter[] ToDbParameter()
         {
             Stack<DbParameter> list = new Stack<DbParameter>();
@@ -67,14 +41,7 @@ namespace SP.StudioCore.Model
         /// </summary>
         public virtual void Fill()
         {
-            foreach (PropertyInfo property in this.GetType().GetProperties().Where(t => t.HasAttribute<OutputAttribute>()))
-            {
-                object outputValue = this._parameters.Get<object>($"@{property.Name}");
-                if (outputValue != null && outputValue != DBNull.Value)
-                {
-                    property.SetValue(this, outputValue);
-                }
-            }
+
         }
     }
 

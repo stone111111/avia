@@ -263,14 +263,14 @@ namespace SP.StudioCore.Cache.Redis
         private const string JOB_COUNT = "Count";
 
         /// <summary>
-        /// 创建Job任务列表（只新建，如果已经存在则返回false）
+        /// Job任务列表
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="jobName"></param>
         /// <param name="list"></param>
         protected virtual bool SaveJob<T>(string jobName, IEnumerable<T> list)
         {
-            string key = $"{JOB}{jobName}";
+            string key = $"JOB:{jobName}";
             string progress = $"{JOB_PROGRESS}{jobName}";
             if (this.NewExecutor().KeyExists(key)) return false;
             IBatch batch = this.NewExecutor().CreateBatch();
@@ -295,7 +295,7 @@ namespace SP.StudioCore.Cache.Redis
         /// <returns></returns>
         protected virtual IEnumerable<T> ExecuteJob<T>(string jobName)
         {
-            string key = $"{JOB}{jobName}";
+            string key = $"JOB:{jobName}";
             string progress = $"{JOB_PROGRESS}{jobName}";
             while (true)
             {

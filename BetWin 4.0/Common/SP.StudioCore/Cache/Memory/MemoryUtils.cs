@@ -21,23 +21,10 @@ namespace SP.StudioCore.Cache.Memory
         /// <typeparam name="TValue"></typeparam>
         /// <param name="key"></param>
         /// <param name="timeSpan">过期时间</param>
-        /// <param name="createValue">返回为null的话，不创建缓存</param>
+        /// <param name="createValue"></param>
+        /// <param name="isSleep">重新创建缓存之后是否暂停进程</param>
         /// <returns></returns>
         public static TValue Get<TValue>(string key, TimeSpan timeSpan, Func<TValue> createValue)
-        {
-            return Get(key, timeSpan, createValue, t => false);
-        }
-
-        /// <summary>
-        /// 获取缓存值（如果不存在则创建）
-        /// </summary>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="timeSpan"></param>
-        /// <param name="createValue"></param>
-        /// <param name="noCreate">不创建的条件</param>
-        /// <returns></returns>
-        public static TValue Get<TValue>(string key, TimeSpan timeSpan, Func<TValue> createValue, Func<TValue, bool> noCreate)
         {
             if (_cache.TryGetValue(key, out TValue result))
             {
@@ -47,7 +34,7 @@ namespace SP.StudioCore.Cache.Memory
             {
                 if (_cache.TryGetValue(key, out result)) return result;
                 result = createValue();
-                if (noCreate(result)) _cache.Set(key, result, timeSpan);
+                _cache.Set(key, result, timeSpan);
                 return result;
             }
         }

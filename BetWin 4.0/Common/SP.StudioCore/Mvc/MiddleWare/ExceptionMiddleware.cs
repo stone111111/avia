@@ -13,10 +13,10 @@ namespace SP.StudioCore.Mvc.MiddleWare
     /// <summary>
     /// 处理异常的中间件
     /// </summary>
-    public abstract class ExceptionMiddlewareBase
+    public abstract class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        public ExceptionMiddlewareBase(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -25,7 +25,7 @@ namespace SP.StudioCore.Mvc.MiddleWare
         {
             try
             {
-                await _next(context).ConfigureAwait(false);
+                await _next(context);
             }
             catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace SP.StudioCore.Mvc.MiddleWare
         }
 
         /// <summary>
-        /// 抛出错误编号(用于子类处理）
+        /// 抛出错误编号(用于下级处理）
         /// </summary>
         /// <param name="ex"></param>
         /// <returns></returns>

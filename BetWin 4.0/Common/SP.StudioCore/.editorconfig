@@ -92,9 +92,3 @@ dotnet_diagnostic.CA1710.severity = none
 
 # CA1304: Specify CultureInfo
 dotnet_diagnostic.CA1304.severity = none
-
-# CA1714: Flags 枚举应采用复数形式的名称
-dotnet_diagnostic.CA1714.severity = none
-
-# CA1054: URI 参数不应为字符串
-dotnet_diagnostic.CA1054.severity = none

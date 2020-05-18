@@ -83,14 +83,6 @@ namespace SP.StudioCore.Net
             return UploadData(url, encoding.GetBytes(data), encoding, wc, headers);
         }
 
-        public static async Task PostAsync(string url, string data)
-        {
-            StringContent content = new StringContent(data, Encoding.UTF8);
-            content.Headers.Add("User-Agent", "USER_AGENT");
-            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-            await new HttpClient().PostAsync(new Uri(url), content).ConfigureAwait(false);
-        }
-
         /// <summary>
         /// 上传二进制流
         /// </summary>
@@ -233,41 +225,6 @@ namespace SP.StudioCore.Net
             return DownloadData(url, Encoding.UTF8, null);
         }
 
-        /// <summary>
-        /// 下载小文件
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static byte[] DownloadFile(string url, Dictionary<string, string> header = null, WebClient wc = null)
-        {
-            bool isNew = false;
-            if (wc == null)
-            {
-                wc = CreateWebClient(url);
-                isNew = true;
-            }
-            if (header != null)
-            {
-                foreach (KeyValuePair<string, string> item in header)
-                {
-                    wc.Headers[item.Key] = item.Value;
-                }
-            }
-            byte[] data = null;
-            try
-            {
-                data = wc.DownloadData(url);
-            }
-            catch (WebException ex)
-            {
-                data = null;
-            }
-            finally
-            {
-                if (isNew) wc.Dispose();
-            }
-            return data;
-        }
 
         private static HttpClient httpClient;
         /// <summary>
@@ -280,7 +237,7 @@ namespace SP.StudioCore.Net
         {
             if (httpClient == null) httpClient = new HttpClient();
             if (encoding == null) encoding = Encoding.UTF8;
-            byte[] data = await httpClient.GetByteArrayAsync(url).ConfigureAwait(false);
+            byte[] data = await httpClient.GetByteArrayAsync(url);
             return encoding.GetString(data);
         }
     }

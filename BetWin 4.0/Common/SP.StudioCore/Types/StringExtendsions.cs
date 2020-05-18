@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace SP.StudioCore.Types
@@ -37,7 +36,7 @@ namespace SP.StudioCore.Types
         {
             if (string.IsNullOrEmpty(str)) return 0;
             byte[] byteContents = Encoding.UTF8.GetBytes(str);
-            SHA256 hash = new SHA256CryptoServiceProvider();
+            System.Security.Cryptography.SHA256 hash = new System.Security.Cryptography.SHA256CryptoServiceProvider();
             byte[] hashText = hash.ComputeHash(byteContents);
             long hashCodeStart = BitConverter.ToInt64(hashText, 0);
             long hashCodeMedium = BitConverter.ToInt64(hashText, 8);

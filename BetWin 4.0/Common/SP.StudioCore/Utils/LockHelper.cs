@@ -20,7 +20,7 @@ namespace SP.StudioCore.Utils
                     for (index[2] = 0; index[2] < md5.Length; index[2]++)
                     {
                         string str = string.Join("", index.Select(t => md5[t]));
-                        LOCKER.Add(str, new object());
+                        LOCKER.Add(str, new Object());
                     }
         }
 

@@ -1,5 +1,4 @@
 ﻿using SP.StudioCore.API;
-using SP.StudioCore.API.Translates;
 using SP.StudioCore.Enums;
 using SP.StudioCore.Xml;
 using System;

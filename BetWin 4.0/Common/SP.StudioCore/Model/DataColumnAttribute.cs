@@ -44,13 +44,12 @@ namespace SP.StudioCore.Model
     /// <summary>
     /// 字段长度
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
     public class LengthAttribute : Attribute
     {
         public LengthAttribute(int length, bool isUnicode = false)
         {
             this.Length = length;
-            this.IsUnicode = isUnicode;
+            this.IsUnicode = IsUnicode;
         }
 
         /// <summary>

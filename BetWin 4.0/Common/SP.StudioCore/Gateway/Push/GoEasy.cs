@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace SP.StudioCore.Gateway.Push
@@ -41,14 +39,12 @@ namespace SP.StudioCore.Gateway.Push
         {
         }
 
-        HttpClient client = new HttpClient();
-
         public override bool Send(object message, params string[] channel)
         {
             foreach (string channelName in channel)
             {
                 string postDataStr = $"appkey={this.commonkey}&channel={channelName}&content={message.ToString()}";
-                _ = NetAgent.PostAsync($"{this.rest}/publish", postDataStr).ConfigureAwait(false);
+                string result = NetAgent.UploadData($"{this.rest}/publish", Encoding.UTF8.GetBytes(postDataStr));
             }
             return true;
         }

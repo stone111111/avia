@@ -260,8 +260,6 @@ namespace SP.StudioCore.Model
                         case ContentType.XML:
                         case ContentType.TEXT:
                         case ContentType.JS:
-                        case ContentType.M3U8:
-                        case ContentType.CSS:
                             result = (string)this.Info;
                             task = context.Response.WriteAsync(result, Encoding.UTF8);
                             break;
@@ -339,15 +337,6 @@ namespace SP.StudioCore.Model
         /// JS脚本输出
         /// </summary>
         [Description("application/x-javascript")]
-        JS = 109,
-        [Description("application/vnd.apple.mpegurl")]
-        M3U8 = 110,
-        [Description("video/mp2t")]
-        TS = 111,
-        /// <summary>
-        /// 样式
-        /// </summary>
-        [Description("text/css")]
-        CSS = 112
+        JS = 109
     }
 }

@@ -28,12 +28,6 @@ namespace SP.StudioCore.Types
             return (T)value.GetValue(typeof(T));
         }
 
-        /// <summary>
-        /// 转化成为安全类型
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public static object GetValue(this object value, Type type = null)
         {
             if (type == null) type = value.GetType();
@@ -61,23 +55,25 @@ namespace SP.StudioCore.Types
                             obj = value.ToString().Equals("1") || value.ToString().Equals("true", StringComparison.CurrentCultureIgnoreCase) || value.ToString().Equals("on", StringComparison.CurrentCultureIgnoreCase);
                             break;
                         case "Decimal":
-                            obj = decimal.TryParse((string)value, out decimal decimalValue) ? decimalValue : 0.00M;
+                            decimal decimalValue;
+                            obj = decimal.TryParse((string)value, out decimalValue) ? decimalValue : 0.00M;
                             break;
                         case "Double":
-                            obj = double.TryParse((string)value, out double doubleValue) ? doubleValue : 0.00D;
+                            double doubleValue;
+                            obj = double.TryParse((string)value, out doubleValue) ? doubleValue : 0.00D;
                             break;
                         case "Int64":
-                            obj = long.TryParse((string)value, out long longValue) ? longValue : (long)0;
+                            long longValue;
+                            obj = long.TryParse((string)value, out longValue) ? longValue : (long)0;
                             break;
                         case "Int32":
-                            obj = int.TryParse((string)value, out int intValue) ? intValue : 0;
+                            int intValue;
+                            obj = int.TryParse((string)value, out intValue) ? intValue : 0;
                             break;
                         case "Int16":
                         case "Short":
-                            obj = short.TryParse((string)value, out short shortValue) ? shortValue : (short)0;
-                            break;
-                        case "Single":
-                            obj = float.TryParse((string)value, out float floatValue) ? floatValue : 0;
+                            short shortValue;
+                            obj = short.TryParse((string)value, out shortValue) ? shortValue : (short)0;
                             break;
                         case "Byte":
                             byte byteValue;
@@ -124,6 +120,7 @@ namespace SP.StudioCore.Types
                     if (type.IsBaseType<ISetting>()) obj = Activator.CreateInstance(type, value.ToString());
                     break;
             }
+
             return obj == null ? value : obj;
         }
 
@@ -140,24 +137,6 @@ namespace SP.StudioCore.Types
             {
                 throw new Exception(string.Format("{0}\nType:{1}", ex.Message, type.FullName));
             }
-        }
-
-        /// <summary>
-        /// 得到安全类型
-        /// 1、不能为空
-        /// 2、日期大于1900
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static object GetSafeValue(this object value, Type type)
-        {
-            return type.Name switch
-            {
-                "String" => value ?? string.Empty,
-                "DateTime" => ((DateTime)value).Max(),
-                _ => value
-            };
         }
 
         public static bool IsType(this string value, Type type)

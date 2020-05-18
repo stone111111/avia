@@ -36,8 +36,6 @@ namespace SP.StudioCore.Data.Expressions
         /// </summary>
         private int paramIndex = 0;
 
-
-
         public override Expression Visit(Expression node)
         {
             return base.Visit(node);
@@ -48,8 +46,9 @@ namespace SP.StudioCore.Data.Expressions
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public string ToCondition(out DynamicParameters parameters)
+        public string ToCondition(Expression expression, out DynamicParameters parameters)
         {
+            this.Visit(expression);
             parameters = new DynamicParameters();
             if (this.sql.Count == 0)
             {
@@ -120,7 +119,6 @@ namespace SP.StudioCore.Data.Expressions
             var left = node.Left;
             this.Visit(left);
             this.sql.Push("(");
-
             return node;
         }
 
@@ -253,10 +251,10 @@ namespace SP.StudioCore.Data.Expressions
                 switch (member.MemberType)
                 {
                     case MemberTypes.Property:
-                        value = ((PropertyInfo)member).GetValue(value) ?? string.Empty;
+                        value = ((PropertyInfo)member).GetValue(value);
                         break;
                     case MemberTypes.Field:
-                        value = ((FieldInfo)member).GetValue(value) ?? string.Empty;
+                        value = ((FieldInfo)member).GetValue(value);
                         break;
                 }
             }
@@ -280,8 +278,8 @@ namespace SP.StudioCore.Data.Expressions
         private void AppendParameter(object value)
         {
             if (value is ConstantExpression) value = ((ConstantExpression)value).Value;
-            sql.Push($"@_p{paramIndex}");
-            parameter.Add($"@_p{paramIndex}", value);
+            sql.Push($"@t{paramIndex}");
+            parameter.Add($"@t{paramIndex}", value);
             paramIndex++;
         }
 

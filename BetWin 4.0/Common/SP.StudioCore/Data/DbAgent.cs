@@ -4,11 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SP.StudioCore.API;
-using SP.StudioCore.API.Translates;
-using SP.StudioCore.Data.Repository;
-using SP.StudioCore.Data.Schema;
 using SP.StudioCore.Enums;
-using SP.StudioCore.Ioc;
 using SP.StudioCore.Model;
 using SP.StudioCore.Utils;
 using SP.StudioCore.Web;
@@ -26,39 +22,46 @@ namespace SP.StudioCore.Data
     /// 逻辑类/数据库连接基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class DbAgent<T> : IDisposable where T : class, new()
+    public abstract class DbAgent<T> : IServiceProvider, IDisposable where T : class, new()
     {
         private readonly string ConnectionString;
 
-        /// <summary>
-        /// 只读操作对象
-        /// </summary>
-        protected virtual IReadRepository ReadDB => IocCollection.GetService<IReadRepository>();
+        private IDbConnection _conn;
+        protected virtual IDbConnection conn
+        {
+            get
+            {
+                if (_conn == null) _conn = new SqlConnection(this.ConnectionString);
+                return this._conn;
+            }
+        }
 
         /// <summary>
-        /// 可写可读操作对象
+        /// 适用于非web环境的EF数据库上下文对象
         /// </summary>
-        protected virtual IWriteRepository WriteDB => IocCollection.GetService<IWriteRepository>();
+        protected static Dictionary<string, DbContext> _dbContext;
+        protected virtual DB DbContext<DB>() where DB : DbContext, new()
+        {
+            if (_dbContext == null) _dbContext = new Dictionary<string, DbContext>();
+            if (_dbContext.ContainsKey(typeof(DB).FullName)) return (DB)_dbContext[typeof(DB).FullName];
+            DB t = new DB();
+            _dbContext.Add(typeof(DB).FullName, t);
+            return t;
+        }
 
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        private readonly DatabaseType DBType;
-
-        protected DbAgent(string dbConnection, DatabaseType dbType = DatabaseType.SqlServer)
+        protected DbAgent(string dbConnection)
         {
             this.ConnectionString = dbConnection;
-            this.DBType = dbType;
         }
 
         protected DbExecutor NewExecutor(IsolationLevel tranLevel = IsolationLevel.Unspecified)
         {
-            return this.NewExecutor(this.ConnectionString, tranLevel);
+            return DbFactory.CreateExecutor(this.ConnectionString, DatabaseType.SqlServer, DataConnectionMode.Instance, tranLevel);
         }
 
         protected DbExecutor NewExecutor(string connectionString, IsolationLevel tranLevel = IsolationLevel.Unspecified)
         {
-            return DbFactory.CreateExecutor(connectionString, this.DBType, tranLevel);
+            return DbFactory.CreateExecutor(connectionString, DatabaseType.SqlServer, DataConnectionMode.Instance, tranLevel);
         }
 
         /// <summary>
@@ -74,15 +77,9 @@ namespace SP.StudioCore.Data
 
         #region ========== Message的传递处理 ===========
 
-        /// <summary>
-        /// 消息体（不支持非Web环境)
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <returns></returns>
         public virtual MessageResult Message(string msg = null)
         {
-            if (this.context == null) return default;
-            MessageResult result = this.context.RequestServices.GetService<MessageResult>();
+            MessageResult result = this.GetService<MessageResult>();
             if (!string.IsNullOrEmpty(msg)) result.Add(msg);
             return result;
         }
@@ -114,7 +111,7 @@ namespace SP.StudioCore.Data
 
         protected virtual TFaild FaildMessage<TFaild>(string msg, TFaild faildValue, params object[] args)
         {
-            return this.FaildMessage(msg, Language.CHN, faildValue, args);
+            return this.FaildMessage<TFaild>(msg, Language.CHN, faildValue, args);
         }
 
         protected virtual TFaild FaildMessage<TFaild>(string msg, Language language, TFaild faildValue, params object[] args)
@@ -150,6 +147,7 @@ namespace SP.StudioCore.Data
             return _instance;
         }
 
+
         #endregion
 
         #region ========  公共的通用方法（工具）  ========
@@ -175,9 +173,9 @@ namespace SP.StudioCore.Data
             }
             else
             {
-                indexName = SchemaCache.GetColumnProperty(indexField).Name;
+                indexName = indexField.GetColumn().Name;
             }
-            string sortName = sortField == null ? "Sort" : SchemaCache.GetColumnProperty(sortField).Name;
+            string sortName = sortField == null ? "Sort" : sortField.GetColumn().Name;
             using (DbExecutor db = NewExecutor(IsolationLevel.ReadUncommitted))
             {
                 foreach (TValue value in indexList)
@@ -196,14 +194,24 @@ namespace SP.StudioCore.Data
 
         #endregion
 
+        public object GetService(Type serviceType)
+        {
+            if (Context.Current == null) return null;
+            return Context.Current.RequestServices.GetService(serviceType);
+        }
+
         protected DbParameter NewParam(string parameterName, object value)
         {
-            return this.DBType.NewParam(parameterName, value);
+            return new SqlParameter(parameterName, value);
         }
 
         public void Dispose()
         {
-
+            if (_conn != null)
+            {
+                _conn.Close();
+                _conn.Dispose();
+            }
         }
     }
 }

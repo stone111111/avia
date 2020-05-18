@@ -4,17 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using System.Web;
 using static Dapper.SqlMapper;
+using MySql.Data.MySqlClient;
 
 namespace SP.StudioCore.Data
 {
     /// <summary>
     /// 数据库操作对象
     /// </summary>
-    public partial class DbExecutor : IDisposable
+    public class DbExecutor : IDisposable
     {
         private readonly IDbConnection conn;
 
@@ -25,7 +27,7 @@ namespace SP.StudioCore.Data
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public DatabaseType DBType { get; private set; }
+        public readonly DatabaseType DBType;
 
         /// <summary>
         /// commit之後要執行的回調方法
@@ -33,7 +35,6 @@ namespace SP.StudioCore.Data
         /// <param name="action"></param>
         public void AddCallback(Action action)
         {
-            if (this.tran == null) throw new NotSupportedException("未开启事务不能注册回调");
             if (this.callback == null) this.callback = new List<Action>();
             this.callback.Add(action);
         }
@@ -52,6 +53,7 @@ namespace SP.StudioCore.Data
                     conn = new SqlConnection(connectionString);
                     break;
                 case DatabaseType.MySql:
+                    conn = new MySqlConnection(connectionString);
                     break;
                 case DatabaseType.SQLite:
 
@@ -66,7 +68,7 @@ namespace SP.StudioCore.Data
         /// <param name="connectionString">链接字符串</param>
         /// <param name="dbType">数据库类型</param>
         /// <param name="isTran">是否启用事务</param>
-        public DbExecutor(string connectionString, DatabaseType dbType = DatabaseType.SqlServer, IsolationLevel tranLevel = IsolationLevel.Unspecified)
+        public DbExecutor(string connectionString, DatabaseType dbType = DatabaseType.SqlServer, DataConnectionMode connMode = DataConnectionMode.None, IsolationLevel tranLevel = IsolationLevel.Unspecified)
         {
             this.DBType = dbType;
             conn = this.CreateDbConnection(connectionString);
@@ -197,7 +199,8 @@ namespace SP.StudioCore.Data
         {
             if (tran == null)
                 throw new Exception("未开启事务");
-
+            //if (this.connectionMode == DataConnectionMode.None)
+            //    throw new Exception("如果要使用事务则必须使用数据的长连接");
             tran.Commit();
 
             if (callback != null)
@@ -216,6 +219,8 @@ namespace SP.StudioCore.Data
         {
             if (tran == null)
                 throw new Exception("未开启事务");
+            //if (this.connectionMode == DataConnectionMode.None)
+            //    throw new Exception("如果要使用事务则必须使用数据的长连接");
             tran.Rollback();
         }
 
@@ -228,67 +233,42 @@ namespace SP.StudioCore.Data
         }
 
         /// <summary>
-        /// Dapar抛出异常
+        /// 抛出异常
         /// </summary>
         private string ThrowException(Exception ex, string cmdText, object param)
         {
-            StringBuilder sb = new StringBuilder("{")
-                .AppendFormat("\"Message\":\"{0}\"", HttpUtility.JavaScriptStringEncode(ex.Message))
-                .Append(",")
-                .AppendFormat("\"Command\":\"{0}\"", HttpUtility.JavaScriptStringEncode(cmdText));
-
+            StringBuilder sb = new StringBuilder(ex.Message);
+            sb.AppendLine(cmdText);
             if (param != null)
             {
-                sb.Append(",\"Params\":{");
-                List<string> parameters = new List<string>();
                 if (param.GetType() == typeof(DynamicParameters))
                 {
                     DynamicParameters dynamicParameters = (DynamicParameters)param;
 
                     foreach (string paramName in dynamicParameters.ParameterNames)
                     {
-                        object value = dynamicParameters.Get<object>(paramName);
-                        if (value == null) value = string.Empty;
-                        parameters.Add(string.Format("\"{0}\":\"{1}\"", paramName, HttpUtility.JavaScriptStringEncode(value.ToString())));
+                        sb.AppendFormat("{0} : {1} \n", paramName, dynamicParameters.Get<Object>(paramName));
                     }
                 }
                 else
                 {
                     foreach (PropertyInfo property in param.GetType().GetProperties())
                     {
-                        object value = property.GetValue(param);
-                        if (value == null) value = string.Empty;
-                        parameters.Add(string.Format("\"{0}\":\"{1}\"", property.Name, HttpUtility.JavaScriptStringEncode(value.ToString())));
+                        sb.AppendFormat("{0} : {1} \n", property.Name, property.GetValue(param));
                     }
                 }
-                sb.Append(string.Join(",", parameters))
-                    .Append("}");
             }
-            sb.Append("}");
             return sb.ToString();
         }
 
-        /// <summary>
-        /// ADO.Net操作抛出异常
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <param name="cmdText"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
         private string ThrowException(Exception ex, string cmdText, params DbParameter[] parameters)
         {
-            StringBuilder sb = new StringBuilder("{")
-               .AppendFormat("\"Message\":\"{0}\"", HttpUtility.JavaScriptStringEncode(ex.Message))
-               .Append(",")
-               .AppendFormat("\"Command\":\"{0}\"", HttpUtility.JavaScriptStringEncode(cmdText));
-            sb.Append(",\"Params\":{");
-            List<string> list = new List<string>();
+            StringBuilder sb = new StringBuilder(ex.Message);
+            sb.AppendLine(cmdText);
             foreach (DbParameter param in parameters)
             {
-                list.Add(string.Format("\"{0}\":\"{1}\"", param.ParameterName, HttpUtility.JavaScriptStringEncode(param.Value.ToString())));
+                sb.AppendFormat("{0} : {1} \n", param.ParameterName, param.Value);
             }
-            sb.Append(string.Join(",", list))
-                .Append("}").Append("}");
             return sb.ToString();
         }
 
@@ -325,29 +305,14 @@ namespace SP.StudioCore.Data
             return this.NewParam(parameterName, value, dbType, 0, ParameterDirection.Input);
         }
 
-        /// <summary>
-        /// ADO.Net的参数对象
-        /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
-        /// <param name="direction"></param>
-        /// <returns></returns>
         public DbParameter NewParam(string parameterName, object value, DbType dbType, int size, ParameterDirection direction)
         {
-            DbParameter param = this.DBType switch
-            {
-                DatabaseType.SqlServer => new SqlParameter()
-                {
-                    ParameterName = parameterName,
-                    Value = value,
-                    DbType = dbType,
-                    Size = size,
-                    Direction = direction
-                },
-                _ => throw new NotImplementedException()
-            };
+            DbParameter param = new SqlParameter();
+            param.ParameterName = parameterName;
+            param.Value = value;
+            param.DbType = dbType;
+            param.Size = size;
+            param.Direction = direction;
             return param;
         }
 
