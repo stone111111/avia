@@ -24,7 +24,7 @@ namespace BW.Agent.Systems
             string value = SystemCaching.Instance().GetSetting(type);
             if (string.IsNullOrEmpty(value))
             {
-                value = this.ReadDB.ReadInfo<SystemSetting, string>(t => t.Value, t => t.Type == type);
+                value = this.ReadDB.ExecuteScalar<SystemSetting, string>(t => t.Value, t => t.Type == type);
                 if (!string.IsNullOrEmpty(value)) SystemCaching.Instance().SaveSetting(type, value);
             }
             return value;

@@ -1,0 +1,466 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Collections;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SP.StudioCore.Http;
+using SP.StudioCore.Model;
+using SP.StudioCore.Enums;
+using SP.StudioCore.Xml;
+using System.Resources;
+using Newtonsoft.Json;
+using SP.StudioCore.Security;
+using System.Text.RegularExpressions;
+using SP.StudioCore.Data;
+using SP.StudioCore.Array;
+using SP.StudioCore.Text;
+using SP.StudioCore.Net;
+using SP.StudioCore.Utils;
+using Newtonsoft.Json.Linq;
+using Web.API.Agent.Translates;
+using Web.API.Agent;
+using System.Diagnostics;
+using SP.StudioCore.IO;
+using SP.StudioCore.Json;
+using System.Net;
+
+namespace Web.API.Action
+{
+    /// <summary>
+    /// 多语种翻译
+    /// </summary>
+    public class Translate : IAction
+    {
+        public Translate(HttpContext context) : base(context)
+        {
+        }
+
+        public Translate(string[] args) : base(args)
+        {
+        }
+
+        #region ========  静态方法  ========
+
+        /// <summary>
+        /// 获取语言词汇的Key值（取MD5的前16位）
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        private static string GetKey(string keyword)
+        {
+            return Encryption.toMD5(keyword).Substring(0, 16);
+        }
+
+        #endregion
+
+        #region ========  命令行环境  ========
+
+        /// <summary>
+        /// 本地执行
+        /// </summary>
+        public override void Execute()
+        {
+            string src = this.args.Get("-src");
+            if (!Directory.Exists(src) && !File.Exists(src))
+            {
+                Console.WriteLine($"路径{src}不存在");
+                return;
+            }
+            string token = this.args.Get("-token");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("未指定Token值");
+                return;
+            }
+
+            string method = this.args.Get("-method");
+            if (string.IsNullOrEmpty(method))
+            {
+                Console.WriteLine("未指定动作");
+                return;
+            }
+
+            string api = this.args.Get("-api");
+            if (string.IsNullOrEmpty(api))
+            {
+                Console.WriteLine("未指定API路径");
+                return;
+            }
+
+            switch (method)
+            {
+                case "GetKeyword":
+                    this.GetKeyword(src, $"{api}/Translate?token={token}");
+                    break;
+                case "Translate":
+                    if (File.Exists(src))
+                    {
+                        this.BuildFileTranslate(src, $"{api}/Translate?token={token}", this.args.Get("-output"), this.args.Get("-language"));
+                    }
+                    else if (Directory.Exists(src))
+                    {
+                        this.BuildPathTranslate(src, $"{api}/Translate?token={token}", this.args.Get("-output"), this.args.Get("-language"));
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 获取要翻译词条输出到远程API中
+        /// </summary>
+        /// <param name="src"></param>
+        private void GetKeyword(string src, string url)
+        {
+            Regex regex = new Regex(@"~.{1,50}?~", RegexOptions.Multiline);
+            Dictionary<string, bool> data = new Dictionary<string, bool>();
+            foreach (string file in Directory.GetFiles(src, "*", SearchOption.AllDirectories).Where(t => t.EndsWith(".html") || t.EndsWith(".js") || t.EndsWith(".css")))
+            {
+                string content = File.ReadAllText(file, Encoding.UTF8);
+                foreach (Match match in regex.Matches(content))
+                {
+                    if (!data.ContainsKey(match.Value))
+                    {
+                        data.Add(match.Value, true);
+                    }
+                }
+            }
+            string json = JsonConvert.SerializeObject(data.Select(t => t.Key));
+            url += $"&action=addnew";
+            Console.WriteLine(json);
+            string result = NetAgent.UploadData(url, Encoding.UTF8.GetBytes(json), Encoding.UTF8, null, new Dictionary<string, string>()
+            {
+                { "Content-Type","application/json"}
+            });
+            Console.WriteLine(result);
+        }
+
+        /// <summary>
+        /// 生成翻译之后的文件（单个文件）
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="url"></param>
+        /// <param name="output"></param>
+        /// <param name="languages">要翻译输出的语种，多个语种用逗号隔开</param>
+        private void BuildFileTranslate(string src, string url, string output, string languages)
+        {
+            if (!output.Contains("{t}"))
+            {
+                Console.WriteLine("输出路径中没有包含语种标识");
+                return;
+            }
+            Stopwatch sw = new Stopwatch();
+            sw.Restart();
+            //#1 获取语言包
+            Dictionary<string, Dictionary<Language, string>> data = this.GetData(url);
+            Console.WriteLine("获取语言包耗时{0}ms,共有{1}条词库", sw.ElapsedMilliseconds, data.Count);
+            Dictionary<Language, List<string>> undone = new Dictionary<Language, List<string>>();
+
+            foreach (string language in languages.Split(','))
+            {
+                sw.Restart();
+                if (!Enum.IsDefined(typeof(Language), language))
+                {
+                    Console.WriteLine("不受支持的语种{0}", language);
+                    continue;
+                }
+                Language lang = language.ToEnum<Language>();
+                BuildTranslate(src, output.Replace("{t}", language), data, lang, undone);
+                Console.WriteLine("{0}翻译完成，耗时{1}ms", lang.GetDescription(), sw.ElapsedMilliseconds);
+            }
+            ShowUndone(undone);
+        }
+
+        /// <summary>
+        /// 目录批量翻译
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="url"></param>
+        /// <param name="output"></param>
+        /// <param name="languages"></param>
+        /// <param name=""></param>
+        private void BuildPathTranslate(string path, string url, string output, string languages)
+        {
+            if (string.IsNullOrEmpty(output))
+            {
+                Console.WriteLine("输出路径未配置");
+                return;
+            }
+            Dictionary<Language, List<string>> undone = new Dictionary<Language, List<string>>();
+            //#1 获取语言包
+            Stopwatch sw = new Stopwatch();
+            sw.Restart();
+            Dictionary<string, Dictionary<Language, string>> data = this.GetData(url);
+            Console.WriteLine("获取语言包耗时{0}ms,共有{1}条词库", sw.ElapsedMilliseconds, data.Count);
+
+            DirectoryInfo directory = new DirectoryInfo(path);
+            foreach (string language in languages.Split(','))
+            {
+                sw.Restart();
+                if (!Enum.IsDefined(typeof(Language), language))
+                {
+                    Console.WriteLine("不受支持的语种{0}", language);
+                    continue;
+                }
+                Language lang = language.ToEnum<Language>();
+                foreach (string file in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories))
+                {
+                    Console.WriteLine("file:{0}", file);
+                    Console.WriteLine("directory:{0}", path);
+
+                    string filePath = file.Substring(path.Length);
+                    BuildTranslate(file, output.Replace("{t}", lang.ToString()) + filePath, data, lang, undone);
+                }
+                Console.WriteLine("{0}翻译完成，耗时{1}ms", lang.GetDescription(), sw.ElapsedMilliseconds);
+            }
+            ShowUndone(undone);
+        }
+
+        /// <summary>
+        /// 对单个文件进行处理
+        /// </summary>
+        /// <param name="source">来源文件（根据后缀决定是否需要翻译）</param>
+        /// <param name="target">目标文件（如果目录不存在则自动创建）</param>
+        /// <param name="data">语言包</param>
+        /// <param name="language">当前需要翻译的语种</param>
+        /// <param name="undone">词库中没有的词汇</param>
+        private void BuildTranslate(string source, string target, Dictionary<string, Dictionary<Language, string>> data, Language language, Dictionary<Language, List<string>> undone)
+        {
+            string fileType = source.Substring(source.LastIndexOf('.') + 1);
+            //#1 创建目标目录
+            string targetDirectory = target.Substring(0, target.LastIndexOf('\\'));
+            if (!Directory.Exists(targetDirectory)) Directory.CreateDirectory(targetDirectory);
+
+            //#2 不需要翻译的文件，判断文件是否更新，进行复制覆盖处理。 如果没有更新则跳过
+            if (!new[] { "html", "htm", "js", "css", "txt", "json" }.Contains(fileType))
+            {
+                if (!File.Exists(target) || FileAgent.GetMD5(source) != FileAgent.GetMD5(target))
+                {
+                    File.Copy(source, target, true);
+                }
+                return;
+            }
+
+            //#3 进行文件翻译
+            string targetContent = File.Exists(target) ? File.ReadAllText(target, Encoding.UTF8) : string.Empty;
+            string sourceContent = File.ReadAllText(source, Encoding.UTF8);
+
+            Regex regex = new Regex(@"~.{1,50}?~", RegexOptions.Multiline);
+            string content = regex.Replace(sourceContent, match =>
+            {
+                string key = GetKey(match.Value);
+                if (data.ContainsKey(key) && data[key].ContainsKey(language)) return data[key][language];
+                if (!Regex.IsMatch(match.Value, @"[\u4e00-\u9fa5]")) return match.Value;
+                string keyword = match.Value.Replace("~", "");
+                if (!undone.ContainsKey(language)) undone.Add(language, new List<string>());
+                if (!undone[language].Contains(keyword)) undone[language].Add(keyword);
+                return keyword;
+            });
+            if (targetContent.GetHashCode() != content.GetHashCode())
+            {
+                File.WriteAllText(target, content, Encoding.UTF8);
+            }
+        }
+
+
+        /// <summary>
+        /// 获取字典翻译数据
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        private Dictionary<string, Dictionary<Language, string>> GetData(string url)
+        {
+            string dataStr = NetAgent.UploadData(url, "action=data", Encoding.UTF8);
+            Result result = Result.Parse(dataStr);
+            try
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, Dictionary<Language, string>>>(((JObject)result.Info)["Content"].ToString());
+            }
+            catch
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("词库读取发生错误");
+                Console.ResetColor();
+                Console.WriteLine(dataStr);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 输出未完成的词条
+        /// </summary>
+        /// <param name="undone"></param>
+        private void ShowUndone(Dictionary<Language, List<string>> undone)
+        {
+            if (undone.Count != 0) Console.WriteLine("未录入词库：");
+            foreach (var item in undone)
+            {
+                Console.WriteLine("{0}：{1}", item.Key.GetDescription(), string.Join(" , ", item.Value));
+            }
+            File.WriteAllText("output.txt", undone.ToJson());
+        }
+
+        #endregion
+
+        #region ========  Web环境  ========
+
+        /// <summary>
+        /// 获取
+        /// </summary>
+        /// <returns></returns>
+        private string GetToken()
+        {
+            string key = "token";
+            string value = this.context.QS(key);
+            if (string.IsNullOrEmpty(value)) value = this.context.Head(key);
+            return value;
+        }
+
+        /// <summary>
+        /// 检查用户名是否正确
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        private bool CheckAuth(string userName, string password)
+        {
+            return userName == "admin" && password == "a123456";
+        }
+        public override Result Invote()
+        {
+            string key = this.GetToken();
+            //if (string.IsNullOrEmpty(key)
+            //    || !context.GetAuth(out string username, out string password)
+            //    || !this.CheckAuth(username, password)
+            //    ) return new Result(HttpStatusCode.Unauthorized, 0, string.IsNullOrEmpty(key) ? "Translate" : key, null);
+
+            if (string.IsNullOrEmpty(key)) return new Result(HttpStatusCode.Unauthorized, 0, string.IsNullOrEmpty(key) ? "Translate" : key, null);
+
+            string action = this.context.GetParam("action") ?? "index";
+            MethodInfo method = this.GetType().GetMethod(action, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
+            if (method == null) return new Result(false, $"don't support action {action}");
+
+            return (Result)method.Invoke(this, null);
+        }
+
+        /// <summary>
+        /// 首页的编辑页面展示
+        /// </summary>
+        /// <returns></returns>
+        private Result Index()
+        {
+            return new Result(ContentType.HTML, Properties.Resources.Translate);
+        }
+
+        /// <summary>
+        /// 当前的语言包配置文件
+        /// </summary>
+        /// <returns></returns>
+        private Result Data()
+        {
+            TranslateModel model = new TranslateModel(this.context.GetParam("Language"))
+            {
+                Content = TranslateAgent.Instance().GetTranslate(this.GetToken())
+            };
+            if (this.context.GetParam("type") == "xml")
+            {
+                return new Result(ContentType.XML, model.ToXml());
+            }
+            return new Result(true, this.GetToken(), model);
+        }
+
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <returns></returns>
+        private Result Update()
+        {
+            string id = this.context.QF("ID");
+            Language language = this.context.QF("Language").ToEnum<Language>();
+            string value = this.context.QF("Value");
+            TranslateAgent.Instance().SaveContent(id, language, value, this.GetToken());
+            return new Result(true, "保存成功");
+        }
+
+        /// <summary>
+        /// 接收一批翻译任务
+        /// </summary>
+        /// <returns></returns>
+        private Result AddNew()
+        {
+            string[] tasks = JsonConvert.DeserializeObject<string[]>(this.context.GetString());
+            if (tasks == null || tasks.Length == 0) return new Result(false, "non-task");
+            int count = 0;
+            Regex ignoreRegex = new Regex(@"~\d+~$");
+            List<string> results = new List<string>();
+            foreach (string keyword in tasks)
+            {
+                if (ignoreRegex.IsMatch(keyword)) continue;
+                if (TranslateAgent.Instance().AddKeyword(keyword, this.GetToken()))
+                {
+                    results.Add(keyword);
+                    count++;
+                }
+            }
+            return new Result(true, this.GetToken(), new
+            {
+                count,
+                Keyword = results
+            });
+        }
+
+        /// <summary>
+        /// 在线翻译
+        /// </summary>
+        /// <returns></returns>
+        private Result Online()
+        {
+            Language source = this.context.QF("Source").ToEnum<Language>();
+            Language target = this.context.QF("Target").ToEnum<Language>();
+            string content = this.context.QF("Content");
+
+            bool success = TranslateAgent.Instance().OnlineTranslate(source, target, content, out string message);
+            return new Result(success, message);
+        }
+
+        /// <summary>
+        /// 获取语言包（数据库直接读取）
+        /// </summary>
+        /// <returns></returns>
+        private Result TranslateData()
+        {
+            IEnumerable<string> contents = JsonConvert.DeserializeObject<string[]>(this.context.QF("Content")).Distinct();
+            string token = this.GetToken();
+            Language[] languages = this.context.QF("Language").Split(',').Select(t => t.ToEnum<Language>()).ToArray();
+            //# Key存入Token
+            foreach (string keyword in contents)
+            {
+                TranslateAgent.Instance().AddKeyword(keyword, token);
+            }
+
+            //# 获取目前数据库内的内容
+            Dictionary<string, Dictionary<Language, string>> translates = new Dictionary<string, Dictionary<Language, string>>();
+            foreach (string keyword in contents)
+            {
+                translates.Add(keyword, TranslateAgent.Instance().GetTranslate(keyword, languages));
+            }
+
+            return new Result(ContentType.JSON, translates.ToJson());
+        }
+
+
+        #endregion
+
+        #region ========  实体类  ========
+
+
+
+        #endregion
+    }
+}

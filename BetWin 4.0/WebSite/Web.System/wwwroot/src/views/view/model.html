@@ -85,10 +85,9 @@
                     div.setAttribute("data-index", index);
                     div.setAttribute("data-status", "wait");
                 }
-                div.innerHTML = laytpl(fileTemplate).render(info);                
+                div.innerHTML = laytpl(fileTemplate).render(info);
                 files.appendChild(div);
             }
-
             // 上傳文件到服務器
             var uploadFile = function (index) {
                 if (!index) index = 0;
@@ -96,6 +95,7 @@
                     layer.msg("文件上傳完畢，請點擊發佈", { icon: 1 });
                     return;
                 }
+                console.log(index);
                 var filePreview = files.querySelector("[data-index='" + index + "']");
                 if (filePreview) {
                     filePreview.setAttribute("data-status", "upload");

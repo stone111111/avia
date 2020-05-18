@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using BW.Common.Base;
-using SP.StudioCore.Ioc;
 
 namespace Web.System.Utils
 {
@@ -29,7 +28,7 @@ namespace Web.System.Utils
         {
             get
             {
-                return IocCollection.GetService<BizDataContext>();
+                return this.GetService<BizDataContext>();
             }
         }
     }

@@ -1,16 +1,13 @@
 ﻿using Aliyun.OSS;
-using BW.Agent;
 using BW.Agent.Systems;
 using BW.Cache.Sites;
 using BW.Cache.Systems;
-using BW.Common.Procedure;
 using BW.Common.Systems;
 using BW.Common.Views;
 using BW.Views;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SP.StudioCore.API;
-using SP.StudioCore.API.Translates;
 using SP.StudioCore.Data;
 using SP.StudioCore.Data.Extension;
 using SP.StudioCore.Enums;
@@ -26,21 +23,18 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Web.System.Agent.Sites;
 using static BW.Common.Systems.SystemAdminLog;
-using static BW.Common.Systems.SystemSetting;
 
 namespace Web.System.Agent.Systems
 {
     /// <summary>
-    /// 系统的视图和模板管理
+    /// 视图管理
     /// </summary>
     public sealed class ViewAgent : IViewAgent<ViewAgent>
     {
         /// <summary>
         /// 数据初始化
         /// 1、把视图类库的实现类全部生成数据
-        /// 2、新增的视图如果在模板中不存在的，则默认选中第一个
         /// </summary>
         public int Initialize()
         {
@@ -50,19 +44,6 @@ namespace Web.System.Agent.Systems
             {
                 this.SaveViewSetting(type);
             }
-
-            // 系统模板没有选择的视图模型（一般新建了视图导致）
-            foreach (int templateId in this.ReadDB.ReadList<ViewTemplate, int>(t => t.ID, t => t.ID != 0))
-            {
-                this.WriteDB.ExecuteNonQuery(new view_InitSystemTtemplate(templateId));
-            };
-
-            // 商户模板中没有选择到的视图模型
-            foreach (int templateId in this.ReadDB.ReadList<ViewSiteTemplate, int>(t => t.ID, t => t.ID != 0))
-            {
-                this.WriteDB.ExecuteNonQuery(new view_InitSiteTtemplate(templateId));
-            }
-
             return types.Length;
         }
 
@@ -223,17 +204,17 @@ namespace Web.System.Agent.Systems
         /// <summary>
         /// 发布模型
         /// </summary>
-        /// <param name="modelId">模型ID</param>
+        /// <param name="modelId"></param>
         /// <returns></returns>
         internal bool PublishModel(int modelId)
         {
             ViewModel model = this.GetModelInfo(modelId);
             if (model == null) return this.FaildMessage("模型错误");
 
-            Language[] languages = SettingAgent.Instance().GetSetting(SettingType.Language).Split(',').Select(t => t.ToEnum<Language>()).ToArray();
+            Language[] languages = SettingAgent.Instance().GetSetting(SystemSetting.SettingType.Language).Split(',').Select(t => t.ToEnum<Language>()).ToArray();
             if (languages.Length == 0) return this.FaildMessage("没有配置语言包");
 
-            string translateUrl = SettingAgent.Instance().GetSetting(SettingType.Translate);
+            string translateUrl = SettingAgent.Instance().GetSetting(SystemSetting.SettingType.Translate);
             if (string.IsNullOrEmpty(translateUrl)) return this.FaildMessage("没有配置语言包接口地址");
 
             //#1 找出样式文件中需要替换的资源路径
@@ -242,18 +223,15 @@ namespace Web.System.Agent.Systems
                string resource = t.Groups["Resource"].Value;
                if (model.ResourceFiles.ContainsKey(resource))
                {
-                   return $"url(../{model.ResourceFiles[resource].Path})";
+                   return $"url({model.ResourceFiles[resource]})";
                }
                return t.Value;
            });
-            this.WriteDB.Update(model, t => t.Style);
 
-            //#1.1 更新引用了这个模型的商户模板的样式
-            foreach (int templateId in this.ReadDB.ReadList<ViewSiteConfig>(t => t.ModelID == modelId).Select(t => t.TemplateID))
+            using (DbExecutor db = NewExecutor())
             {
-                TemplateAgent.Instance().SaveStyle(templateId);
+                model.Update(db, t => t.Style);
             }
-
 
             //#2 发布页面的各个语言版本
             {
@@ -266,7 +244,7 @@ namespace Web.System.Agent.Systems
                     if (!words.ContainsKey(word)) words.Add(word, true);
                 }
                 //#2.2 发送到翻译API，获得语言包
-                Dictionary<string, Dictionary<Language, string>> dic = TranslateUtils.Get(words.Select(t => t.Key).ToArray(), translateUrl, languages);
+                Dictionary<string, Dictionary<Language, string>> dic = Translate.Get(words.Select(t => t.Key).ToArray(), translateUrl, languages);
 
                 foreach (Language language in languages)
                 {
@@ -408,7 +386,7 @@ namespace Web.System.Agent.Systems
                 }
 
                 //# 得到当前平台下所有的视图
-                IEnumerable<ViewSetting> views = db.ReadList<ViewSetting>(t => t.Platform == template.Platform);
+                List<ViewSetting> views = db.ReadList<ViewSetting>(t => t.Platform == template.Platform);
                 List<ViewModel> modelList = new List<ViewModel>();
                 foreach (int modelId in models)
                 {
@@ -470,6 +448,165 @@ namespace Web.System.Agent.Systems
                 db.Commit();
             }
             return this.AccountInfo.Log(LogType.View, $"删除系统模板 {template.Platform}/{template.Name}");
+        }
+
+        #endregion
+
+        #region ========  商户模板管理  ========
+
+        /// <summary>
+        /// 复制系统模板到商户模板
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public new int CopySystemTemplate(int siteId, int templateId)
+        {
+            return base.CopySystemTemplate(siteId, templateId);
+        }
+
+        /// <summary>
+        /// 删除商户模板
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public bool DeleteSiteTemplate(int templateId)
+        {
+            ViewSiteTemplate template = this.GetSiteTemplateInfo(templateId);
+            if (template == null) return this.FaildMessage("");
+            using (DbExecutor db = NewExecutor(IsolationLevel.ReadUncommitted))
+            {
+                template.Configs.ForEach(config =>
+                {
+                    config.Delete(db);
+                });
+                template.Delete(db);
+                db.Commit();
+            }
+            return this.AccountInfo.Log(LogType.View, $"删除商户模板 {template.Platform}/{template.Name}");
+        }
+
+        /// <summary>
+        /// 获取商户模板（包括视图配置信息）
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public new ViewSiteTemplate GetSiteTemplateInfo(int templateId)
+        {
+            return base.GetSiteTemplateInfo(templateId);
+        }
+
+        /// <summary>
+        /// 保存商户模板
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="models"></param>
+        /// <returns></returns>
+        public bool SaveSiteTemplateInfo(ViewSiteTemplate template, int[] models)
+        {
+            if (string.IsNullOrEmpty(template.Name)) return this.FaildMessage("请输入模板名称");
+            if (!string.IsNullOrEmpty(template.Domain) && !isDomain(template.Domain)) return this.FaildMessage("域名错误，请重新输入域名");
+
+            bool isNew = template.ID == 0;
+            using (DbExecutor db = NewExecutor(IsolationLevel.ReadUncommitted))
+            {
+                if (template.ID == 0)
+                {
+                    template.AddIdentity(db);
+                }
+                else
+                {
+                    template.Update(db, t => t.Name, t => t.Platform, t => t.Domain);
+                }
+
+                //# 得到当前平台下所有的视图
+                List<ViewSetting> views = db.ReadList<ViewSetting>(t => t.Platform == template.Platform);
+                List<ViewModel> modelList = new List<ViewModel>();
+                foreach (int modelId in models)
+                {
+                    ViewModel model = db.ReadInfo<ViewModel>(t => t.ID == modelId);
+                    if (model == null)
+                    {
+                        db.Rollback();
+                        return this.FaildMessage($"模型ID{modelId}不存在");
+                    }
+                    ViewSiteConfig config = isNew ? null :
+                        config = db.ReadInfo<ViewSiteConfig>(t => t.TemplateID == template.ID && t.ViewID == model.ViewID && t.SiteID == template.SiteID);
+                    if (config != null && config.ModelID != modelId)
+                    {
+                        config.ModelID = modelId;
+                        config.Update(db, t => t.ModelID);
+                    }
+                    else if (config == null)
+                    {
+                        config = new ViewSiteConfig()
+                        {
+                            TemplateID = template.ID,
+                            ViewID = model.ViewID,
+                            ModelID = model.ID,
+                            SiteID = template.SiteID
+                        };
+                        config.Add(db);
+                    }
+                    modelList.Add(model);
+                }
+
+                ViewSetting view = views.FirstOrDefault(t => !modelList.Any(p => p.ViewID == t.ID));
+                if (view != null)
+                {
+                    db.Rollback();
+                    return this.FaildMessage($"视图{view.Name}未选则模型");
+                }
+
+                db.AddCallback(() =>
+                {
+                    SiteCaching.Instance().RemoveSiteInfo(template.SiteID);
+                });
+
+                db.Commit();
+            }
+
+            return this.AccountInfo.Log(LogType.View, $"保存系统模板 {template.Platform}/{template.Name}");
+        }
+
+        #endregion
+
+        #region ========  商户视图配置  ========
+
+        /// <summary>
+        /// 获取商户对于视图的配置（数据库读取)
+        /// </summary>
+        /// <param name="configId"></param>
+        /// <returns></returns>
+        public ViewSiteConfig GetSiteViewConfig(int configId)
+        {
+            return this.ReadDB.ReadInfo<ViewSiteConfig>(t => t.ID == configId);
+        }
+
+        /// <summary>
+        /// 保存商户对于视图的配置
+        /// </summary>
+        /// <param name="configId"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public bool SaveSiteViewConfig(int configId, string setting)
+        {
+            ViewSiteConfig config = this.GetSiteViewConfig(configId);
+            if (config == null) return this.FaildMessage("配置项目错误");
+            // 验证setting内容是否正确
+            ViewSetting view = this.GetViewSetting(config.ViewID);
+            try
+            {
+                ViewUtils.CreateInstance(view.Code, setting);
+            }
+            catch (Exception ex)
+            {
+                return this.FaildMessage(ex.Message);
+            }
+            config.Setting = setting;
+            this.WriteDB.Update<ViewSiteConfig, string>(t => t.Setting, setting, t => t.ID == configId);
+            ViewCaching.Instance().SaveSiteConfig(config);
+            return this.AccountInfo.Log(LogType.Site, $"修改商户{config.SiteID}视图配置参数,ID={configId},View={view.Code}");
         }
 
         #endregion

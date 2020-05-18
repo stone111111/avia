@@ -1364,7 +1364,7 @@ layui.use(["table"], function () {
             return layui.data(layui.setter.tableName);
         },
         parseData: function (res) {
-            res["data"] = res.info ? (Array.isArray(res.info) ? res.info : res.info.list) : null;
+            res["data"] = res.info ? res.info.list : null;
             res["count"] = res.info ? res.info.RecordCount : 0;
             res["total"] = res.info && res.info.data ? res.info.data : null;
             delete res["info"];

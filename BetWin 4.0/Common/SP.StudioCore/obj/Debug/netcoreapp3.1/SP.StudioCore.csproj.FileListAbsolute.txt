@@ -7,3 +7,11 @@ D:\泛亚电竞\svn\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.A
 D:\泛亚电竞\svn\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.AssemblyInfo.cs
 D:\泛亚电竞\svn\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.dll
 D:\泛亚电竞\svn\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.pdb
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.csprojAssemblyReference.cache
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.Properties.Resources.resources
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.csproj.GenerateResource.cache
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.csproj.CoreCompileInputs.cache
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.AssemblyInfoInputs.cache
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.dll
+D:\work\avia\avia\BetWin 4.0\Common\SP.StudioCore\obj\Debug\netcoreapp3.1\SP.StudioCore.pdb

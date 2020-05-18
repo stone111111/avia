@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using BW.Common.Database;
 using BW.Common.Base;
 using SP.StudioCore.Http;
-using SP.StudioCore.Ioc;
 
 namespace BW.Agent
 {
@@ -25,7 +24,29 @@ namespace BW.Agent
         {
             get
             {
-                return IocCollection.GetService<BizDataContext>();
+                return this.GetService<BizDataContext>() ?? this.DbContext<BizDataContext>();
+            }
+        }
+
+        /// <summary>
+        /// 可写数据库操作对象（无事务）
+        /// </summary>
+        protected virtual DbExecutor WriteDB
+        {
+            get
+            {
+                return this.GetService<WriteDbExecutor>();
+            }
+        }
+
+        /// <summary>
+        /// 只读数据库操作对象
+        /// </summary>
+        protected virtual DbExecutor ReadDB
+        {
+            get
+            {
+                return this.GetService<ReadDbExecutor>();
             }
         }
 

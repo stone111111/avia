@@ -2488,7 +2488,7 @@
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
           "BW.Views": "1.0.0",
-          "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj": "1.0.0"
+          "SP.Provider": "1.0.0"
         },
         "compile": {
           "bin/placeholder/BW.Common.dll": {}
@@ -2511,6 +2511,22 @@
         },
         "runtime": {
           "bin/placeholder/BW.Views.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "SP.Provider/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "dependencies": {
+          "SP.StudioCore": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/SP.Provider.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SP.Provider.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -7995,6 +8011,11 @@
       "path": "../BW.Views/BW.Views.csproj",
       "msbuildProject": "../BW.Views/BW.Views.csproj"
     },
+    "SP.Provider/1.0.0": {
+      "type": "project",
+      "path": "../../Common/SP.Provider/SP.Provider.csproj",
+      "msbuildProject": "../../Common/SP.Provider/SP.Provider.csproj"
+    },
     "SP.StudioCore/1.0.0": {
       "type": "project",
       "path": "../../Common/SP.StudioCore/SP.StudioCore.csproj",
@@ -8007,25 +8028,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Administrator\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\DELL20200501\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj",
+      "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj",
       "projectName": "BW.Agent",
-      "projectPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj",
-      "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Agent\\obj\\",
+      "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj",
+      "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+      "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Agent\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -8037,8 +8057,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "D:\\avia\\BetWin 4.0\\Framework\\BW.Cache\\BW.Cache.csproj": {
-              "projectPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Cache\\BW.Cache.csproj"
+            "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Cache\\BW.Cache.csproj": {
+              "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Cache\\BW.Cache.csproj"
             }
           }
         }
@@ -8072,16 +8092,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1104",
-      "level": "Error",
-      "message": "找不到项目“D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj”。请检查项目引用是否有效以及项目文件是否存在。",
-      "libraryId": "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.1"
-      ]
-    }
-  ]
+  }
 }

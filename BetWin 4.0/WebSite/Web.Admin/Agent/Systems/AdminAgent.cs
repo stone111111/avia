@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Web.Admin.Agent.Systems
 {
-    public sealed class AdminAgent
+    public sealed class AdminAgent : IAdminAgent<AdminAgent>
     {
     }
 }

@@ -22,7 +22,7 @@ namespace BW.Agent.Systems
         protected List<GameSetting> GetGameSettingList()
         {
             // 此处表达式存在BUG，布尔型的判断一定要有等于号
-            return this.ReadDB.ReadList<GameSetting>().ToList();
+            return this.ReadDB.ReadList<GameSetting>();
         }
 
         /// <summary>

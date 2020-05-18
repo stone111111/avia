@@ -1,12 +1,20 @@
 ﻿using BW.Agent.Sites;
+using BW.Agent.Systems;
+using BW.Cache.Systems;
 using BW.Common.Sites;
 using BW.Common.Systems;
+using SP.StudioCore.Cache.Memory;
 using SP.StudioCore.Data;
+using SP.StudioCore.Http;
+using SP.StudioCore.Model;
 using SP.StudioCore.Security;
 using SP.StudioCore.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Web.System.Properties;
 using System.Data;
 using SP.StudioCore.Data.Extension;
 using BW.Common.Providers;
@@ -17,9 +25,11 @@ using System.Text.RegularExpressions;
 using SP.Provider.CDN;
 using static BW.Common.Systems.SystemSetting;
 using SP.StudioCore.Enums;
-using Web.System.Agent.Systems;
+using BW.Common.Views;
+using BW.Views;
+using System.Linq.Expressions;
 
-namespace Web.System.Agent.Sites
+namespace Web.System.Agent.Systems
 {
     /// <summary>
     /// 系统管理员
@@ -52,7 +62,7 @@ namespace Web.System.Agent.Sites
                 {
                     db.AddCallback(() =>
                     {
-                        site.PCTemplate = TemplateAgent.Instance().CopySystemTemplate(site.ID, site.PCTemplate);
+                        site.PCTemplate = ViewAgent.Instance().CopySystemTemplate(site.ID, site.PCTemplate);
                     });
                 }
 
@@ -61,7 +71,7 @@ namespace Web.System.Agent.Sites
                 {
                     db.AddCallback(() =>
                     {
-                        site.H5Template = TemplateAgent.Instance().CopySystemTemplate(site.ID, site.H5Template);
+                        site.H5Template = ViewAgent.Instance().CopySystemTemplate(site.ID, site.H5Template);
                     });
                 }
 
@@ -70,7 +80,7 @@ namespace Web.System.Agent.Sites
                 {
                     db.AddCallback(() =>
                     {
-                        site.APPTemplate = TemplateAgent.Instance().CopySystemTemplate(site.ID, site.APPTemplate);
+                        site.APPTemplate = ViewAgent.Instance().CopySystemTemplate(site.ID, site.APPTemplate);
                     });
                 }
 
@@ -85,7 +95,7 @@ namespace Web.System.Agent.Sites
                 db.Commit();
             }
 
-            this.WriteDB.Update(site, t => t.ID == site.ID, t => t.PCTemplate, t => t.H5Template, t => t.APPTemplate);
+            site.Update(this.WriteDB, t => t.PCTemplate, t => t.H5Template, t => t.APPTemplate);
 
             this.AccountInfo.Log(LogType.Site, $"新建商户{site.ID}");
 
@@ -185,6 +195,7 @@ namespace Web.System.Agent.Sites
 
         #region ========  域名管理  ========
 
+        protected override string CName => SettingAgent.Instance().GetSetting(SettingType.CNAME);
 
         /// <summary>
         /// 当前选择的CDN供应商是否被系统支持
@@ -227,7 +238,7 @@ namespace Web.System.Agent.Sites
             if (record == null) return this.FaildMessage("记录不存在");
             SiteDomain domain = this.ReadDB.ReadInfo<SiteDomain>(t => t.ID == record.DomainID);
 
-            IEnumerable<DomainCDN> cdnlist = this.ReadDB.ReadList<DomainCDN>(t => t.RecordID == record.ID);
+            List<DomainCDN> cdnlist = this.ReadDB.ReadList<DomainCDN>(t => t.RecordID == record.ID);
             // 调用CDN接口，删除CDN记录
             foreach (DomainCDN cdn in cdnlist)
             {
@@ -258,7 +269,7 @@ namespace Web.System.Agent.Sites
         {
             SiteDomain domain = domainId == 0 ? null : this.WriteDB.ReadInfo<SiteDomain>(t => t.ID == domainId);
             if (domain == null) this.FaildMessage("该域名不存在");
-            IEnumerable<DomainRecord> records = this.ReadDB.ReadList<DomainRecord>(t => t.DomainID == domain.ID);
+            List<DomainRecord> records = this.ReadDB.ReadList<DomainRecord>(t => t.DomainID == domain.ID);
 
             foreach (DomainRecord record in records)
             {
@@ -433,11 +444,58 @@ namespace Web.System.Agent.Sites
         /// </summary>
         public bool SaveAdminUrl(int siteId, string adminUrl)
         {
-
             if (!Regex.IsMatch(adminUrl, @"^\w{4,10}$")) return this.FaildMessage("格式错误");
 
             this.WriteDB.Update<SiteDetail, string>(t => t.AdminURL, adminUrl, t => t.SiteID == siteId);
             return this.AccountInfo.Log(SystemAdminLog.LogType.Site, $"修改商户{siteId}后台管理地址为{adminUrl}");
+        }
+        #endregion
+
+        #region ========  商户模板管理  ========
+
+        /// <summary>
+        /// 添加商户模板
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="isDefault"></param>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public bool AddTemplate(ViewSiteTemplate template, bool isDefault, int templateId)
+        {
+            if (template.SiteID == 0) return this.FaildMessage("商户ID错误");
+            if (string.IsNullOrEmpty(template.Name)) return this.FaildMessage("模板名称错误");
+
+            Site site = this.GetSiteInfo(template.SiteID);
+            if (site.GetTemplateID(template.Platform) == 0) isDefault = true;
+            if (isDefault) template.Domain = string.Empty;
+
+            template.ID = ViewAgent.Instance().CopySystemTemplate(template.SiteID, templateId);
+            if (isDefault)
+            {
+                Expression<Func<Site, int>> field = template.Platform switch
+                {
+                    PlatformSource.PC => t => t.PCTemplate,
+                    PlatformSource.H5 => t => t.H5Template,
+                    PlatformSource.APP => t => t.APPTemplate,
+                    _ => null
+                };
+                this.WriteDB.Update(field, template.ID, t => t.ID == site.ID);
+                SiteCaching.Instance().RemoveSiteInfo(site.ID);
+            }
+            template.Update(this.WriteDB, t => t.Name, t => t.Domain);
+            return true;
+        }
+
+        /// <summary>
+        /// 获取商户模板信息（包括配置信息）
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public ViewSiteTemplate GetTemplateInfo(int templateId)
+        {
+            ViewSiteTemplate template = this.ReadDB.ReadInfo<ViewSiteTemplate>(t => t.ID == templateId);
+            template.Configs = this.ReadDB.ReadList<ViewSiteConfig>(t => t.TemplateID == templateId);
+            return template;
         }
 
         #endregion

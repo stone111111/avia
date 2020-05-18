@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SP.StudioCore.Data;
-using SP.StudioCore.Ioc;
 using SP.StudioCore.Mvc.Startups;
 using SP.StudioCore.Web;
 using Web.System.Utils;
@@ -26,17 +25,17 @@ namespace Web.System
             {
                 opt.Filters.Add<SysFilterAttribute>();
             });
-            IocCollection.AddService(services
-                .AddDbContext<BizDataContext>(ServiceLifetime.Scoped)
-                .AddScoped<ReadDbExecutor>()
-                .AddScoped<WriteDbExecutor>()
-                .AddCors(options =>
-                {
-                    options.AddPolicy("CorsPolicy",
-                        builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-                }));
+            services.AddDbContext<BizDataContext>(ServiceLifetime.Scoped);
+            services.AddScoped<ReadDbExecutor>();
+            services.AddScoped<WriteDbExecutor>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
         }
 
         protected override void UseMiddleware(IApplicationBuilder app)

@@ -1,4 +1,6 @@
 ﻿using BW.Common.Sites;
+using BW.Common.Views;
+using BW.Views;
 using Microsoft.AspNetCore.Mvc;
 using SP.Provider.CDN;
 using SP.StudioCore.Enums;
@@ -461,6 +463,78 @@ namespace Web.System.Handler.Merchants
             return this.GetResult(SiteAdminAgent.Instance().ResetAdminSecretKey(id, siteId));
         }
 
+
+        #endregion
+
+        #region ========  商户模板配置  ========
+
+        /// <summary>
+        /// 商户模板配置
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.商户管理.商户列表.模板配置)]
+        public Task TemplateList([FromForm]int siteId, [FromForm]PlatformSource? platform)
+        {
+            var list = BDC.ViewSiteTemplate.Where(t => t.SiteID == siteId)
+                .Where(platform, t => t.Platform == platform.Value);
+            Site site = SiteAgent.Instance().GetSiteInfo(siteId);
+            return this.GetResult(this.ShowResult(list, t => new
+            {
+                t.ID,
+                t.Name,
+                t.Platform,
+                t.Domain,
+                IsDefault = site.GetTemplateID(t.Platform) == t.ID
+            }));
+        }
+
+        /// <summary>
+        /// 添加模板
+        /// </summary>
+        /// <param name="name">模板名称</param>
+        /// <param name="source">所属平台</param>
+        /// <param name="isDefault">是否为默认模板</param>
+        /// <param name="domain">适配的域名</param>
+        /// <param name="templateId">从系统模板中复制</param>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.商户管理.商户列表.模板配置)]
+        public Task AddTemplate([FromForm]string name, [FromForm]int siteId, [FromForm]PlatformSource source, [FromForm]int isDefault, [FromForm]string domain, [FromForm]int templateId)
+        {
+            if (templateId == 0) return this.ShowError("请选择来源模板");
+
+            ViewSiteTemplate template = new ViewSiteTemplate()
+            {
+                SiteID = siteId,
+                Name = name,
+                Platform = source,
+                Domain = domain
+            };
+
+            return this.GetResult(SiteAgent.Instance().AddTemplate(template, isDefault == 1, templateId));
+        }
+
+        /// <summary>
+        /// 获取模板信息
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.商户管理.商户列表.模板配置)]
+        public Task GetTemplate([FromForm]int templateId)
+        {
+            ViewSiteTemplate template = SiteAgent.Instance().GetTemplateInfo(templateId);
+            Site site = SiteAgent.Instance().GetSiteInfo(template.SiteID);
+            return this.GetResult(new
+            {
+                template.ID,
+                template.SiteID,
+                template.Name,
+                template.Platform,
+                template.Domain,
+                IsDefault = site.GetTemplateID(template.Platform) == templateId,
+                Models = template.Configs.ToDictionary(t => t.ViewID, t => new { t.ModelID, t.ID })
+            });
+        }
 
         #endregion
     }

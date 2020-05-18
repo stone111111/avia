@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Web.System.Agent.Sites;
 using Web.System.Agent.Systems;
 using Web.System.Utils;
 
@@ -261,7 +260,77 @@ namespace Web.System.Handler.Systems
         #endregion
 
         #region =======  模板  ========
-       
+        /// <summary>
+        /// 读取商户模板列表
+        /// </summary>
+        /// <param name="platform"></param>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.视图模板.模板管理.Value)]
+        public Task SiteTemplateList([FromForm]int siteid)
+        {
+            return this.GetResult(this.ShowResult(ViewAgent.Instance().GetSiteTemplateList(siteid), t => new
+            {
+                t.ID,
+                t.Name,
+                t.Platform,
+                t.SiteID,
+                t.Domain
+            }));
+        }
+
+        /// <summary>
+        /// 删除商户模板
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpPost, Permission(BW.Permission.视图模板.模板管理.Value)]
+        public Task SiteTemplateDelete([FromForm]int id)
+        {
+            return this.GetResult(ViewAgent.Instance().DeleteSiteTemplate(id));
+        }
+
+        /// <summary>
+        /// 保存商户模板
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.视图模板.模板管理.Value)]
+        public Task SaveSiteTemplateInfo([FromForm]int id, [FromForm]string name, [FromForm]PlatformSource platform, [FromForm]string domain, [FromForm]int siteid, [FromForm]string model)
+        {
+            ViewSiteTemplate template = new ViewSiteTemplate()
+            {
+                ID = id,
+                Name = name,
+                Platform = platform,
+                Domain = domain,
+                SiteID = siteid
+            };
+
+            return this.GetResult(ViewAgent.Instance().SaveSiteTemplateInfo(template, WebAgent.GetArray<int>(model)));
+        }
+
+        /// <summary>
+        /// 读取商户模板（包含模型配置)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost, Permission(BW.Permission.视图模板.模板管理.Value)]
+        public Task GetSiteTemplateInfo([FromForm]int id)
+        {
+            ViewSiteTemplate template = ViewAgent.Instance().GetSiteTemplateInfo(id) ?? new ViewSiteTemplate()
+            {
+                Configs = new List<ViewSiteConfig>()
+            };
+            return this.GetResult(new
+            {
+                template.ID,
+                template.Platform,
+                template.Name,
+                template.Domain,
+                template.SiteID,
+                Models = template.Configs.Select(t => t.ModelID)
+            });
+        }
         #endregion
     }
 }

@@ -151,16 +151,6 @@ namespace BW.Cache.Systems
         }
 
         /// <summary>
-        /// 删除商户模板
-        /// </summary>
-        /// <param name="templateId"></param>
-        public void DeleteTemplateInfo(int templateId)
-        {
-            string key = $"{TEMPLATEINFO}{templateId}";
-            this.NewExecutor().KeyDelete(key);
-        }
-
-        /// <summary>
         /// 获取商户模板所属的平台类型
         /// </summary>
         /// <param name="templateId"></param>

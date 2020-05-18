@@ -10,11 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Web.System.Agent.Sites;
 using Web.System.Agent.Systems;
 using Web.System.Properties;
 using Web.System.Utils;
-using SP.StudioCore.API.Translates;
 
 namespace Web.System.Handler.Systems
 {
@@ -34,7 +32,7 @@ namespace Web.System.Handler.Systems
         [HttpPost, Guest]
         public Task Login([FromForm]string userName, [FromForm]string password, [FromForm]string code)
         {
-            return this.GetResult(AdminAgent.Instance().Login(userName, password, code, out string token), "登录成功".Get(this.Language), new
+            return this.GetResult(AdminAgent.Instance().Login(userName, password, code, out string token), "登录成功", new
             {
                 Token = token
             });
@@ -47,7 +45,7 @@ namespace Web.System.Handler.Systems
         [HttpPost]
         public Task Menu()
         {
-            AdminMenu menu = AdminAgent.Instance().GetAdminMenu(this.AdminInfo.ID, this.Language);
+            AdminMenu menu = AdminAgent.Instance().GetAdminMenu(this.AdminInfo.ID);
             return this.GetResult(menu.ToString());
         }
 

@@ -84,7 +84,7 @@ namespace Web.System.Agent.Systems
         {
             GameSetting setting = this.GetGameSettingInfo(id);
             if (setting == null) return this.FaildMessage("编号错误");
-            return this.WriteDB.Delete(setting) &&
+            return setting.Delete(this.WriteDB) &&
                  AccountInfo.Log(LogType.Set, string.Format("删除游戏设置{0} 名称{1}", setting.ID, setting.Name));
         }
     }

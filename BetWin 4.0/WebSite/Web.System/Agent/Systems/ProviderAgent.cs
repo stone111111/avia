@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using System.Data;
 using static BW.Common.Systems.SystemAdminLog;
 using SP.Provider.CDN;
-using BW.Common.Games;
-using SP.StudioCore.Data.Extension;
 
 namespace Web.System.Agent.Systems
 {
@@ -68,23 +66,23 @@ namespace Web.System.Agent.Systems
         /// <summary>
         /// 添加/修改游戏供应商
         /// </summary>
-        /// <param name="gameProvider"></param>
+        /// <param name="game"></param>
         /// <returns></returns>
-        public bool SaveGameProvider(GameProvider gameProvider)
+        public bool SaveGameProvider(GameProvider game)
         {
             using (DbExecutor db = NewExecutor(IsolationLevel.ReadUncommitted))
             {
-                if (gameProvider.Exists(db))
+                if (game.Exists(db))
                 {
-                    gameProvider.Update(db);
+                    game.Update(db);
                 }
                 else
                 {
-                    gameProvider.Add(db);
+                    game.Add(db);
                 }
                 db.Commit();
             }
-            return this.AccountInfo.Log(LogType.Set, $"保存游戏供应商:{gameProvider.Type}");
+            return this.AccountInfo.Log(LogType.Set, $"保存游戏供应商:{game.Type}");
         }
 
         /// <summary>
@@ -115,8 +113,7 @@ namespace Web.System.Agent.Systems
         {
             GameProvider provider = this.GetGameProviderInfo(providerId);
             if (provider == null) return this.FaildMessage("编号错误");
-            if (this.ReadDB.Exists<GameSetting>(t => t.ProviderID == providerId)) return this.FaildMessage("该供应商下存在游戏配置");
-            return this.WriteDB.Delete(provider) &&
+            return provider.Delete(this.WriteDB) &&
                  AccountInfo.Log(LogType.Set, string.Format("删除游戏供应商{0} 名称{1}", provider.ID, provider.Name));
         }
 

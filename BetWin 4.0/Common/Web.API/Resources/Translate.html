@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>语言包</title>
+    <base href="/Translate" />
+    <style type="text/css">
+        body { margin: 0px; padding: 0px; font-size: 12px; }
+        table { border-spacing: 0px; font-size: 12px; border-top: 1px solid #808080; border-left: 1px solid #808080; }
+            table tr th:first-child { width: 20px; }
+            table th, table td { padding: 3px 4px; }
+            table .key { width: 120px !important; }
+            table th { background: #D4D0C8; font-weight: normal; border-left: 1px solid #FFFFFF; border-top: 1px solid #FFFFFF; border-bottom: 1px solid #808080; border-right: 1px solid #808080; }
+            table td { border-right: 1px solid #D4D0C8; border-bottom: 1px solid #D4D0C8; width: 300px; }
+            table tr.selected td { background-color: rgba(0,0,0,.1); }
+            table td.editing { padding: 0px; }
+                table td.editing input { width: 100%; border: none; height: 22px; text-indent: 2px; transition: all 0.2s; }
+                    table td.editing input.loading { background: url('https://img-cdn.a8.gl/upload/202001/841b11687d431ef7.gif') no-repeat center left; text-indent: 1em; }
+            table tr.selected th { background: #D4D0C8 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAHCAYAAAA8sqwkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADNJREFUKFNjYGBg+A/E+ACGPEgAmyaYGDoNVoxPE4YcsgZk09DF4RrJtgHd43j9QHQoAQDR1yTcHiaxAwAAAABJRU5ErkJggg==) no-repeat 4px center; }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th class="key">KEY</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        var thead = document.querySelector("thead tr");
+        var tbody = document.querySelector("tbody");
+
+        // 初始化加载
+        !function () {
+            fetch(location.search, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: "action=data"
+            })
+                .then(response => response.json())
+                .then(res => {
+                    // thead 語言類型綁定
+                    for (var key in res.info.Languages) {
+                        var th = document.createElement('th');
+                        th.innerText = res.info.Languages[key];
+                        thead.appendChild(th);
+                    }
+                    for (var key in res.info.Content) {
+                        var item = res.info.Content[key];
+                        var tr = document.createElement("tr");
+                        tr.setAttribute("data-id", key);
+                        tr.appendChild(document.createElement("th"));
+                        var keyObj = document.createElement("td");
+                        keyObj.innerText = key;
+                        keyObj.className = "key";
+                        tr.appendChild(keyObj);
+
+                        for (var language in res.info.Languages) {
+                            var td = document.createElement("td");
+                            td.setAttribute("data-language", language);
+                            td.className = "edit";
+                            td.innerText = item[language] || "";
+                            tr.appendChild(td);
+                        }
+                        tbody.appendChild(tr);
+                    }
+                });
+        }();
+
+        // 事件
+        !function () {
+            tbody.addEventListener("click", function (e) {
+                var td = e.target;
+                if (td.className !== "edit" || td.tagName === "INPUT") return;
+                td.className = "editing";
+                var value = td.innerText;
+                td.innerText = "";
+                var input = document.createElement("input");
+                input.type = "text";
+                input.value = value;
+                td.appendChild(input);
+
+                input.addEventListener("focus", function (e) {
+                    var obj = this;
+                    var td = obj.parentNode;
+                    var tr = td.parentNode;
+                    tr.className = "selected";
+                });
+
+                input.addEventListener("blur", function (e) {
+                    var obj = this;
+                    var td = obj.parentNode;
+                    var tr = td.parentNode;
+                    var value = obj.value;
+                    tr.className = "";
+                    td.className = "edit";
+                    td.innerText = value;
+                });
+
+                input.addEventListener("keydown", function (e) {
+                    if (e.key !== "Tab") return;
+                    var obj = this;
+                    var td = obj.parentNode;
+                    var language = td.getAttribute("data-language");
+                    var tr = td.parentNode;
+                    var next = tr.nextElementSibling;
+                    if (!next) return;
+                    var nextInput = next.querySelector(".edit[data-language='" + language + "']");
+                });
+
+                input.select();
+            });
+
+            var save = function (e) {
+                var obj = e.target;
+                if (obj.tagName !== "INPUT") return;
+                var td = obj.parentNode;
+                var tr = td.parentNode;
+                var id = tr.getAttribute("data-id");
+                var value = obj.value;
+                var language = td.getAttribute("data-language");
+
+                td.className = "loading";
+                fetch(location.search, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: "action=update&ID=" + id + "&Language=" + language + "&Value=" + value
+                })
+                    .then(response => response.json())
+                    .then(res => {
+
+                    });
+            };
+            tbody.addEventListener("change", save);
+
+            tbody.addEventListener("dblclick", function (e) {
+                var obj = e.target;
+                if (obj.tagName !== "INPUT") return;
+                var td = obj.parentNode;
+                var tr = td.parentNode;
+                var target = td.getAttribute("data-language");
+                if (target === "CHN" || obj.value) return;
+
+                var chn = tr.querySelector("td[data-language='CHN']").innerText;
+                obj.className = "loading";
+                fetch(location.search, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: "action=online&Target=" + target + "&Content=" + chn
+                })
+                    .then(response => response.json())
+                    .then(res => {
+                        obj.className = "";
+                        if (res.success) {
+                            obj.value = res.msg;
+                            save({ target: obj });
+                            obj.blur();
+                        }
+                    });
+
+            });
+        }();
+    </script>
+</body>
+</html>

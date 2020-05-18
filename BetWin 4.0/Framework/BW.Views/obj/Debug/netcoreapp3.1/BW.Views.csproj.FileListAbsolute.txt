@@ -9,3 +9,15 @@ D:\泛亚电竞\svn\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.Assembly
 D:\泛亚电竞\svn\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.csproj.CopyComplete
 D:\泛亚电竞\svn\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.dll
 D:\泛亚电竞\svn\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.pdb
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\bin\Debug\netcoreapp3.1\BW.Views.deps.json
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\bin\Debug\netcoreapp3.1\BW.Views.dll
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\bin\Debug\netcoreapp3.1\BW.Views.pdb
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\bin\Debug\netcoreapp3.1\SP.StudioCore.dll
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\bin\Debug\netcoreapp3.1\SP.StudioCore.pdb
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.csprojAssemblyReference.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.csproj.CoreCompileInputs.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.AssemblyInfoInputs.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.csproj.CopyComplete
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.dll
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Views\obj\Debug\netcoreapp3.1\BW.Views.pdb

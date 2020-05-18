@@ -3,7 +3,6 @@ using SP.Provider.CDN;
 using SP.StudioCore.Data.Extension;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace BW.Agent.Systems
@@ -21,7 +20,7 @@ namespace BW.Agent.Systems
         protected List<CDNProvider> GetCDNProviders()
         {
             // 此处表达式存在BUG，布尔型的判断一定要有等于号
-            return this.ReadDB.ReadList<CDNProvider>(t => t.IsOpen == true).ToList();
+            return this.ReadDB.ReadList<CDNProvider>(t => t.IsOpen == true);
         }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace BW.Agent.Systems
         protected List<GameProvider> GetGameProviders()
         {
             // 此处表达式存在BUG，布尔型的判断一定要有等于号
-            return this.ReadDB.ReadList<GameProvider>().ToList();
+            return this.ReadDB.ReadList<GameProvider>();
         }
 
         /// <summary>

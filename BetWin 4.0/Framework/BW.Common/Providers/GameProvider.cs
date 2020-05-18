@@ -105,15 +105,7 @@ namespace BW.Common.Providers
         /// <param name="provider"></param>
         public static implicit operator IGameProvider(GameProvider provider)
         {
-            return GameFactory.GetFactory(provider.Type.ToString(), provider.SettingString);
-        }
-
-        /// <summary>
-        /// 本地支持的供应商类型
-        /// </summary>
-        public enum GameProviderType : byte
-        {
-            BetWin
+            return GameFactory.GetFactory(provider.Type, provider.SettingString);
         }
 
         #endregion

@@ -20,7 +20,7 @@ using SP.StudioCore.Data.Extension;
 using SP.StudioCore.API;
 using static BW.Common.Systems.SystemAdminLog;
 
-namespace Web.System.Agent.Sites
+namespace Web.System.Agent.Systems
 {
     /// <summary>
     /// 商户证书
@@ -85,7 +85,7 @@ namespace Web.System.Agent.Sites
         {
             SiteDomainCert cert = this.GetCertInfo(certId);
             if (cert == null) return this.FaildMessage("编号错误");
-            return this.WriteDB.Delete(cert) &&
+            return cert.Delete(this.WriteDB) &&
                  AccountInfo.Log(LogType.Site, string.Format("删除站点{0} 证书{1}", cert.SiteID, cert.Name));
         }
 

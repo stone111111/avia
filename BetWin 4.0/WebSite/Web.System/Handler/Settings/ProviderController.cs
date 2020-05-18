@@ -8,10 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Web.System.Agent.Sites;
 using Web.System.Agent.Systems;
 using Web.System.Utils;
-using static BW.Common.Providers.GameProvider;
 
 namespace Web.System.Handler.Settings
 {
@@ -99,7 +97,7 @@ namespace Web.System.Handler.Settings
         #region ========  游戏供应商  ========
 
         [HttpPost, Permission(BW.Permission.系统运维.供应商管理.游戏供应商.Value)]
-        public Task SaveGameInfo([FromForm]int id, [FromForm]GameProviderType type, [FromForm]string name, [FromForm]string setting)
+        public Task SaveGameInfo([FromForm]int id,[FromForm]GameProviderType type,[FromForm]string name,[FromForm]string setting)
         {
             if (string.IsNullOrWhiteSpace(name)) return this.ShowError("请输入供应商名称");
             if (type == 0) return this.ShowError("请选择类型");
@@ -108,7 +106,7 @@ namespace Web.System.Handler.Settings
             {
                 ID = id,
                 Name = name,
-                Type = type,
+                Type =  type,
                 SettingString = setting
             };
             return this.GetResult(ProviderAgent.Instance().SaveGameProvider(provider));
@@ -126,27 +124,29 @@ namespace Web.System.Handler.Settings
         }
 
         [HttpPost, Permission(BW.Permission.系统运维.供应商管理.游戏供应商.Value)]
-        public Task GameInfo([FromForm]int id)
+        public Task GameInfo([FromForm]int? id)
         {
-            GameProvider gameProvider = ProviderAgent.Instance().GetGameProviderInfo(id) ?? new GameProvider();
-            IGameProvider provider = gameProvider;
+            GameProvider provider = id == null ? new GameProvider() { Name = "",SettingString = "",}
+             : (ProviderAgent.Instance().GetGameProviderInfo(id.Value) ?? new GameProvider() { Name = "", SettingString = "", });
+            IGameProvider iProvider = GameFactory.GetFactory(provider.Type, provider.SettingString);
 
             return this.GetResult(new
             {
-                gameProvider.ID,
-                gameProvider.Name,
-                gameProvider.Type,
-                Setting = gameProvider.ID == 0 ? new JsonString("[]") : new JsonString(provider.ToSetting())
+                provider.ID,
+                provider.Name,
+                provider.Type,
+                Setting = provider.ID == 0 ? new JsonString("[]"): new JsonString(iProvider.ToSetting())
             });
         }
 
         [HttpPost, Permission(BW.Permission.系统运维.供应商管理.游戏供应商.Value)]
         public Task GameGetSetting([FromForm]GameProviderType type)
         {
-            IGameProvider provider = GameFactory.GetFactory(type.ToString(), string.Empty);
+            IGameProvider iProvider = GameFactory.GetFactory(type, string.Empty);
+
             return this.GetResult(new
             {
-                Setting = provider == null ? new JsonString("[]") : new JsonString(provider.ToSetting())
+                Setting = iProvider == null ? new JsonString("[]") : new JsonString(iProvider.ToSetting())
             });
         }
 

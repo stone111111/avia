@@ -4,3 +4,23 @@ D:\泛亚电竞\svn\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\staticwebassets\We
 D:\泛亚电竞\svn\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.MvcApplicationPartsAssemblyInfo.cache
 D:\泛亚电竞\svn\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.AssemblyInfoInputs.cache
 D:\泛亚电竞\svn\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.csprojAssemblyReference.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.csproj.CoreCompileInputs.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.MvcApplicationPartsAssemblyInfo.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.AssemblyInfoInputs.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\appsettings.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.exe
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.deps.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.runtimeconfig.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.runtimeconfig.dev.json
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.dll
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\bin\Debug\netcoreapp3.1\Web.Admin.pdb
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.RazorTargetAssemblyInfo.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\staticwebassets\Web.Admin.StaticWebAssets.Manifest.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\staticwebassets\Web.Admin.StaticWebAssets.xml
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.dll
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.pdb
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.Admin\obj\Debug\netcoreapp3.1\Web.Admin.genruntimeconfig.cache

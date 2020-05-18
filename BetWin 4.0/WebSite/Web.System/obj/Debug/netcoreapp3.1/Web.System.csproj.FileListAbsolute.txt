@@ -21,3 +21,13 @@ D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
 D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
 D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\appsettings.json
 D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\web.config
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csprojAssemblyReference.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.Properties.Resources.resources
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.GenerateResource.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CoreCompileInputs.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfoInputs.cache
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
+D:\work\avia\avia\BetWin 4.0\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb

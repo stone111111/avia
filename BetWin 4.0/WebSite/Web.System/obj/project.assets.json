@@ -2504,7 +2504,7 @@
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
           "BW.Views": "1.0.0",
-          "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj": "1.0.0"
+          "SP.Provider": "1.0.0"
         },
         "compile": {
           "bin/placeholder/BW.Common.dll": {}
@@ -2527,6 +2527,22 @@
         },
         "runtime": {
           "bin/placeholder/BW.Views.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "SP.Provider/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "dependencies": {
+          "SP.StudioCore": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/SP.Provider.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SP.Provider.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -8016,6 +8032,11 @@
       "path": "../../Framework/BW.Views/BW.Views.csproj",
       "msbuildProject": "../../Framework/BW.Views/BW.Views.csproj"
     },
+    "SP.Provider/1.0.0": {
+      "type": "project",
+      "path": "../../Common/SP.Provider/SP.Provider.csproj",
+      "msbuildProject": "../../Common/SP.Provider/SP.Provider.csproj"
+    },
     "SP.StudioCore/1.0.0": {
       "type": "project",
       "path": "../../Common/SP.StudioCore/SP.StudioCore.csproj",
@@ -8025,29 +8046,28 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "BW.Agent >= 1.0.0",
-      "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj"
+      "SP.Provider >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Administrator\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\DELL20200501\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\avia\\BetWin 4.0\\WebSite\\Web.System\\Web.System.csproj",
+      "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\WebSite\\Web.System\\Web.System.csproj",
       "projectName": "Web.System",
-      "projectPath": "D:\\avia\\BetWin 4.0\\WebSite\\Web.System\\Web.System.csproj",
-      "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\avia\\BetWin 4.0\\WebSite\\Web.System\\obj\\",
+      "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\WebSite\\Web.System\\Web.System.csproj",
+      "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+      "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\WebSite\\Web.System\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -8059,11 +8079,11 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj": {
-              "projectPath": "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj"
+            "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj": {
+              "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj"
             },
-            "D:\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj": {
-              "projectPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj"
+            "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj": {
+              "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Agent\\BW.Agent.csproj"
             }
           }
         }
@@ -8097,16 +8117,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1104",
-      "level": "Error",
-      "message": "找不到项目“D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj”。请检查项目引用是否有效以及项目文件是否存在。",
-      "libraryId": "D:\\avia\\BetWin 4.0\\Common\\SP.Provider\\SP.Provider.csproj",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.1"
-      ]
-    }
-  ]
+  }
 }

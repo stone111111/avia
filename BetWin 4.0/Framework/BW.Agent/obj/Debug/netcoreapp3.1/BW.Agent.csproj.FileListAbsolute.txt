@@ -17,3 +17,9 @@ D:\泛亚电竞\svn\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.dll
 D:\泛亚电竞\svn\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.pdb
 D:\泛亚电竞\svn\Framework\BW.Agent\bin\Debug\netcoreapp3.1\SP.Provider.dll
 D:\泛亚电竞\svn\Framework\BW.Agent\bin\Debug\netcoreapp3.1\SP.Provider.pdb
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.csprojAssemblyReference.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.csproj.CoreCompileInputs.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.AssemblyInfoInputs.cache
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.AssemblyInfo.cs
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.dll
+D:\work\avia\avia\BetWin 4.0\Framework\BW.Agent\obj\Debug\netcoreapp3.1\BW.Agent.pdb

@@ -1,0 +1,25 @@
+﻿<title>视图参数配置</title>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Merchant/Site/CertInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['diag-site-viewsetting-info'](d)">
+            <form class="layui-form" lay-filter="diag-site-viewsetting-set" id="diag-site-viewsetting-set">
+                <div class="layui-form-item" id="diag-site-viewsetting-container">
+
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-viewsetting-submit">确定</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['diag-site-viewsetting-info'] = function (result) {
+        delete BW.callback['diag-site-viewsetting-info'];
+        layui.use(["betwin", "table"], function () {
+            var layui = this,
+                betwin = layui.betwin,
+                table = layui.table;
+        });
+    }
+</script>

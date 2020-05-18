@@ -1,4 +1,4 @@
-﻿::-webkit-scrollbar { width: 6px; height: 6px; }
+﻿::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background-color: #eaeaea; border-left: 1px solid #ccc; }
 ::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 5px; }
     ::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
@@ -7,8 +7,6 @@
 .layui-table .link-blue { color: #0094ff; padding: 4px; border-radius: 6px; }
     .layui-table .link-blue:hover { background-color: #0094ff; color: white; }
 
-
-.layui-table-body { overflow-x: hidden; }
 
 /* 公共弹出页面 */
 .layui-layer-admin.diag { border-radius: 8px; }

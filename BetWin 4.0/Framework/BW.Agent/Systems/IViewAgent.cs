@@ -80,7 +80,7 @@ namespace BW.Agent.Systems
             int viewId = ViewCaching.Instance().GetViewID(fullName);
             if (viewId == 0)
             {
-                viewId = this.ReadDB.ReadInfo<ViewSetting, int>(t => t.ID, t => t.Code == fullName);
+                viewId = this.ReadDB.ExecuteScalar<ViewSetting, int>(t => t.ID, t => t.Code == fullName);
                 if (viewId != 0)
                 {
                     ViewCaching.Instance().SaveViewID(fullName, viewId);
@@ -100,7 +100,7 @@ namespace BW.Agent.Systems
             string code = ViewUtils.GetCode<TView>(platform);
             int viewId = ViewCaching.Instance().GetViewID(code);
             if (viewId != 0) return viewId;
-            viewId = this.ReadDB.ReadInfo<ViewSetting, int>(t => t.ID, t => t.Code == code);
+            viewId = this.ReadDB.ExecuteScalar<ViewSetting, int>(t => t.ID, t => t.Code == code);
             if (viewId != 0)
             {
                 ViewCaching.Instance().SaveViewID(code, viewId);
@@ -156,7 +156,7 @@ namespace BW.Agent.Systems
         {
             ViewTemplate template = this.ReadDB.ReadInfo<ViewTemplate>(t => t.ID == templateId);
             if (template == null) return null;
-            template.Configs = this.ReadDB.ReadList<ViewTemplateConfig>(t => t.TemplateID == templateId).ToList();
+            template.Configs = this.ReadDB.ReadList<ViewTemplateConfig>(t => t.TemplateID == templateId);
 
             return template;
         }
@@ -164,6 +164,96 @@ namespace BW.Agent.Systems
         #endregion
 
         #region ========  商户模板  ========
+
+        /// <summary>
+        /// 复制系统模板到商户模板中
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        protected int CopySystemTemplate(int siteId, int templateId)
+        {
+            ViewTemplate template = this.GetTemplateInfo(templateId);
+            if (template == null) return 0;
+
+            using (DbExecutor db = NewExecutor(IsolationLevel.ReadUncommitted))
+            {
+                //#1 插入商户模板
+                ViewSiteTemplate siteTemplate = new ViewSiteTemplate()
+                {
+                    SiteID = siteId,
+                    Platform = template.Platform,
+                    Name = template.Name
+                };
+                siteTemplate.AddIdentity(db);
+
+                //#2 插入所选则的视图模板
+                foreach (ViewTemplateConfig config in template.Configs)
+                {
+                    new ViewSiteConfig()
+                    {
+                        TemplateID = siteTemplate.ID,
+                        SiteID = siteId,
+                        ViewID = config.ViewID,
+                        ModelID = config.ModelID,
+                        Setting = config.Setting
+                    }.Add(db);
+                }
+
+                db.Commit();
+
+                return siteTemplate.ID;
+            }
+
+        }
+
+        /// <summary>
+        /// 获取当前系统支持的模板（根据平台类型筛选）
+        /// </summary>
+        /// <param name="platform"></param>
+        /// <returns></returns>
+        public List<ViewSiteTemplate> GetSiteTemplateList(int siteid)
+        {
+            return BDC.ViewSiteTemplate.Where(t => t.SiteID == siteid).ToList();
+        }
+
+        /// <summary>
+        /// 获取商户模板
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        protected ViewSiteTemplate GetSiteTemplateInfo(int templateId)
+        {
+            ViewSiteTemplate template = this.ReadDB.ReadInfo<ViewSiteTemplate>(t => t.ID == templateId);
+            if (template == null) return null;
+            template.Configs = this.ReadDB.ReadList<ViewSiteConfig>(t => t.TemplateID == templateId);
+
+            return template;
+        }
+
+        /// <summary>
+        /// 判断域名格式,多域名以,隔开
+        /// </summary>
+        /// <param name="Domain"></param>
+        /// <returns></returns>
+        public bool isDomain(string Domain)
+        {
+            string pattern = @"^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$";
+            string[] domains = Domain.Split(",");
+
+            bool result = true;
+
+            foreach (string item in domains)
+            {
+                if (!Regex.IsMatch(item, pattern))
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        }
 
         #endregion
     }

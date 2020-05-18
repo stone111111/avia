@@ -5,7 +5,6 @@ using BW.Common.Systems;
 using SP.StudioCore.Cache.Memory;
 using SP.StudioCore.Data;
 using SP.StudioCore.Data.Extension;
-using SP.StudioCore.Enums;
 using SP.StudioCore.Http;
 using SP.StudioCore.Model;
 using SP.StudioCore.Security;
@@ -182,10 +181,10 @@ namespace Web.System.Agent.Systems
         /// </summary>
         /// <param name="adminId"></param>
         /// <returns></returns>
-        public AdminMenu GetAdminMenu(int adminId, Language language)
+        public AdminMenu GetAdminMenu(int adminId)
         {
             XElement root = XElement.Parse(Resources.Permission);
-            return new AdminMenu(language, root, true, AdminCaching.Instance().GetPermission(adminId).ToArray());
+            return new AdminMenu(root, true, AdminCaching.Instance().GetPermission(adminId).ToArray());
         }
 
         #region ========  账号管理  ========
@@ -233,7 +232,7 @@ namespace Web.System.Agent.Systems
             if (admin == null) return this.FaildMessage("账号错误");
             admin.Status = status;
             admin.Permission = permission;
-            this.WriteDB.Update(admin, t => t.Status, t => t.Permission);
+            admin.Update(this.WriteDB, t => t.Status, t => t.Permission);
             this.RemoveCache(admin.ID);
             return this.AccountInfo.Log(SystemAdminLog.LogType.Setting, $"修改管理员{admin.UserName}权限");
         }
@@ -251,7 +250,7 @@ namespace Web.System.Agent.Systems
         /// <param name="content"></param>
         internal void SaveLog(int adminId, SystemAdminLog.LogType type, string content)
         {
-            this.WriteDB.Insert(new SystemAdminLog()
+            new SystemAdminLog()
             {
                 AdminID = adminId,
                 Type = type,
@@ -259,7 +258,7 @@ namespace Web.System.Agent.Systems
                 CreateAt = DateTime.Now,
                 IP = IPAgent.IP,
                 PostData = this.context.GetLog()
-            });
+            }.Add(this.WriteDB);
         }
 
         #endregion

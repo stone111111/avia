@@ -49,7 +49,7 @@
                                 title: "复制模板",
                                 icon:"am-icon-copy"
                             },
-                            delete: "Merchant/Template/DeleteTemplate"
+                            delete: "System/View/SiteTemplateDelete"
                         })
                     }
                 ]]
@@ -59,7 +59,7 @@
             element.on("tab(diag-site-template-tab)", function (e) {
                 var platform = this.getAttribute("lay-id");
                 table.reload("diag-site-template-list", {
-                    url: "Merchant/Template/TemplateList",
+                    url: "Merchant/Site/TemplateList",
                     where: {
                         SiteID: siteId,
                         Platform: platform

@@ -1,5 +1,4 @@
 ﻿using BW.Views.IViews;
-using SP.StudioCore.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,11 +36,5 @@ namespace BW.Views.PC
 
         [Description("底部代码")]
         public string Footer { get; set; }
-
-        /// <summary>
-        /// LOGO图片
-        /// </summary>
-        [Description("Logo"), SettingCustomType(SettingCustomType.Upload)]
-        public string Logo { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using SP.StudioCore.Security;
 using SP.StudioCore.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using static BW.Common.Sites.SiteAdmin;
 
@@ -23,7 +22,7 @@ namespace BW.Agent.Sites
         /// <returns></returns>
         protected List<SiteAdmin> GetAdminList(int siteId)
         {
-            return this.ReadDB.ReadList<SiteAdmin>(t => t.SiteID == siteId && t.Status != AdminStatus.Deleted).ToList();
+            return this.ReadDB.ReadList<SiteAdmin>(t => t.SiteID == siteId && t.Status != AdminStatus.Deleted);
         }
 
         /// <summary>

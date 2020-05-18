@@ -5,3 +5,7 @@
 部署好资源网站Web.Studio，改好程序中的链接
 
 如有问题 可找作者Peter SCH或者kevin，纸飞机：+63917361888，@betwin2015
+
+BetWin 4.0为包网总后台管理，前端系统等
+
+GameCenter 1.0包网对外接口

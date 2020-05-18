@@ -39,7 +39,7 @@ namespace BW.Common.Systems
             [Description("动态CDN")]
             APIUrl,
             /// <summary>
-            /// 静态CDN域名（对应OSS存储）
+            /// 静态CDN域名
             /// </summary>
             [Description("静态CDN")]
             CDNUrl,

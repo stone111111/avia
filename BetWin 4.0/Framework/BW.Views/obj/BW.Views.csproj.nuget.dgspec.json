@@ -1,25 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj": {}
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj": {}
   },
   "projects": {
-    "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
+        "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
         "projectName": "SP.StudioCore",
-        "projectPath": "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
-        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\obj\\",
+        "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj",
+        "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+        "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -143,22 +142,21 @@
         }
       }
     },
-    "D:\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj": {
+    "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj",
+        "projectUniqueName": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj",
         "projectName": "BW.Views",
-        "projectPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj",
-        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\avia\\BetWin 4.0\\Framework\\BW.Views\\obj\\",
+        "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Views\\BW.Views.csproj",
+        "packagesPath": "C:\\Users\\DELL20200501\\.nuget\\packages\\",
+        "outputPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Framework\\BW.Views\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\DELL20200501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -170,8 +168,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
-                "projectPath": "D:\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj"
+              "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj": {
+                "projectPath": "D:\\work\\avia\\avia\\BetWin 4.0\\Common\\SP.StudioCore\\SP.StudioCore.csproj"
               }
             }
           }

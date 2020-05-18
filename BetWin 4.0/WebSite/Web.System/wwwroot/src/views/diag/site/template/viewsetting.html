@@ -43,7 +43,7 @@
                 return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
                 "<label class='layui-form-label'>" + item.Description + "</label>",
                     "<div class='layui-input-block'>",
-                "<input type='checkbox' value='true' title='" + item.Description + "' " + (item.Value ? "checked" : "") + " />",
+                "<input type='checkbox' value='true' title='" + item.Description + "' " + (item.Value ? "checked" : "") +" />",
                     "</div>",
                     "</div>"].join("");
             },
@@ -168,7 +168,7 @@
                                 var input = inputs[n];
                                 if (input.getAttribute("type") === "checkbox") {
                                     if (input.checked) value.push(input.value);
-                                } else if (input.value) {
+                                } else {
                                     value.push(input.value);
                                 }
                             }

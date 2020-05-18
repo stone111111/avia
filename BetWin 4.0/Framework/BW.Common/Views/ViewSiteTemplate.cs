@@ -42,9 +42,6 @@ namespace BW.Common.Views
                     case "Domain":
                         this.Domain = (string)reader[i];
                         break;
-                    case "Style":
-                        this.Style = (string)reader[i];
-                        break;
                 }
             }
         }
@@ -70,9 +67,6 @@ namespace BW.Common.Views
                         break;
                     case "Domain":
                         this.Domain = (string)dr[i];
-                        break;
-                    case "Style":
-                        this.Style = (string)dr[i];
                         break;
                 }
             }
@@ -115,13 +109,6 @@ namespace BW.Common.Views
         /// </summary>
         [Column("Domain")]
         public string Domain { get; set; }
-
-
-        /// <summary>
-        /// 样式文件路径
-        /// </summary>
-        [Column("Style")]
-        public string Style { get; set; }
 
         #endregion
 

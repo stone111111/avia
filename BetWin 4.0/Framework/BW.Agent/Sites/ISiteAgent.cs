@@ -12,7 +12,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using static BW.Common.Systems.SystemSetting;
 
 namespace BW.Agent.Sites
 {
@@ -85,7 +84,7 @@ namespace BW.Agent.Sites
         /// <returns></returns>
         protected List<SiteDomain> GetDomainList(int siteId)
         {
-            return this.ReadDB.ReadList<SiteDomain>(t => t.SiteID == siteId).ToList();
+            return this.ReadDB.ReadList<SiteDomain>(t => t.SiteID == siteId);
         }
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace BW.Agent.Sites
         /// <returns></returns>
         protected List<DomainRecord> GetDomainRecordList(int domainId)
         {
-            return this.ReadDB.ReadList<DomainRecord>(t => t.DomainID == domainId).ToList();
+            return this.ReadDB.ReadList<DomainRecord>(t => t.DomainID == domainId);
         }
 
         /// <summary>
@@ -223,8 +222,13 @@ namespace BW.Agent.Sites
                     subName = subName.ToLower() + "_";
                     break;
             }
-            return $"{subName}{domain.Replace('.', '_')}.{SettingType.CNAME.GetSetting()}";
+            return $"{subName}{domain.Replace('.', '_')}.{this.CName}";
         }
+
+        /// <summary>
+        /// CDN的商户别名
+        /// </summary>
+        protected abstract string CName { get; }
 
         /// <summary>
         /// 获取域名记录信息

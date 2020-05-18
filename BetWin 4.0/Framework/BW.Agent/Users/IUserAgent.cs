@@ -157,7 +157,7 @@ namespace BW.Agent.Users
             int userId = UserCaching.Instance().GetUserID(siteId, userName);
             if (userId == 0)
             {
-                userId = this.ReadDB.ReadInfo<User, int>(t => t.ID, t => t.SiteID == siteId && t.UserName == userName);
+                userId = this.ReadDB.ExecuteScalar<User, int>(t => t.ID, t => t.SiteID == siteId && t.UserName == userName);
                 if (userId != 0) UserCaching.Instance().SaveUserID(siteId, userId, userName);
             }
             return userId;
