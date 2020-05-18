@@ -1,0 +1,53 @@
+﻿<title>添加商户</title>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form action="Merchant/Site/AddSite" class="layui-form" lay-filter="site-addsite" id="site-addsite">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户编号：</label>
+                <div class="layui-input-inline w150">
+                    <input type="number" name="ID" placeholder="请输入商户编号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户名称：</label>
+                <div class="layui-input-inline w150">
+                    <input type="text" name="Name" placeholder="请输入商户名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">主币种：</label>
+                <div class="layui-input-inline w150">
+                    <select name="Currency" data-enum="SP.StudioCore.Enums.Currency"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">主语种：</label>
+                <div class="layui-input-inline w150">
+                    <select name="Language" data-enum="SP.StudioCore.Enums.Language"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">前缀：</label>
+                <div class="layui-input-inline w150">
+                    <input type="text" name="Prefix" placeholder="请输入前缀" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="site-addsite-submit">新建商户</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(["betwin", "table"], function () {
+        var layui = this,
+            betwin = layui.betwin,
+            table = layui.table;
+        betwin.form.render("site-addsite");
+        betwin.form.submit("site-addsite-submit", null, {
+            success: function (res) {
+                table.reload("site-list");
+            }
+        });
+    });
+</script>

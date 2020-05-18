@@ -1,0 +1,64 @@
+﻿<title>账号管理</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="setting-admin-header">
+            账号管理
+            <button class="layui-btn layui-btn-right"><i class="am-icon-plus"></i> 添加账号</button>
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" id="setting-admin" lay-filter="setting-admin"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="setting-admin-list-info">
+    <p><img src="{{ UI.GetImage(d.Face) }}" /></p>
+    <p>{{ d.Name }}</p>
+</script>
+<script type="text/javascript">
+    layui.use(["betwin", "table"], function () {
+        var betwin = layui.betwin,
+            table = layui.table;
+
+        betwin.admin.popup("#setting-admin-header");
+
+
+        table.render({
+            elem: "#setting-admin",
+            url: "System/Admin/GetList",
+            cols: [[
+                { title: "ID", field: "ID", width: 100 },
+                { title: "账户名", templet: "#setting-admin-list-info", width: 200 },
+                { title: "登录时间", field: "LoginAt", width: 150 },
+                { title: "登录IP", templet: "<div>{{ htmlFunction.IP(d.LoginIP,d.IPAddress) }}</div>", width: 150 },
+                { title: "状态", templet: "<div>{{ GolbalSetting.enum['BW.Common.Systems.SystemAdmin+AdminStatus'][d.Status] }}</div>", width: 100 },
+                { title: "验证码", templet: "<div>{{ htmlFunction.bool(d.IsSecretKey) }}</div>", width: 80 },
+                {
+                    title: "操作", templet: GolbalSetting.templet.control({
+                        "edit": {
+                            "action": "setting/admininfo",
+                            "area": "lg"
+                        },
+                        "password": {
+                            "action": "System/Admin/ResetPassword",
+                            "event": "confirm",
+                            "confirm": "确认要重置密码吗？",
+                            "icon": "am-icon-key"
+                        },
+                        "code": {
+                            "action": "System/Admin/ResetCode",
+                            "event": "confirm",
+                            "confirm": "确认要清除验证码？",
+                            "icon": "am-icon-google"
+                        },
+                        "delete": {
+                            "action": "System/Admin/Delete"
+                        }
+                    })
+                }
+            ]]
+        });
+
+        betwin.table.tool("setting-admin");
+    });
+</script>

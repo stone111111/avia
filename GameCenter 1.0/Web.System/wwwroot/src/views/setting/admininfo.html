@@ -1,0 +1,67 @@
+﻿<style type="text/css">
+    .layui-form-item > .layui-form-item { padding-left: 2em; border-bottom: 1px solid #efefef; border-left: 1px solid #efefef; }
+</style>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="System/Admin/GetInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['setting-admininfo'](d)">
+            <form class="layui-form" action="System/Admin/SavePermission" id="setting-admininfo" lay-filter="setting-admininfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        账户名：
+                    </label>
+                    <div class="layui-input-inline">
+                        {{ d.info.UserName }}
+                    </div>
+                    <label class="layui-form-label">
+                        状态：
+                    </label>
+                    <div class="layui-input-inline">
+                        <select name="Status" data-value="{{ d.info.Status }}" data-enum="GM.Common.Systems.SystemAdmin+AdminStatus"></select>
+                    </div>
+                </div>
+                <hr />
+                <div id="setting-admininfo-permission"></div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="setting-admininf-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['setting-admininfo'] = function (result) {
+        delete BW.callback['setting-admininfo'];
+        layui.use(["betwin", "laytpl","table"], function () {
+            var betwin = layui.betwin,
+                laytpl = layui.laytpl,
+                table = layui.table;
+            var permission = function (list) {
+                var html = [];
+                html.push('<div class="layui-form-item">');
+                layui.each(list, function (index, item) {
+                    html.push(laytpl('<input type="checkbox" name="Permission" title="{{ d.name }}" {{ d.checked ? "checked" :"" }} value="{{ d.id }}" />').render(item));
+                    if (item.menu) html.push(permission(item.menu));
+                });
+                html.push('</div>');
+                return html.join("");
+            };
+            document.getElementById("setting-admininfo-permission").innerHTML = permission(result.info.Permission.menu);
+            betwin.form.render("setting-admininfo");
+
+            betwin.form.submit("setting-admininf-submit", function (data) {
+                var permissions = document.getElementById("setting-admininfo-permission").querySelectorAll("input[name='Permission']:checked");
+                var arr = [];
+                for (var i = 0; i < permissions.length; i++) {
+                    arr.push(permissions[i].value);
+                }
+                data["Permission"] = arr.join(",");
+                return data;
+            }, {
+                success: function (res) {
+                    table.reload("setting-admin");
+                }
+            });
+        });
+    };
+</script>

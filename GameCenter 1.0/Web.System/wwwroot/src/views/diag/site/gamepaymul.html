@@ -1,0 +1,39 @@
+﻿<div class="layui-card-body">
+    <script type="text/html" template lay-done="BW.callback['setting-gamepaymul-setting'](d)">
+        <form class="layui-form" action="merchant/Site/SitePayMul" id="setting-gamepaymul-setting" lay-filter="setting-gamepaymul-setting">
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额：</label>
+                <div class="layui-input-inline w150">
+                    <input type="number" name="Money" placeholder="请输入金额" autocomplete="off" class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <input type="hidden" name="IDs" value="{{ d.params.IDs }}" />
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="setting-gamepaymul-setting-submit">保存</button>
+            </div>
+        </form>
+    </script>
+</div>
+<script type="text/javascript">
+
+    BW.callback['setting-gamepaymul-setting'] = function (result) {
+        delete BW.callback['setting-gamepaymul-setting'];
+        layui.use(["betwin", "table"], function () {
+            var betwin = layui.betwin,
+                table = layui.table;
+
+            betwin.form.render("setting-gamepaymul-setting");
+
+            betwin.form.submit("setting-gamepaymul-setting-submit",
+                null, {
+                    success: function (res, data, index) {
+                        layer.close(index);
+                        table.reload("site-game-list");
+                        return false;
+                }
+            });
+        });
+    }
+
+</script>

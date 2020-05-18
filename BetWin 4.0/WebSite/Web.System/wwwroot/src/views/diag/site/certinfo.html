@@ -1,0 +1,98 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Merchant/Site/CertInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}','SiteID':'{{ d.params.SiteID }}'}" lay-done="BW.callback['site-cert-info'](d)">
+            <form class="layui-form" action="Merchant/Site/SaveCert" lay-filter="site-cert-info-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">证书文件</label>
+                    <div class="layui-input-inline">
+                        <input type="file" class="layui-input" id="site-cert-info-cert" />
+                    </div>
+                    <label class="layui-form-label">密钥文件</label>
+                    <div class="layui-input-inline">
+                        <input type="file" class="layui-input" id="site-cert-info-key" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">证书名字</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Name" class="layui-input" readonly />
+                    </div>
+                    <label class="layui-form-label">到期时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Expire" class="layui-input" readonly />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">包含域名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Domain" class="layui-input" readonly />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="PEM" />
+                    <input type="hidden" name="KEY" />
+                    <input type="hidden" name="ID" />
+                    <input type="hidden" name="SiteID" value="{{ d.params.SiteID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="site-cert-info-submit">保存证书</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+
+<script type="text/javascript">
+    BW.callback['site-cert-info'] = function (result) {
+        delete BW.callback['site-cert-info'];
+
+        layui.use(["betwin", "table", "form"], function () {
+            var layui = this,
+                betwin = layui.betwin,
+                table = layui.table,
+                form = layui.form;
+
+            var loadFile = function (id, name) {
+                document.getElementById(id).onchange = function (e) {
+                    var file = e.target.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        var content = event.target.result;
+                        switch (name) {
+                            case "PEM":
+                                betwin.admin.req({
+                                    url: "Merchant/Site/CertView",
+                                    data: { Content: content },
+                                    success: function (res) {
+                                        if (!res.success) {
+                                            layer.msg(res.msg, { icon: 2 });
+                                            form.val("site-cert-info-form", res.info);
+                                            return;
+                                        }
+                                        res.info.PEM = content;
+                                        form.val("site-cert-info-form", res.info);
+                                    }
+                                });
+                                break;
+                            case "KEY":
+                                form.val("site-cert-info-form", { KEY: content });
+                                break;
+                        }
+
+                    };
+                    reader.readAsText(file);
+                };
+            };
+
+            loadFile("site-cert-info-cert", "PEM");
+            loadFile("site-cert-info-key", "KEY");
+
+            betwin.form.submit("site-cert-info-submit", null, {
+                success: function (res, data, index) {
+                    layer.close(index);
+                    table.reload("site-cert-list");
+                    return false;
+                }
+            });
+            form.val("site-cert-info-form", result.info);
+        });
+    };
+</script>

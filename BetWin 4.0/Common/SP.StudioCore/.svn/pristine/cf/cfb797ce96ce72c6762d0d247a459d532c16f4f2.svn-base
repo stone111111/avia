@@ -1,0 +1,102 @@
+﻿using Microsoft.AspNetCore.Http;
+using SP.StudioCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Reflection;
+
+namespace SP.StudioCore.Linq
+{
+    /// <summary>
+    /// Linq的扩展
+    /// </summary>
+    public static class LinqExtensions
+    {
+        /// <summary>
+        /// 要查询的字段值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="perdicate"></param>
+        public static IQueryable<T> Where<T>(this IQueryable<T> list, HttpContext context, string key, Expression<Func<T, bool>> predicate)
+        {
+            if (string.IsNullOrEmpty(context.QF(key))) return list;
+            return list.Where(predicate);
+        }
+
+        public static IQueryable<T> Where<T, TValue>(this IQueryable<T> list, TValue? value, Expression<Func<T, bool>> predicate) where TValue : struct
+        {
+            if (!value.HasValue) return list;
+            return list.Where(predicate);
+        }
+
+        public static IQueryable<T> Where<T>(this IQueryable<T> list, object value, Expression<Func<T, bool>> predicate)
+        {
+            if (value == null) return list;
+            bool isValue = false;
+            switch (value.GetType().Name)
+            {
+                case "String":
+                    isValue = !string.IsNullOrEmpty((string)value);
+                    break;
+                case "Int32":
+                    isValue = (int)value != 0;
+                    break;
+                case "Int64":
+                    isValue = (long)value != 0;
+                    break;
+                case "Byte":
+                    isValue = (byte)value != 0;
+                    break;
+            }
+            if (!isValue) return list;
+            return list.Where(predicate);
+        }
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="field">字段</param>
+        /// <param name="type">排序类型</param>
+        /// <returns></returns>
+        public static IQueryable<T> Sort<T>(this IQueryable<T> query, string field, string type)
+        {
+            if (string.IsNullOrWhiteSpace(field) || string.IsNullOrWhiteSpace(type)) return query;
+            string sorting = string.Empty;
+            if (type.ToUpper().Trim() == "ASC")
+            {
+                sorting = "OrderBy";
+            }
+            else if (type.ToUpper().Trim() == "DESC")
+            {
+                sorting = "OrderByDescending";
+            }
+            ParameterExpression param = Expression.Parameter(typeof(T), field);
+            PropertyInfo property = typeof(T).GetProperty(field);
+            if (property == null) return query;
+            Type[] types = new Type[2];
+            types[0] = typeof(T);
+            types[1] = property.PropertyType;
+            Expression exp = Expression.Call(typeof(Queryable), sorting, types, query.Expression, Expression.Lambda(Expression.Property(param, field), param));
+            return query.AsQueryable().Provider.CreateQuery<T>(exp);
+        }
+        /// <summary>
+        /// 默认排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="expression"></param>
+        /// <param name="field">字段</param>
+        /// <param name="type">排序类型</param>
+        /// <returns></returns>
+        public static IOrderedQueryable<T> OrderByDescending<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> expression, string field, string type)
+        {
+            if (string.IsNullOrWhiteSpace(field) || string.IsNullOrWhiteSpace(type)) return query.OrderByDescending(expression);
+            return (IOrderedQueryable<T>)query.Sort(field, type);
+        }
+    }
+}

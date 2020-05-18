@@ -1,0 +1,84 @@
+﻿<div class="layui-card-body">
+    <script type="text/html" template lay-url="merchant/Site/SiteGameList" lay-type="post" lay-data="{'SiteID':'{{ d.params.SiteID }}'}" lay-done="BW.callback['setting-gameset-setting'](d)">
+        <form class="layui-form" action="merchant/Site/SaveSiteGameSetting" id="setting-gameset-setting" lay-filter="setting-gameset-setting">
+            <div class="layui-form-item">
+                <label class="layui-form-label">游戏：</label>
+                <div class="layui-input-block" id="setting-gameset-setting-games">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <input type="hidden" name="SiteID" value="{{ d.params.SiteID }}" />
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="setting-gameset-setting-submit">保存</button>
+            </div>
+        </form>
+    </script>
+</div>
+<script type="text/javascript">
+
+    BW.callback['setting-gameset-setting'] = function (result) {
+        delete BW.callback['setting-gameset-setting'];
+        layui.use(["betwin", "table"], function () {
+            var betwin = layui.betwin,
+            table = layui.table;
+
+            function IsChecked(gameid) {
+                var rs = false;
+                layui.each(result.info.list, function (index, value) {
+                    if (gameid == value.GameID) {
+                        rs = true;
+                    }
+                });
+
+                return rs;
+            }
+
+            var loadSetting = function () {
+                var html = "";
+
+                betwin.admin.req({
+                    url: "Setting/Game/GameSettingList",
+                    success: function (res) {
+                        layui.each(res.info.list, function (index, value) {
+                            debugger;
+                            var checked = "checked"; 
+
+                            var aa = IsChecked(value.ID);
+                            if (!IsChecked(value.ID)) checked = "";
+
+                            var input = `<input type="checkbox" lay-skin="primary" value="${value.ID}" ${ checked } lay-filter="setting-gameset-setting-games" title="${value.Name}" />`
+
+                            html = html + input;
+                        });
+
+                        var div = document.getElementById("setting-gameset-setting-games");
+                        div.innerHTML = html;
+
+                        betwin.form.render("setting-gameset-setting");
+                    }
+                })
+
+            }
+
+            loadSetting();
+
+            betwin.form.submit("setting-gameset-setting-submit",
+                function (data) {
+                    var gameids = "";
+                    var div = document.getElementById("setting-gameset-setting-games");
+
+                    div.querySelectorAll("input").forEach(function (input) {
+                        if (input.checked) {
+                            gameids = gameids +"|"+ input.value;
+                        }
+                    });
+                    data["gameids"] = gameids;
+                    return data;
+                }, {
+                success: function (res) {
+                        table.reload("site-game-list");
+                }
+            });
+        });
+    }
+
+</script>

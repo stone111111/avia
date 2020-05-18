@@ -1,0 +1,64 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Merchant/Site/GetRecordInfo" lay-type="post" lay-data='{"ID":"{{ d.params.ID }}","SiteID":"{{ d.params.SiteID }}"}' lay-done="BW.callback['diag-site-domaincdn'](d)">
+            <form action="Merchant/Site/UpdateCDNProvider" class="layui-form" id="diag-site-domaincdn" lay-filter="diag-site-domaincdn">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">域名：</label>
+                    <div class="layui-input-block">{{ d.info.SubName }}.{{ d.info.Domain }}</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-text-ft12">CDN供应商：</label>
+                    <div class="layui-input-inline"><select name="Provider" data-value="{{ d.info.CDNType }}" data-enum="SP.Provider.CDN.CDNProviderType" lay-ignore="select" id="diag-site-domaincdn-provider"></select></div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">CDN别名：</label>
+                    <div class="layui-input-block"><input type="text" name="CName" class="layui-input" id="diag-site-domaincdn-cname" /></div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="RecordID" value="{{ d.params.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-domaincdn-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['diag-site-domaincdn'] = function (result) {
+        delete BW.callback['diag-site-domaincdn'];
+        layui.use(["betwin"], function () {
+            var betwin = layui.betwin;
+
+            betwin.form.render("diag-site-domaincdn");
+
+            var cnameObj = document.getElementById("diag-site-domaincdn-cname");
+
+            var loadCDN = function () {
+                var value = this.value;
+                cnameObj.disabled = (value !== "Manual");
+                betwin.admin.req({
+                    url: "Merchant/Site/GetCDNInfo",
+                    data: {
+                        RecordID: result.params.ID,
+                        Type: value
+                    },
+                    success: function (res) {
+                        cnameObj.value = res.success ? res.info.CName : "";
+                    }
+                });
+            };
+
+            betwin.form.submit("diag-site-domaincdn-submit", null, {
+                success: function (res, data, index) {
+                    layer.close(index);
+                    BW.callback['diag-site-domain-reaload']();
+                    return false;
+                }
+            });
+
+            !function (obj) {
+                obj.addEventListener("change", loadCDN);
+                loadCDN.apply(obj);
+            }(document.getElementById("diag-site-domaincdn-provider"));
+        });
+    }
+</script>

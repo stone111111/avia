@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\SP.Provider\SP.Provider.csproj" />
+    <ProjectReference Include="..\BW.Views\BW.Views.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Games\" />
+  </ItemGroup>
+
+</Project>

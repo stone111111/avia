@@ -1,0 +1,301 @@
+﻿using Dapper;
+using SP.StudioCore.Data.Attributes;
+using SP.StudioCore.Data.Expressions;
+using SP.StudioCore.Types;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
+
+namespace SP.StudioCore.Data.Extension
+{
+    /// <summary>
+    /// 数据的表达式方式操作
+    /// </summary>
+    public static class DbExecutorExpression
+    {
+        /// <summary>
+        /// 查询一个值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static TValue ExecuteScalar<T, TValue>(this DbExecutor db, Expression<Func<T, TValue>> field, Expression<Func<T, bool>> condition) where T : class
+        {
+            using (ExpressionCondition expression = new ExpressionCondition())
+            {
+                expression.Visit(field);
+                string sql = $"SELECT TOP 1 {expression.ToString()} FROM [{typeof(T).GetTableName()}]";
+                expression.Visit(condition);
+                sql += expression.ToCondition(out DynamicParameters parameters);
+                object value = db.ExecuteScalar(CommandType.Text, sql, parameters);
+                if (value == null) return default;
+
+                return (TValue)value;
+            }
+        }
+
+        /// <summary>
+        /// 数据是否存在
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static bool Exists<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class
+        {
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string sql = $"SELECT 0 WHERE EXISTS(SELECT 0 FROM [{typeof(T).GetTableName()}] { expression.ToCondition(out DynamicParameters parameters)} )";
+                object value = db.ExecuteScalar(CommandType.Text, sql, parameters);
+                return value != null;
+            }
+        }
+
+        /// <summary>
+        /// 只更新一个字段
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="field"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static int Update<T, TValue>(this DbExecutor db, Expression<Func<T, TValue>> field, TValue value, Expression<Func<T, bool>> condition)
+        {
+            using (ExpressionCondition expression = new ExpressionCondition())
+            {
+                expression.Visit(field);
+                string sql = $"UPDATE [{typeof(T).GetTableName()}] SET {expression.ToString()} = @Value ";
+                expression.Visit(condition);
+                sql += expression.ToCondition(out DynamicParameters parameters);
+                parameters.Add("@Value", value);
+                return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 多字段更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="obj"></param>
+        /// <param name="condition"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public static int Update<T>(this DbExecutor db, T obj, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            if (fields.Length == 0) return 0;
+
+            DynamicParameters parameters;
+            string whereSql;
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                whereSql = expression.ToCondition(out parameters);
+            }
+
+            Stack<string> updateFields = new Stack<string>();
+            foreach (Expression<Func<T, object>> field in fields)
+            {
+                string fieldName = field.GetFieldName();
+                object value = field.Compile().Invoke(obj);
+                parameters.Add($"@{fieldName}", value);
+                updateFields.Push(fieldName);
+            }
+
+            string sql = $"UPDATE [{typeof(T).GetTableName()}] SET {string.Join(",", updateFields.Select(t => $"[{t}] = @{t}"))} {whereSql}";
+
+            return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+        }
+
+        /// <summary>
+        /// 更新增长型字段（自动跳过为0的字段）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="obj"></param>
+        /// <param name="condition"></param>
+        /// <param name="fields">要自定义更新的字段（可覆盖增长型字段)</param>
+        /// <returns></returns>
+        public static int UpdatePlus<T>(this DbExecutor db, T obj, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string whereSql = expression.ToCondition(out DynamicParameters parameters);
+
+                Stack<string> updateFields = new Stack<string>();
+                foreach (PropertyInfo property in obj.GetType().GetProperties().Where(t => t.HasAttribute<UpdatePlusAttribute>()))
+                {
+                    object value = property.GetValue(obj);
+                    switch (property.PropertyType.Name)
+                    {
+                        case "Int32":
+                            if ((int)value == default) continue;
+                            break;
+                        case "Decimal":
+                            if ((decimal)value == default) continue;
+                            break;
+                        default:
+                            continue;
+                    }
+                    string fieldName = property.Name;
+
+                    parameters.Add($"@{fieldName}", value);
+                    updateFields.Push(fieldName);
+                }
+
+                string sql = $"UPDATE [{typeof(T).GetTableName()}] SET {string.Join(",", updateFields.Select(t => $"[{t}] = [{t}] + @{t}"))} {whereSql}";
+
+                return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 获取DataSet
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public static DataSet GetDataSet<T>(this DbExecutor db, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            string field = "*";
+            if (fields.Length != 0)
+            {
+                Stack<string> selectFields = new Stack<string>();
+                foreach (Expression<Func<T, object>> fieldName in fields)
+                {
+                    string name = ((PropertyInfo)(((MemberExpression)fieldName.Body).Member)).GetAttribute<ColumnAttribute>().Name;
+                    selectFields.Push($"[{name}]");
+                }
+                field = string.Join(",", selectFields);
+            }
+
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string conditionSql = expression.ToCondition(out DynamicParameters parameters);
+                string sql = $"SELECT {field} FROM [{typeof(T).GetTableName()}] {conditionSql}";
+                return db.GetDataSet(CommandType.Text, sql, parameters.ToDbParameter());
+            }
+        }
+
+        /// <summary>
+        /// 刪除數據
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static int Delete<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class, new()
+        {
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string sql = $"DELETE FROM [{typeof(T).GetTableName()}] { expression.ToCondition(out DynamicParameters parameters) }";
+
+                return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 返回一个数据库读取对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public static IDataReader ReadData<T>(this DbExecutor db, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            string field = "*";
+            if (fields.Length != 0)
+            {
+                Stack<string> selectFields = new Stack<string>();
+                foreach (Expression<Func<T, object>> fieldName in fields)
+                {
+                    string name = fieldName.GetFieldName();
+                    selectFields.Push($"[{name}]");
+                }
+                field = string.Join(",", selectFields);
+            }
+
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string conditionSql = expression.ToCondition(out DynamicParameters parameters);
+                string sql = $"SELECT {field} FROM [{typeof(T).GetTableName()}] {conditionSql}";
+                return db.ReadData(CommandType.Text, sql, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 读取数据，使用泛型返回（只返回一列）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="field"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static IEnumerable<TValue> ReadData<T, TValue>(this DbExecutor db, Expression<Func<T, TValue>> field, Expression<Func<T, bool>> condition) where T : class, new()
+        {
+            string fieldName = field.GetFieldName();
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string conditionSql = expression.ToCondition(out DynamicParameters parameters);
+                string sql = $"SELECT {fieldName} FROM [{typeof(T).GetTableName()}] {conditionSql}";
+                IDataReader reader = db.ReadData(CommandType.Text, sql, parameters);
+                while (reader.Read())
+                {
+                    yield return (TValue)reader[0];
+                }
+            }
+        }
+
+        /// <summary>
+        /// 返回範型實例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <param name="fields">要读取的字段</param>
+        /// <returns></returns>
+        public static IEnumerable<T> ReadList<T>(this DbExecutor db, Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] fields) where T : class, new()
+        {
+            IDataReader reader = db.ReadData<T>(condition, fields);
+            while (reader.Read())
+            {
+                yield return (T)Activator.CreateInstance(typeof(T), reader);
+            }
+            if (!reader.IsClosed) reader.Close();
+        }
+
+        /// <summary>
+        /// 读取单个对象（使用IDataReader构造）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static T ReadInfo<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class, new()
+        {
+            IDataReader reader = db.ReadData<T>(condition);
+            try
+            {
+                while (reader.Read())
+                {
+                    return (T)Activator.CreateInstance(typeof(T), reader);
+                }
+            }
+            finally
+            {
+                if (!reader.IsClosed) reader.Close();
+            }
+            return null;
+        }
+    }
+}

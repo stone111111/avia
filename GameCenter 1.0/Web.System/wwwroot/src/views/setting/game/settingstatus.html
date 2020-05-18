@@ -1,0 +1,87 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Setting/Game/GameSettingInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['setting-game-settingstatus'](d);">
+            <form class="layui-form" action="Setting/Game/UpdateStatus" id="settting-game-settingstatus-form" lay-filter="settting-game-settingstatus">
+                <div class="layui-card-header">
+                    开启|关闭|维护
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏编号：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="number" name="ID" readonly="readonly" placeholder="请输入游戏编号" autocomplete="off" class="layui-input" value="{{ d.info.ID||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏状态：</label>
+                    <div class="layui-input-inline w150">
+                        <select name="Status" id="settting-game-settingstatus-status" lay-filter="settting-game-settingstatus-status" data-enum="GM.Common.Games.GameStatus" data-value="{{ d.info.Status||'' }}"></select>
+                    </div>
+                </div>
+                <div id="settting-game-settingstatus-maintainTime" hidden="hidden" class="layui-form-item">
+                    <label class="layui-form-label">维护时间：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" class="layui-input" id="settting-game-settingstatus-form-maintainTime" name="MaintainTime" placeholder="yyyy-MM-dd HH:mm:ss" value="{{ d.info.MaintainTime||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="settting-game-settingstatus-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['setting-game-settingstatus'] = function (result) {
+        delete BW.callback['setting-game-settingstatus'];
+
+        layui.use(["admin", "betwin", "form", "table", "laydate"], function () {
+            var betwin = layui.betwin,
+                admin = layui.admin,
+                form = layui.form,
+                table = layui.table,
+                laydate = layui.laydate,
+                $ = layui.$;
+
+            laydate.render({
+                elem: '#settting-game-settingstatus-form-maintainTime'
+                , type: 'datetime'
+            });
+
+            debugger;
+            var div = $("#settting-game-settingstatus-maintainTime");
+
+            if (result.info.Status == "Maintain") {
+                div.show();
+            }
+            else {
+                div.hide();
+            }
+
+            form.on("select(settting-game-settingstatus-status)", function (e) {
+                debugger;
+
+                var div = $("#settting-game-settingstatus-maintainTime");
+
+                if (e.value == "Maintain") {
+                    div.show();
+                }
+                else {
+                    div.hide();
+                }
+            })
+
+            betwin.form.submit("settting-game-settingstatus-submit",
+                function (data) {
+                    //data = Utils.GetSetting(data, "Setting.");
+                    return data;
+                }, {
+                success: function (res) {
+                    table.reload("setting-game-index");
+                }
+            });
+
+            betwin.form.render("settting-game-settingstatus");
+
+        });
+    }
+</script>

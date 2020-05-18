@@ -1,0 +1,3 @@
+﻿.layui-text-tip.debug { display: block; border-color: #D6E9C6; background-color: #F4FFEF; color: #808080; max-height: 80px; overflow: auto; }
+    .layui-text-tip.debug::before { display: none; }
+    .layui-text-tip.debug li { line-height: 22px; padding: 4px; }

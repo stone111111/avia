@@ -1,0 +1,203 @@
+﻿<style type="text/css">
+    .jsonsetting { }
+        .jsonsetting fieldset { margin-bottom: 10px; }
+            .jsonsetting fieldset li { position: relative; border: 1px solid #f5f5f5; padding: 0px 5px; border-bottom-color: #ccc; }
+                .jsonsetting fieldset li .drag { position: absolute; right: 26px; top: 2px; z-index: 1; cursor: move; }
+                .jsonsetting fieldset li .close { position: absolute; right: 2px; top: 2px; z-index: 1; }
+</style>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Merchant/Template/GetSiteConfig" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['diag-site-template-viewsetting'](d)">
+            <form action="Merchant/Template/SaveSiteConfig" class="layui-form" lay-filter="diag-site-template-viewsetting">
+                <div class="jsonsetting" id="diag-site-template-viewsetting"></div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="ID" value="{{ d.params.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-template-viewsetting-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback["diag-site-template-viewsetting"] = function (result) {
+        delete BW.callback["diag-site-template-viewsetting"];
+
+        var setting = {
+            "System.Int32": function (item) {
+                return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
+                "<label class='layui-form-label'>" + item.Description + "</label>",
+                    "<div class='layui-input-inline'>",
+                "<input type='number' class='layui-input' value='" + item.Value + "' />",
+                    "</div>",
+                    "</div>"].join("");
+            },
+            "System.String": function (item) {
+                return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
+                "<label class='layui-form-label'>" + item.Description + "</label>",
+                    "<div class='layui-input-block'>",
+                "<input type='text' class='layui-input' value='" + (item.Value || "") + "' />",
+                    "</div>",
+                    "</div>"].join("");
+            },
+            "System.Boolean": function (item) {
+                return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
+                "<label class='layui-form-label'>" + item.Description + "</label>",
+                    "<div class='layui-input-block'>",
+                "<input type='checkbox' value='true' title='" + item.Description + "' " + (item.Value ? "checked" : "") + " />",
+                    "</div>",
+                    "</div>"].join("");
+            },
+            "Upload": function (item) {
+                return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
+                "<label class='layui-form-label'>" + item.Description + "</label>",
+                    "<div class='layui-input-block'>",
+                "<input type='image' class='layui-input-upload' src='" + UI.GetImage(item.Value) + "' value='" + item.Value + "' />",
+                    "</div>",
+                    "</div>"].join("");
+            },
+            "Link": function (item) {
+                return ["<div class='layui-form-item' data-jsonname='" + item.Name + "'>",
+                "<label class='layui-form-label'>" + item.Description + "</label>",
+                    "<div class='layui-input-block'>",
+                "<input type='text' class='layui-input' value='" + item.Value + "' readonly data-type='Link' />",
+                    "</div>",
+                    "</div>"].join("");
+            },
+            "List": function (item) {
+                var html = ["<fieldset data-jsonname='" + item.Name + "'>",
+                "<legend>" + item.Description + " <button data-name='" + item.Name + "' type='button' class='layui-btn layui-btn-normal layui-btn-xs am-icon-plus'></button></legend>"];
+                html.push("<ul>");
+                if (!item.List.Value || !item.List.Value.length) item.List.Value = [{}];
+                layui.each(item.List.Value, function (index, value) {
+                    html.push(setting.ListItem(item, value));
+                });
+                html.push("</ul>");
+                html.push("</fieldset>");
+                return html.join("");
+            },
+            // 列表项目
+            "ListItem": function (item, value) {
+                var html = ["<li>",
+                    "<a href='javascript:' class='layui-btn layui-btn-primary layui-btn-xs am-icon-arrows-alt drag'></a>",
+                    "<a href='javascript:' class='layui-btn layui-btn-danger layui-btn-xs am-icon-close close'></a>"];
+                layui.each(item.List.Field, function (index, field) {
+                    field.Value = value ? (value[field.Name] || null) : null;
+                    if (setting[field.Type]) {
+                        html.push(setting[field.Type](field));
+                        return;
+                    }
+                });
+                html.push("</li>");
+                return html.join("");
+            }
+        };
+
+        layui.use(["form", "betwin"], function () {
+            var form = layui.form,
+                betwin = layui.betwin;
+            var html = [];
+
+            layui.each(result.info, function (index, item) {
+                if (setting[item.Type]) {
+                    html.push(setting[item.Type](item));
+                }
+            });
+
+            var viewsetting = document.getElementById("diag-site-template-viewsetting");
+            viewsetting.innerHTML = html.join("");
+
+            // 绑定表单的原始事件
+            var formRender = function () {
+                viewsetting.querySelectorAll(".layui-input-upload").forEach(function (item, index) {
+                    if (item.getAttribute("id")) return;
+                    var id = "upload-" + new Date().getTime() + "-" + index;
+                    item.setAttribute("id", id);
+                    betwin.form.upload(id);
+                });
+            };
+
+            form.render(null, "diag-site-template-viewsetting");
+            formRender();
+
+            layui.$(viewsetting).on("click", "button[data-name]", function () {
+                var ul = layui.$(this).parents("fieldset").find("ul");
+                var name = this.getAttribute("data-name");
+                var item = result.info.first(function (item) { return item.Name === name; });
+                var html = setting.ListItem(item);
+                ul.append(layui.$(html));
+                formRender();
+            });
+
+            layui.$(viewsetting).on("click", "a.am-icon-close", function () {
+                var li = layui.$(this).parents("li");
+                li.remove();
+            });
+
+            betwin.form.submit("diag-site-template-viewsetting-submit", function (data, formObj) {
+                var elems = formObj.querySelectorAll("#diag-site-template-viewsetting > [data-jsonname]");
+                var json = {};
+                for (var i = 0; i < elems.length; i++) {
+                    var elem = elems[i];
+                    var name = elem.getAttribute("data-jsonname");
+                    switch (elem.tagName) {
+                        case "FIELDSET":
+                            json[name] = [];
+                            elem.querySelectorAll("li").forEach(function (block) {
+                                var item = {};
+                                block.querySelectorAll("[data-jsonname]").forEach(function (quote) {
+                                    var name = quote.getAttribute("data-jsonname");
+                                    var value = [];
+                                    quote.querySelectorAll("select,input,textarea").forEach(function (input) {
+                                        if (input.getAttribute("type") === "checkbox") {
+                                            if (input.checked) value.push(input.value);
+                                        } else {
+                                            value.push(input.value);
+                                        }
+                                    });
+                                    if (value.length) item[name] = value.filter(function (t) {
+                                        return t;
+                                    }).join(",");
+                                });
+                                json[name].push(item);
+                            });
+                            break;
+                        default:
+                            var inputs = elem.querySelectorAll("select,input,textarea");
+                            var value = [];
+                            for (var n = 0; n < inputs.length; n++) {
+                                var input = inputs[n];
+                                if (input.getAttribute("type") === "checkbox") {
+                                    if (input.checked) value.push(input.value);
+                                } else if (input.value) {
+                                    value.push(input.value);
+                                }
+                            }
+                            if (value.length) json[name] = value.join(",");
+                            break;
+                    }
+                }
+                data["Setting"] = JSON.stringify(json);
+                return data;
+            }, {
+                success: function (res, data, index) {
+                    layer.close(index);
+                    return false;
+                }
+            });
+
+            var sortable = function () {
+                viewsetting.querySelectorAll("ul").forEach(function (ul) {
+                    Sortable.create(ul, {
+                        handle: ".drag",
+                        animation: 150
+                    });
+                });
+            };
+            if (window["Sortable"]) {
+                sortable();
+            } else {
+                layui.$.getScript("/js/sortable.js", sortable);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        var x = 1;
+        var total = 1000;
+        var rate = 0.96;
+
+        var html = new Array();
+        html.push("<table border=1>");
+        html.push("<thead><tr><th>A投注</th><th>A赔率</th><th>B投注</th><th>B赔率</th></tr></thead>");
+        html.push("<tbody>");
+        while (x < total) {
+            var y = total - x;
+
+            html.push("<tr>");
+            html.push("<td>" + x + "</td>");
+            html.push("<td>" + (total * rate / x).toFixed(4) + "</td>");
+            html.push("<td>" + y + "</td>");
+            html.push("<td>" + (total * rate / y).toFixed(4) + "</td>");
+            html.push("</tr>");
+
+            x += 10;
+        }
+        html.push("</tbody></table>");
+
+        document.writeln(html.join(""));
+    </script>
+</body>
+</html>

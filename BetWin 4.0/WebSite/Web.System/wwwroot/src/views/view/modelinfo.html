@@ -1,0 +1,57 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="System/View/GetModelInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID || 0 }}','ViewID':'{{ d.params.ViewID || 0 }}'}" lay-done="BW.callback['view-modelinfo'](d)">
+            <form class="layui-form" action="System/View/SaveModelInfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">模型名称：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="Name" class="layui-input" value="{{ d.info.Name || "" }}" />
+                    </div>
+                    <label class="layui-form-label">模型路径：</label>
+                    <div class="layui-input-inline w200">
+                        <input type="text" name="Path" class="layui-input" value="{{ d.info.Path || "" }}" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">模型说明：</label>
+                    <div class="layui-input-block">
+                        <textarea name="Description" class="layui-textarea" style="min-height:80px;">{{ d.info.Description || "" }}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">预览图：</label>
+                    <div class="layui-input-inline">
+                        <input type="image" class="layui-input-upload" name="Preview" id="view-modelinfo-preview" value="{{ d.info.Preview || "" }}" src="{{  UI.GetImage(d.info.Preview) }}" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="ViewID" value="{{ d.info.ViewID }}" />
+                    <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                    <button type="button" class="layui-btn layui-btn-block" lay-submit lay-filter="view-modelinfo-submit">保存模型信息</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    BW.callback['view-modelinfo'] = function (result) {
+        delete BW.callback['view-modelinfo'];
+
+        layui.use(["betwin", "laytpl", "admin", "form"], function () {
+            var $ = layui.$,
+                laytpl = layui.laytpl,
+                admin = layui.admin,
+                form = layui.form,
+                betwin = layui.betwin;
+
+            betwin.form.upload("view-modelinfo-preview");
+            betwin.form.submit("view-modelinfo-submit", null, {
+                success: function (res) {
+                    if (BW.callback['view-index-tab-load']) BW.callback['view-index-tab-load']();
+                }
+            });
+        });
+    }
+</script>

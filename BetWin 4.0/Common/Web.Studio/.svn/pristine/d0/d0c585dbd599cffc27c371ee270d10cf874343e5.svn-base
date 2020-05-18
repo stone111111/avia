@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="style.css" rel="stylesheet" />
+    <script src="../scripts/mootools.js"></script>
+    <script src="show.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+
+        var data = {
+            "一码不定位": 0,
+            "二码不定位": 0,
+            "三码不定位": 0
+        };
+        var count = 0, count2 = 0, count3 = 0;
+        var total = 0;
+        for (var n1 = 0; n1 < 10; n1++) {
+            for (var n2 = 0; n2 < 10; n2++) {
+                for (var n3 = 0; n3 < 10; n3++) {
+                    for (var n4 = 0; n4 < 10; n4++) {
+                        for (var n5 = 0; n5 < 10; n5++) {
+                            total++;
+                            var number = [n1, n2, n3, n4, n5];
+                            if (number.contains(0)) {
+                                data["一码不定位"]++;
+                            }
+                            if (number.contains(0) && number.contains(1)) {
+                                data["二码不定位"]++;
+                            }
+                            if (number.contains(0) && number.contains(1) && number.contains(2)) {
+                                data["三码不定位"]++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        ShowResult(data, total);
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+
+namespace SP.StudioCore.Enums
+{
+    /// <summary>
+    /// 用户的通用状态
+    /// </summary>
+    public enum UserStatus : byte
+    {
+        [Description("正常")]
+        Normal = 0,
+        [Description("锁定")]
+        Lock = 1,
+        [Description("删除")]
+        Deleted = 10
+    }
+
+    /// <summary>
+    /// 审核状态
+    /// </summary>
+    public enum CheckStatus : byte
+    {
+        [Description("待处理")]
+        None = 0,
+        [Description("成功")]
+        Success = 1,
+        [Description("失败")]
+        Faild = 2
+    }
+
+    /// <summary>
+    /// 通用的错误信息
+    /// </summary>
+    public enum ErrorType
+    {
+        [Description("请先登录")]
+        Login,
+        [Description("没有权限")]
+        Permission,
+        [Description("地区限制")]
+        IP,
+        [Description("请求无效")]
+        BadRequest,
+        [Description("无效授权")]
+        Authorization,
+        [Description("系统异常")]
+        Exception
+    }
+
+    /// <summary>
+    /// 语种
+    /// </summary>
+    public enum Language : byte
+    {
+        [Description("简体中文"), ISO6391("zh-CN")]
+        CHN = 0,
+        [Description("正體中文"), ISO6391("zh-TW")]
+        THN = 1,
+        [Description("English"), ISO6391("en")]
+        ENG = 2,
+        [Description("日本語"), ISO6391("ja")]
+        JP = 3,
+        [Description("한국어"), ISO6391("ko")]
+        KR = 4,
+        [Description("Tiếng việt"), ISO6391("vi")]
+        VN = 5,
+        [Description("ไทย"), ISO6391("th")]
+        TH = 6,
+        [Description("Español"), ISO6391("es")]
+        ES = 7,
+        [Description("Português"), ISO6391("pt")]
+        PT = 8,
+        [Description("Français"), ISO6391("fr")]
+        FR = 9,
+        [Description("Deutsch"), ISO6391("de")]
+        DE = 10,
+        [Description("Italiano"), ISO6391("it")]
+        IT = 11,
+        [Description("Русский"), ISO6391("ru")]
+        RU = 12,
+        [Description("indonesia"), ISO6391("id")]
+        ID = 13
+    }
+
+    /// <summary>
+    /// 币种
+    /// </summary>
+    public enum Currency : byte
+    {
+        [Description("人民币")]
+        CNY,
+        [Description("美元")]
+        USD,
+        [Description("新台币")]
+        TWD,
+        [Description("欧元")]
+        EUR,
+        [Description("泰铢")]
+        THB,
+        [Description("越南盾")]
+        VND,
+        [Description("印尼盾")]
+        IDR,
+        [Description("菲律宾比索")]
+        PHP,
+        [Description("俄罗斯卢布")]
+        RUB,
+        [Description("日元")]
+        JPY,
+        [Description("韩元")]
+        KRW
+    }
+
+    /// <summary>
+    /// 排序规则
+    /// </summary>
+    public enum SortType
+    {
+        ASC,
+        DESC
+    }
+
+    /// <summary>
+    /// ISO-639-1 语言代码
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class ISO6391Attribute : Attribute
+    {
+        public ISO6391Attribute(string code)
+        {
+            this.Code = code;
+        }
+
+        /// <summary>
+        /// ISO-639-1 语言代码
+        /// </summary>
+        public string Code { get; private set; }
+
+        public static implicit operator string(ISO6391Attribute IOS6391)
+        {
+            return IOS6391.Code;
+        }
+    }
+}

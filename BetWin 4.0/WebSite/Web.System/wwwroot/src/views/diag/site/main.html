@@ -1,0 +1,104 @@
+﻿<style type="text/css">
+</style>
+<div class="layui-card">
+    <script type="text/html" lay-url="Merchant/Site/Info" lay-type="post" lay-data="{'ID':{{ d.params.SiteID }} }" template lay-done="UI.SetEditMode('diag-site-main-info');BW.callback['diag-site-main-info'](d)">
+        <form action="Merchant/Site/Save" class="layui-form" lay-filter="diag-site-main-info" id="diag-site-main-info">
+            <div class="layui-card-header">
+                基础设置
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <tr>
+                        <th>商户编号：</th>
+                        <td>{{ d.info.ID }}</td>
+                        <th>商户名：</th>
+                        <td><input type="text" name="Name" class="layui-input" value="{{ d.info.Name }}" /></td>
+                        <th>主币种：</th>
+                        <td><select name="Currency" lay-ignore="select" data-value="{{ d.info.Currency }}"></select></td>
+                        <th>主语种：</th>
+                        <td><select name="Language" lay-ignore="select" data-value="{{ d.info.Language }}"></select></td>
+                    </tr>
+                    <tr>
+                        <th>支持语种：</th>
+                        <td colspan="7">
+                            {{# layui.each(GolbalSetting.enum["SP.StudioCore.Enums.Language"],function(key,name){ }}
+                            <input type="checkbox" name="Setting.Languages" lay-filter="diag-site-main-select" value="{{ key }}" title="{{ name }}" {{ d.info.Setting.Languages.contains(key) ? "checked" : "" }} />
+                            {{# }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>支持币种：</th>
+                        <td colspan="7">
+                            {{# layui.each(GolbalSetting.enum["SP.StudioCore.Enums.Currency"],function(key,name){ }}
+                            <input type="checkbox" name="Setting.Currencies" lay-filter="diag-site-main-select" value="{{ key }}" title="{{ name }}" {{ d.info.Setting.Currencies.contains(key) ? "checked" : "" }} />
+                            {{# }) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+        </form>
+    </script>
+
+    <script type="text/html" lay-url="Merchant/Site/GetSiteDetail" lay-type="post" lay-data="{'ID':{{ d.params.SiteID }} }" template lay-done="UI.SetEditMode('diag-site-main-detail');">
+        <form action="Merchant/Site/SaveSiteDetail" class="layui-form" id="diag-site-main-detail" lay-filter="diag-site-main-detail">
+            <div class="layui-card-header">
+                商户资料
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <tr>
+                        <th>手机号码：</th>
+                        <td>
+                            <input type="hidden" name="ID" value="{{ d.info.SiteID }}" />
+                            <input type="text" name="Mobile" value="{{ d.info.Mobile || "" }}" class="layui-input" />
+                        </td>
+                        <th>电子邮件：</th>
+                        <td>
+                            <input type="text" name="Email" value="{{ d.info.Email || "" }}" class="layui-input" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </script>
+</div>
+
+<script type="text/javascript">
+    BW.callback['diag-site-main-info'] = function (reault) {
+        delete BW.callback['diag-site-main-info'];
+        layui.use(["form"], function () {
+            var form = layui.form;
+            var formObj = document.getElementById("diag-site-main-info");
+            var showSelect = function (name, data) {
+                formObj.querySelector("[name='" + name + "']").select(data, function (item) { return item; },
+                    function (item) {
+                        return GolbalSetting.enum["SP.StudioCore.Enums." + name][item];
+                    }
+                );
+            }
+            showSelect("Language", reault.info.Setting.Languages);
+            showSelect("Currency", reault.info.Setting.Currencies);
+
+            form.on("checkbox(diag-site-main-select)", function (e) {
+                var name = e.elem.getAttribute("name");
+                var list = formObj.querySelectorAll("input[name='" + name + "']:checked");
+                var data = [];
+                list.forEach(function (item) { data.push(item.getAttribute("value")); });
+
+                switch (name) {
+                    case "Setting.Currencies":
+                        showSelect("Currency", data);
+                        break;
+                    case "Setting.Languages":
+                        showSelect("Language", data);
+                        break;
+                }
+            });
+
+        });
+
+
+
+    };
+</script>

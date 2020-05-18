@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SP.StudioCore.API.CDN
+{
+    /// <summary>
+    /// 阿里云提供的CDN 接口
+    /// </summary>
+    public sealed class ALIYUN : ICDNProvider
+    {
+    }
+}

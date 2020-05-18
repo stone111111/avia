@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript" src="https://a02image.coppore.com/script/A02P/_default/__js/_wms/_l/electronicgames/games.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var type = {
+            "MG": 5,
+            "PT": 1,
+            "AG": 2
+        };
+        for (var i = 0; i < games.length; i++) {
+
+            var item = games[i];
+            var slot = {
+                "Type": item[1],
+                "Name": item[3],
+                "Line": item[6],
+                "GameType": item[4],
+                "Cover": "https://www.1111k8.com/static/A02P/_default/__static/_wms/_l/electronicgames/" + item[16]
+            }
+            var wget = "wget " + slot.Cover + " -N --no-check-certificate --directory-prefix=" + slot.Type;
+            //document.writeln("<p>" + wget + "</p>");
+
+            if (!type[slot.Type]) continue;
+
+            var gameType = 0;
+            switch (slot.GameType) {
+                case 1:
+                    gameType = 2;
+                    break;
+                case 13:
+                    gameType = 3;
+                    break;
+                case 2:
+                    gameType = 5;
+                    break;
+                case 4:
+                    gameType = 4;
+                    break;
+                case 5:
+                    gameType = 13;
+                    break;
+            }
+            if (gameType != 0) {
+                var sql = "INSERT INTO game_EntranceTag SELECT GameID, " + gameType + " FROM game_Entrance WHERE Type = " + type[slot.Type] + " AND Category = 2 AND GameName = '" + slot.Name + "';";
+                document.writeln("<p>" + sql + "</p>");
+            }
+
+            /*
+            var lineId = 0;
+            if (slot.Line > 0 && slot.Line < 5) {
+                lineId = 6;
+            } else if (slot.Line > 4 && slot.Line <= 9) {
+                lineId = 7;
+            } else if (slot.Line >= 15 && slot.Line <= 25) {
+                lineId = 8;
+            } else if (slot.Line >= 30 && slot.Line <= 50) {
+                lineId = 9;
+            } else if (slot.Line >= 51 && slot.Line <= 146) {
+                lineId = 10;
+            } else if (slot.Line == 243) {
+                lineId = 11;
+            } else if (slot.Line == 1024) {
+                lineId = 12;
+            }
+            if (lineId != 0) {
+                var sql = "INSERT INTO game_EntranceTag SELECT GameID, " + lineId + " FROM game_Entrance WHERE Type = " + type[slot.Type] + " AND Category = 2 AND GameName = '" + slot.Name + "';";
+                document.writeln("<p>" + sql + "</p>");
+            }
+            */
+        }
+    </script>
+</body>
+</html>

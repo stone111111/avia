@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GM.Cache\GM.Cache.csproj" />
+    <ProjectReference Include="..\GM.Common\GM.Common.csproj" />
+    <ProjectReference Include="..\SP.StudioCore\SP.StudioCore.csproj" />
+  </ItemGroup>
+
+</Project>

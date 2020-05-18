@@ -1,0 +1,21 @@
+﻿<!-- 游戏订单的详情统一显示方法 -->
+<script type="text/html" template lay-done="BW.callback['common-gamelog-info']()">
+    <div class="layui-card" id="common-gamelog-info" data-category="{{ d.params.Category }}" data-type="{{ d.params.Type }}" data-sourceid="{{ d.params.SourceID }}">
+    </div>
+</script>
+
+<script type="text/javascript">
+    BW.callback['common-gamelog-info'] = function () {
+        delete BW.callback['common-gamelog-info'];
+        var loadGameDetail = function () {
+            var elem = document.getElementById("common-gamelog-info");
+            var data = elem.getData();
+            GameLog.Query(elem, "request/game/log/chessinfo", data.Category, data.type, data.sourceid, false);
+        }
+        if (window["GameLog"]) {
+            loadGameDetail();
+        } else {
+            layui.$.getScript("/common/js/gamelog.js", loadGameDetail);
+        }
+    }
+</script>

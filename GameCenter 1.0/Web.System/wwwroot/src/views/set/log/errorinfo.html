@@ -1,0 +1,14 @@
+﻿<div class="layui-card">
+    <script type="text/html" template lay-url="Setting/Log/ErrorDetail" lay-type="post" lay-data="{'ID':'{{ d.params.ErrorID }}'}" lay-done="BW.callback['set-log-errorinfo'](d)">
+        <div class="layui-card-body">
+            <pre id="set-log-errorinfo"></pre>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript">
+    BW.callback['set-log-errorinfo'] = function (result) {
+        delete BW.callback['set-log-errorinfo'];
+        Utils.jsonViewer("set-log-errorinfo", result.info);
+    };
+</script>

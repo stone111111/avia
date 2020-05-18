@@ -1,0 +1,50 @@
+﻿<title>錯誤日志</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header">錯誤日志</div>
+        <div class="layui-card-body">
+            <form class="layui-form layui-form-sm" id="set-log-error-search" lay-filter="set-log-error-search">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">錯誤編號：</label>
+                    <div class="layui-input-inline w300">
+                        <input type="text" name="ID" class="layui-input" />
+                    </div>
+                    <div class="layui-input-inline" data-submit></div>
+                </div>
+            </form>
+            <table id="set-log-error" lay-filter="set-log-error"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(["table", "betwin"], function () {
+        var layuit = this,
+            table = layui.table,
+            betwin = layui.betwin;
+
+        table.render({
+            elem: "#set-log-error",
+            url: "Setting/Log/ErrorList",
+            cols: [[
+                { title: "編號", templet: "<div>{{ d.ErrorID.toUpperCase() }}</div>", width: 280 },
+                { title: "時間", field: "CreateAt", width: 150 },
+                { title: "標題", field: "Title" },
+                { title: "IP", field: "IP", width: 130 },
+                {
+                    title: "詳情", width: 60, templet: GolbalSetting.templet.control({
+                        edit: {
+                            action: "set/log/errorinfo",
+                            area: "lg",
+                            icon: "am-icon-search",
+                            title: "錯誤日志詳情"
+                        }
+                    })
+                }
+            ]]
+        });
+
+        betwin.table.tool("set-log-error");
+        betwin.form.search("set-log-error-search", "set-log-error");
+    });
+</script>

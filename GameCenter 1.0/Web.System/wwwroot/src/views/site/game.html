@@ -1,0 +1,96 @@
+﻿<title>游戏订单</title>
+<div class="layui-text-tip debug">
+    <ol>
+        <li>显示出所有游戏的订单，可按商户、游戏类型、游戏厂商、游戏账户名、投注时间等条件进行搜索，来自表(game_log)</li>
+        <li>游戏可查看明细，即针对原始数据的解析。（统一做到游戏微服务中，前台后台统一用一个程序进行明细查看）</li>
+    </ol>
+</div>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form layui-form-sm" id="site-gameorder-search" lay-filter="site-gameorder-search">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商家：</label>
+                    <div class="layui-input-inline w100">
+                        <select name="SiteID" id="site-gameorder-sites" lay-ignore="select"></select>
+                    </div>
+                    <label class="layui-form-label">游戏类型：</label>
+                    <div class="layui-input-inline w100">
+                        <select name="GameType" data-enum="GM.Common.Games.GameType"><option value="">全部</option></select>
+                    </div>
+                    <label class="layui-form-label">游戏厂商：</label>
+                    <div class="layui-input-inline w100">
+                        <select name="GameID" id="site-gameorder-games" lay-ignore="select"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏账号：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="PlayerName" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">开始时间：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="StartAt"  id="site-gameorder-startat" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">结束时间：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="EndAt"  id="site-gameorder-endat" class="layui-input" />
+                    </div>
+                </div>
+                <div class="layui-input-inline" data-submit></div>
+            </form>
+            <table class="layui-table" id="site-gameorder" lay-filter="site-gameorder"></table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(["betwin", "table", "laydate"], function () {
+        var layui = this,
+            betwin = layui.betwin,
+            laydate = layui.laydate,
+            table = layui.table;
+
+        laydate.render({
+                elem: '#site-gameorder-startat'
+                , type: 'datetime'
+        });
+
+        laydate.render({
+                elem: '#site-gameorder-endat'
+                , type: 'datetime'
+            });
+
+        // 绑定表单数据
+        table.render({
+            elem: "#site-gameorder",
+            url: "Merchant/Site/GetGameOrderList",
+            cols: [[
+                { title: '编号', field: "ID", width: 100},
+                { title: "游戏类型", templet: "<div>{{ GolbalSetting.enum['GM.Common.Games.GameType'][d.Type] }}</div>" },
+                { title: '游戏订单号', field: "SourceID", width: 100 },
+                { title: '商户', field: "SiteName", width: 100 },
+                { title: '用户', field: "UserName", width: 100 },
+                { title: '厂商', field: "GameName", width: 100 },
+                { title: '供应商处的用户名', field: "PlayerName", width: 100 },
+                { title: '游戏代码', field: "Code", width: 100 },
+                { title: '下注时间', field: "CreateAt", width: 200 },
+                { title: '派奖时间', field: "ResultAt", width: 200 },
+                { title: '结算时间', field: "SettlementAt", width: 200 },
+                { title: '投注金额', field: "BetMoney", width: 100 },
+                { title: '有效投注', field: "BetAmount", width: 100 },
+                { title: '盈亏', field: "Money", width: 100 },
+                { title: '订单更新时间', field: "UpdateTime", width: 150 },
+                { title: '订单摘要信息', field: "Content", width: 100 }
+            ]]
+        });
+
+        // 绑定搜索事件
+        betwin.form.search("site-gameorder-search", "site-gameorder");
+
+        document.getElementById("site-gameorder-sites").select("Merchant/Site/GetSiteList", "ID", "Name", "全部");
+
+        document.getElementById("site-gameorder-games").select("Setting/Game/GameSettingList", "ID", "Name", "全部");
+
+        betwin.form.render("site-gameorder-search");
+    });
+</script>

@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using SP.StudioCore.Http;
+using SP.StudioCore.Model;
+
+namespace SP.StudioCore.Web
+{
+    public static class SSLAgent
+    {
+        /// <summary>
+        /// 解析SSL证书的内容
+        /// </summary>
+        /// <param name="content">证书内容原串</param>
+        /// <returns></returns>
+        public static CertInfo GetFirstCertInfo(string content)
+        {
+            var certList = HttpsHelper.ReadCert(content);
+            if (certList.Count > 0) return certList[0];
+            return new CertInfo
+            {
+                Message = "证书解析错误"
+            };
+        }
+
+        /// <summary>
+        /// 解析SSL证书的内容，根据传入的证书内容解析成实体
+        /// </summary>
+        /// <param name="content">证书内容原串</param>
+        /// <returns></returns>
+        public static List<CertInfo> GetCertList(string content)
+        {
+            return HttpsHelper.ReadCert(content);
+        }
+    }
+}

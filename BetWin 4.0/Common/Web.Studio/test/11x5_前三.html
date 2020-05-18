@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="style.css" rel="stylesheet" />
+    <script src="show.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var data = {
+            "直选前三": 0,
+            "组选前三": 0
+        };
+        var count = 0;
+        var input = "1,2,3";
+        for (var i1 = 1; i1 <= 11; i1++) {
+            for (i2 = 1; i2 <= 11; i2++) {
+                for (i3 = 1; i3 <= 11; i3++) {
+                    if (i1 == i2 || i2 == i3 || i1 == i3) continue;
+                    count++;
+                    var result = [i1, i2, i3];
+                    if (result.join(",") == input) { data["直选前三"]++; }
+                    result.sort();
+                    if (result.join(",") == input) { data["组选前三"]++; }
+                }
+            }
+        }
+        ShowResult(data, count);
+    </script>
+</body>
+</html>

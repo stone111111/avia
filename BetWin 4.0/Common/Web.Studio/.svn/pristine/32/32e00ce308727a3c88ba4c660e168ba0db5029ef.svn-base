@@ -1,0 +1,42 @@
+﻿html { user-select: none; font-family: sans-serif; }
+body { user-select: none; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; word-wrap: break-word; font-size: 14px; font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif; line-height: 20px; text-rendering: optimizeLegibility; -webkit-backface-visibility: hidden; -webkit-user-drag: none; -ms-content-zooming: none; }
+* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+h1, h2, h3, h4, h5, h6, form, p, ul, li, menu, aside { padding: 0px; margin: 0px; list-style-type: none; }
+em, i { font-style: normal; }
+/* 工具类 */
+.moo-height { height: 10px; }
+    .moo-height.sm { height: 8px; }
+    .moo-height.xs { height: 4px; }
+
+.moo-left { float: left; }
+.moo-right { float: right; }
+.moo-hide { display: none; }
+.moo-text-red { color: #d65966; }
+.moo-text-green { color: #4bad4b; }
+/* view 视图模式 */
+.moo-container { position: absolute; display: block; width: 100%; height: 100%; top: 0px; left: 0px; }
+.moo-clear::after { content: " "; display: block; clear: both; }
+
+.moo-view { position: absolute; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; background-color: #fff; transition: all 0.5s; transform: translateX(-33%); }
+    .moo-view:last-child { transform: translateX(100%); }
+    .moo-view.active { transform: translateX(0%); }
+
+.moo-bar-header { display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -moz-flex; display: -ms-flexbox; display: flex; -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; position: absolute; right: 0; left: 0; z-index: 9; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; padding: 5px; width: 100%; height: 44px; border-width: 0; border-style: solid; border-top: 1px solid transparent; border-bottom: 1px solid #ddd; background-color: white; background-size: 0; }
+    .moo-bar-header > .moo-left { float: left; }
+    .moo-bar-header > .moo-right { float: right; }
+    .moo-bar-header > .moo-left.action { font-size: 22px; width: 34px; height: 34px; line-height: 34px; text-align: center; }
+
+.moo-content { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; margin-top: -1px; padding-top: 1px; margin-bottom: -1px; width: auto; height: auto; }
+.moo-bar-header ~ .moo-content { top: 44px; }
+
+.moo-scroll { -webkit-overflow-scrolling: touch; overflow: auto; }
+
+.moo-list { }
+    .moo-list li { display: block; position: relative; border-bottom: 1px solid rgba(33,33,33,.5); min-height: 24px; line-height: 24px; padding: 4px; }
+        .moo-list li::after { clear: both; content: " "; display: block; }
+        .moo-list li .moo-left,
+        .moo-list li .moo-right { max-width: 50%; }
+        .moo-list li.am-icon-angle-right .moo-right { padding-right: 22px; }
+        .moo-list li.am-icon-angle-right::before { position: absolute; right: 5px; top: 50%; color: #fff; font-size: 22px; transform: translateY(-50%); }
+
+.moo-scroll-loading::after { content: "loading..."; text-align: center; line-height: 50px; color: #fff; text-shadow: 1px 1px 0px #000; display: block; position: fixed; bottom: 10px; left: 0px; right: 0px; }

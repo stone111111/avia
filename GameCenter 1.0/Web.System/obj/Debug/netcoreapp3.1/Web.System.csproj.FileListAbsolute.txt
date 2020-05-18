@@ -1,0 +1,158 @@
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\appsettings.Development.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Properties\launchSettings.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.exe
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.deps.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.dev.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.dll
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\Web.System.pdb
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csprojAssemblyReference.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.Manifest.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.xml
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.Properties.Resources.resources
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.GenerateResource.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cs
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfoInputs.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfo.cs
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.RazorTargetAssemblyInfo.cache
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CopyComplete
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
+D:\泛亚电竞\svn\WebSite\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\appsettings.json
+D:\泛亚电竞\svn\Publish\System\netcoreapp3.1\web.config
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\appsettings.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\web.config
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.exe
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.deps.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.runtimeconfig.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.runtimeconfig.dev.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Web.System.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Aliyun.MNS.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Aliyun.OSS.Core.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Dapper.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Gma.QrCodeNet.Encoding.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Relational.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\MySql.Data.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\PinYinConverterCore.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Pipelines.Sockets.Unofficial.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\PusherServer.Core.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\StackExchange.Redis.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Composition.AttributedModel.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Composition.Convention.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Composition.Hosting.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Composition.Runtime.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Composition.TypedParts.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Diagnostics.PerformanceCounter.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Runtime.Caching.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win-x64\nativeassets\netcoreapp2.2\aspnetcorev2_inprocess.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win-x86\nativeassets\netcoreapp2.2\aspnetcorev2_inprocess.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.PerformanceCounter.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Agent.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Cache.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Common.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\SP.Provider.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\SP.StudioCore.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Agent.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Common.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\GM.Cache.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\SP.Provider.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\bin\Debug\netcoreapp3.1\SP.StudioCore.pdb
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.exe
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csprojAssemblyReference.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.Manifest.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.xml
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.Properties.Resources.resources
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.GenerateResource.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cs
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfoInputs.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfo.cs
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\web.config
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\appsettings.Development.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\appsettings.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Properties\launchSettings.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.deps.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.dev.json
+D:\泛亚电竞\svn\MicroService\Publish\System\netcoreapp3.1\Web.System.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.RazorTargetAssemblyInfo.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CopyComplete
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
+D:\avia\Publish\System\netcoreapp3.1\web.config
+D:\avia\Publish\System\netcoreapp3.1\appsettings.Development.json
+D:\avia\Publish\System\netcoreapp3.1\appsettings.json
+D:\avia\Publish\System\netcoreapp3.1\Properties\launchSettings.json
+D:\avia\Publish\System\netcoreapp3.1\Web.System.exe
+D:\avia\Publish\System\netcoreapp3.1\Web.System.deps.json
+D:\avia\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.json
+D:\avia\Publish\System\netcoreapp3.1\Web.System.runtimeconfig.dev.json
+D:\avia\Publish\System\netcoreapp3.1\Web.System.dll
+D:\avia\Publish\System\netcoreapp3.1\Web.System.pdb
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csprojAssemblyReference.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.Properties.Resources.resources
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.GenerateResource.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CoreCompileInputs.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cs
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.MvcApplicationPartsAssemblyInfo.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfoInputs.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.AssemblyInfo.cs
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.RazorTargetAssemblyInfo.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.csproj.CopyComplete
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.Manifest.cache
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\staticwebassets\Web.System.StaticWebAssets.xml
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.dll
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.pdb
+D:\avia\GameCenter 1.0\Web.System\obj\Debug\netcoreapp3.1\Web.System.genruntimeconfig.cache

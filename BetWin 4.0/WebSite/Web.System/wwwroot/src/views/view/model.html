@@ -1,0 +1,163 @@
+﻿<style type="text/css">
+    .view-model-file { float: left; width: 80px; height: 50px; margin: 10px; word-break: break-all; border: 1px solid #efefef; padding: 5px; font-size: 12px; text-align: center; border-radius: 6px; box-shadow: 0px 0px 5px rgba(0,0,0,.2); position: relative; }
+        .view-model-file a { visibility: hidden; position: absolute; border-radius: 50%; border: 1px solid #ccc; width: 16px; height: 16px; line-height: 16px; right: -8px; top: -8px; background-color: #fff; }
+            .view-model-file a.preview { right: 12px; }
+        .view-model-file:hover a { visibility: visible; }
+
+
+        .view-model-file[data-status='wait']::before { content: "\f251"; font-size: 16px; position: absolute; bottom: 10px; left: 50%; transform: translate(-50%,-50%); }
+        .view-model-file[data-status='upload']::before { content: "\f110"; font-size: 16px; position: absolute; bottom: 10px; animation: icon-spin 2s infinite linear; }
+        .view-model-file[data-status='done']::before { content: "\f058"; font-size: 32px; position: absolute; top: 70%; left: 50%; transform: translate(-50%,-50%); color: green; }
+</style>
+<div class="layui-card">
+    <script type="text/html" template lay-url="System/View/GetModelInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['view-model'](d)">
+        <div class="layui-card-header" id="view-model-header">
+            模型信息
+            <button class="layui-btn layui-btn-right layui-btn-danger" data-action="System/View/DeleteModel" data-confirm="確認要刪除嗎？" data-callback="view-model-delete" data-data='{"ID":"{{ d.info.ID }}"}'>
+                <i class="am-icon-close"></i> 刪除
+            </button>
+            <button class="layui-btn layui-btn-right layui-btn-normal" data-action="System/View/PublishModel" data-data='{"ID":"{{ d.info.ID }}"}' data-callback="view-model-publish">
+                <i class="am-icon-play-circle"></i> 发布
+            </button>
+            <button class="layui-btn layui-btn-right" data-popup="view/modelinfo" data-title="修改模型信息" data-data='{"ID":"{{ d.info.ID }}"}' data-area="sm">
+                <i class="am-icon-edit"></i> 修改
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" lay-filter="view-model-contents" id="view-model-contents"></table>
+        </div>
+        <div class="layui-card-header">
+            资源文件
+            <input type="file" class="layui-btn layui-btn-normal layui-btn-right" value="上传文件" multiple id="view-model-upload" />
+        </div>
+        <div class="layui-card-body layui-clear" id="view-model-files">
+        </div>
+    </script>
+</div>
+<script type="text/html" id="view-model-file-template">
+    <h3>{{ d.Name }}</h3>
+    <a href="javascript:" class="delete am-icon-close" data-delete="{{ d.Name }}"></a>
+    {{# if(d.Path){ }}
+    <a href="javascript:" class="preview am-icon-eye" data-preview="{{ d.Path }}"></a>
+    {{# } }}
+</script>
+<script type="text/javascript">
+
+    BW.callback["view-model-delete"] = function (result) {
+        layer.closeAll();
+        if(BW.callback["view-index-tab-load"]) BW.callback["view-index-tab-load"]();
+    }
+
+    BW.callback['view-model'] = function (result) {
+        delete BW.callback['view-model'];
+        layui.use(["betwin", "admin", "table","laytpl","admin"], function () {
+            var betwin = layui.betwin,
+                table = layui.table,
+                laytpl = layui.laytpl,
+                admin = layui.admin;
+
+            var modelId = result.info.ID;
+
+            betwin.admin.popup("#view-model-header");
+
+            table.render({
+                elem: "#view-model-contents",
+                url: "System/View/ModelContents",
+                where: {
+                    ID: result.info.ID
+                },
+                cols: [[
+                    { title: "语种", templet: "<div>{{ GolbalSetting.enum['SP.StudioCore.Enums.Language'][d.Language] || d.Language }}</div>",width:100 },
+                    { title: "路径", templet: "<div><a href='{{ d.Path }}' class='layui-text-blue' target='_blank'>{{ d.Path }}</a></div>" },
+                    { title: "语言包", width:80, templet: "<div>{{ htmlFunction.p(d.Translate) }}</div>" }
+                ]]
+            });
+
+            // 文件上传
+            var files = document.getElementById("view-model-files");
+            var uploadObj = document.getElementById("view-model-upload");
+            var fileTemplate = document.getElementById("view-model-file-template").innerHTML;
+
+            var appendFile = function (info, index) {
+                var div = document.createElement("div");
+                div.className = "view-model-file am-icon-";
+                if (index !== undefined) {
+                    div.setAttribute("data-index", index);
+                    div.setAttribute("data-status", "wait");
+                }
+                div.innerHTML = laytpl(fileTemplate).render(info);                
+                files.appendChild(div);
+            }
+
+            // 上傳文件到服務器
+            var uploadFile = function (index) {
+                if (!index) index = 0;
+                if (index === uploadObj.files.length) {
+                    layer.msg("文件上傳完畢，請點擊發佈", { icon: 1 });
+                    return;
+                }
+                var filePreview = files.querySelector("[data-index='" + index + "']");
+                if (filePreview) {
+                    filePreview.setAttribute("data-status", "upload");
+                    var file = uploadObj.files[index];
+                    var data = new FormData();
+                    data.append("ID", modelId);
+                    data.append("file", file)
+
+                    admin.req({
+                        url: "System/View/SaveModelFile",
+                        async: false,
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            filePreview.setAttribute("data-status", "done");
+                            filePreview.removeAttribute("data-index");
+                            setTimeout(uploadFile, 100, index + 1);
+                        }
+                    });
+                } else {
+                    console.error("找不到上傳對象:Index = " + index);
+                }
+            };
+
+            document.getElementById("view-model-upload").addEventListener("change", function () {
+                var obj = this;
+                for (var i = 0; i < obj.files.length; i++) {
+                    appendFile({
+                        Name: obj.files[i].name
+                    }, i);
+                }
+                setTimeout(uploadFile, 500);
+            });
+
+            document.getElementById("view-model-files").addEvent("click", function (e) {
+                var obj = e.target;
+                var name = obj.getAttribute("data-delete");
+                betwin.admin.req({
+                    url: "System/View/DeleteModelResource",
+                    data: {
+                        ModelID: modelId,
+                        Name: name
+                    },
+                    success: function (res) {
+                        obj.parentNode.dispose();
+                    }
+                });
+
+            }, function (item) {
+                return item.getAttribute("data-delete");
+            });
+
+            layui.each(result.info.Resources, function (key, item) {
+                appendFile(item);
+            });
+        });
+    }
+
+
+
+    BW.callback['view-model-publish'] = function (res) {
+        layui.table.reload("view-model-contents");
+    };
+</script>

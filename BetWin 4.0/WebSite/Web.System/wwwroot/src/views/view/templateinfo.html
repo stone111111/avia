@@ -1,0 +1,110 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="System/View/GetTemplateInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['view-templateinfo'](d)">
+            <form class="layui-form" id="view-templateinfo" lay-filter="view-templateinfo" action="System/View/SaveTemplateInfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">模板名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Name" class="layui-input" value="{{ d.info.Name || ""}}" />
+                    </div>
+                    <label class="layui-form-label">模板类型：</label>
+                    <div class="layui-input-inline">
+                        <select name="Platform" data-enum="BW.Views.PlatformSource" lay-filter="view-templateinfo-platform" data-value="{{ d.info.Platform }}"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-form-label">预览图：</div>
+                    <input type="image" name="Cover" class="layui-input-upload" id="view-templateinfo-cover" src="{{ UI.GetImage(d.info.Preview) }}" value="{{ d.info.Preview }}" />
+                </div>
+                <div class="view-index-content layui-bg-gray" id="view-templateinfo-views"></div>
+                <hr />
+                <div class="layui-form-item">
+                    <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="view-templateinfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+
+<script type="text/html" id="view-templateinfo-views-template">
+    {{# layui.each(d.info.list,function(index,item){ }}
+    <div class="layui-inline">
+        <div class="layui-card">
+            <div class="layui-card-header">{{ item.Name }}</div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space10">
+                    {{# layui.each(item.Models,function(index,model){ }}
+                    <div class="layui-col-md6 model {{ (d.Models.length === 0 && index === 0) || (d.Models.contains(model.ID)) ? "selected" : "" }}" data-modelid="{{ model.ID }}">
+                        <a href="javascript:" class="preview" style="background-image:url('{{ UI.GetImage(model.Preview) }}');"></a>
+                        <label>{{ model.Name }}</label>
+                        <em class="am-icon-circle-o"></em>
+                    </div>
+                    {{# })}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{# }) }}
+</script>
+<script type="text/javascript">
+    BW.callback['view-templateinfo'] = function (result) {
+        delete BW.callback['view-templateinfo'];
+        layui.use(["betwin", "laytpl", "form", "table"], function () {
+            var betwin = layui.betwin,
+                laytpl = layui.laytpl,
+                form = layui.form,
+                table = layui.table,
+                $ = layui.$;
+
+            var template = document.getElementById("view-templateinfo-views-template").innerHTML;
+            // 加载视图
+            var loadData = function (platform) {
+                betwin.admin.req({
+                    url: "System/View/SettingList",
+                    data: { Platform: platform },
+                    success: function (res) {
+                        res.Models = result.info.Models;
+
+                        laytpl(template).render(res, function (html) {
+                            document.getElementById("view-templateinfo-views").innerHTML = html;
+                        })
+                    }
+                });
+            };
+
+            form.on("select(view-templateinfo-platform)", function (e) {
+                loadData(e.value);
+            });
+
+            loadData("PC");
+
+            $("#view-templateinfo-views").on("click", ".model", function () {
+                if (this.hasClass("selected")) return;
+                var parent = this.getParent("layui-row");
+                var list = parent.querySelectorAll(".model");
+                for (var i = 0; i < list.length; i++) {
+                    list[i].removeClass("selected");
+                }
+                this.addClass("selected");
+            });
+
+            betwin.form.upload("view-templateinfo-cover");
+            betwin.form.render("view-templateinfo");
+
+            betwin.form.submit("view-templateinfo-submit", function (data) {
+                var model = [];
+                var models = document.getElementById("view-templateinfo-views").querySelectorAll(".model.selected");
+                for (var i = 0; i < models.length; i++) {
+                    model.push(models[i].getAttribute("data-modelid"));
+                }
+                data["Model"] = model.join(",");
+                return data;
+            }, {
+                success: function (res) {
+                    table.reload("view-template");
+                }
+            });
+        });
+    }
+</script>

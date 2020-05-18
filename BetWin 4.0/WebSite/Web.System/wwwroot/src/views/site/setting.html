@@ -1,0 +1,55 @@
+﻿<title>条件配置</title>
+<div class="layui-text-tip debug">
+    <ol>
+        <li>条件配置指的是配置条件的SQL，商户后台填入条件配置的参数值，可以用于 用户分组的自动跳组条件、活动的筛选条件等场景</li>
+        <li>
+            原理：后台配置出一个查询条件的SQL，如<i>SELECT 0 FROM Users WHERE SiteID = @SiteID AND UserID = @UserID AND EXISTS(SELECT 0 FROM usr_Rechage WHERE UserID = @UserID GROUP BY UserID HAVING(SUM(Money)) > @Money)</i>,
+            此SQL可以适配找出充值大于@Money的的会员，配置@Money的类型，填写说明，给商户在自己的后台填写。
+        </li>
+    </ol>
+</div>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="site-setting-header">
+            条件配置
+            <button class="layui-btn layui-btn-right" data-popup="site/settinginfo" data-area="lg">
+                <i class="am-icon-plus"></i> 添加配置
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <script type="text/html" template lay-done="BW.callback['site-setting-tab']()">
+                <div class="layui-tab layui-tab-brief" lay-filter="site-setting-tab" id="site-setting-tab">
+                    <ul class="layui-tab-title">
+                        {{# layui.each(GolbalSetting.enum["BW.Common.Systems.SystemCondition+ConditionType"],function(key,value){ }}
+                        <li lay-id="{{ key }}">{{ value }}</li>
+                        {{# }) }}
+                    </ul>
+                    <hr class="xs" />
+                    <div class="layui-tab-content">
+                        <table class="layui-table" id="site-setting-list" lay-filter="site-setting-list"></table>
+                    </div>
+                </div>
+            </script>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback["site-setting-tab"] = function () {
+        delete BW.callback["site-setting-tab"];
+
+        layui.use(["element", "table", "betwin"], function () {
+            var layui = this,
+                element = layui.element,
+                table = layui.table,
+                betwin = layui.betwin;
+
+            element.on('tab(site-setting-tab)', function () {
+                var type = this.getAttribute("lay-id");
+
+
+            });
+            element.tabChange('site-setting-tab', "UserGroup");
+            betwin.admin.popup("#site-setting-header");
+        });
+    }
+</script>

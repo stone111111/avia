@@ -1,0 +1,54 @@
+﻿<style type="text/css">
+</style>
+<div class="layui-card">
+    <script type="text/html" lay-url="Merchant/Site/Info" lay-type="post" lay-data="{'ID':{{ d.params.SiteID }} }" template lay-done="UI.SetEditMode('diag-site-main-info');">
+        <form action="Merchant/Site/Save" class="layui-form" lay-filter="diag-site-main-info" id="diag-site-main-info">
+            <div class="layui-card-header">
+                基础设置
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商户编号：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="number" name="ID" readonly="readonly"  value="{{ d.info.ID }}" placeholder="请输入商户编号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商户名称：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Name" value="{{ d.info.Name }}" placeholder="请输入商户名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">主币种：</label>
+                    <div class="layui-input-inline w150">
+                        <select name="Currency" data-enum="SP.StudioCore.Enums.Currency"  data-value="{{ d.info.Currency }}"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">主语种：</label>
+                    <div class="layui-input-inline w150">
+                        <select name="Language" data-enum="SP.StudioCore.Enums.Language"  data-value="{{ d.info.Language }}"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">前缀：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Prefix" lay-verify=""  value="{{ d.info.Prefix }}" placeholder="请输入前缀" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+
+</div>
+
+<script type="text/javascript">
+    BW.callback['diag-site-main-info'] = function (reault) {
+        delete BW.callback['diag-site-main-info'];
+        layui.use(["form"], function () {
+            var form = layui.form;
+
+        });
+    };
+</script>

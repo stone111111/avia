@@ -1,0 +1,28 @@
+﻿<title>会员管理</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            商户列表
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form layui-form-sm">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">所属商户：</label>
+                    <div class="layui-input-inline">
+                        <select name="SiteID"></select>
+                    </div>
+                    <label class="layui-form-label">用户名：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="UserName" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">游戏账户：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="GameName" class="layui-input" />
+                    </div>
+                    <div class="layui-input-inline" data-submit></div>
+                </div>
+            </form>
+            <table class="layui-table" id="site-list" lay-filter="site-list"></table>
+        </div>
+    </div>
+</div>

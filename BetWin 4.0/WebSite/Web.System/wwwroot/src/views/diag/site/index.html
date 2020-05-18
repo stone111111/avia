@@ -1,0 +1,48 @@
+﻿<script type="text/html" template lay-done="BW.callback['diag-site-index'](d)">
+    <div class="layui-tab layui-tab-brief diagtab" style="margin:0px;" lay-filter="diag-site-tab" id="diag-site-tab">
+        <ul class="layui-tab-title layui-bg-cyan">
+            <li lay-id="main"><i class="am-icon-cog"></i> <span>基础信息</span></li>
+            <li lay-id="game"><i class="am-icon-gamepad"></i> <span>游戏设定</span></li>
+            <li lay-id="domain"><i class="am-icon-adn"></i> <span>域名管理</span></li>
+            <li lay-id="cert"><i class="am-icon-certificate"></i> <span>证书管理</span></li>
+            <li lay-id="safe"><i class="am-icon-shield"></i> <span>后台安全</span></li>
+            <li lay-id="template"><i class="am-icon-tasks"></i> <span>模板配置</span></li>
+            <li lay-id="report"><i class="am-icon-pie-chart"></i> <span>简要报表</span></li>
+        </ul>
+        <div class="layui-tab-content" id="diag-site-show"></div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    BW.callback['diag-site-index'] = function (result) {
+        delete BW.callback['diag-site-index'];
+
+        layui.use(["form", "view", "element"], function () {
+            var $ = layui.$
+                , layer = layui.layer
+                , view = layui.view
+                , element = layui.element;
+
+            var siteId =  result.params.SiteID;
+            var start =  result.params.Start || "main";
+
+            element.on('tab(diag-site-tab)', function () {
+                var type = this.getAttribute("lay-id");
+                var url = "diag/site/" + type;
+                var data = { SiteID: siteId };
+                var loadIndex = layer.load(2, { time: 3000 });
+                view('diag-site-show').render(url, data).then(function () {
+
+                }).done(function () {
+                    layer.close(loadIndex);
+                    var content = $("#diag-site-show");
+                    var viewsite = content.parents(".site");
+                    var height = viewsite.height() - viewsite.find(".layui-layer-title").height() - viewsite.find(".layui-tab-title").height();
+                    content.css("height", height);
+                });
+            });
+            element.tabChange('diag-site-tab', start);
+        });
+    }
+
+</script>

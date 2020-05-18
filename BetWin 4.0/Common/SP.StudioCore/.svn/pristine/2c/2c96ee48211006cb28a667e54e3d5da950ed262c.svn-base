@@ -1,0 +1,109 @@
+﻿using Dapper;
+using SP.StudioCore.Data.Expressions;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq.Expressions;
+using System.Text;
+
+namespace SP.StudioCore.Data.Extension
+{
+    /// <summary>
+    /// 数据的表达式方式操作
+    /// </summary>
+    public static class DbExecutorExpression
+    {
+        /// <summary>
+        /// 查询一个值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static TValue ExecuteScalar<T, TValue>(this DbExecutor db, Expression<Func<T, TValue>> field, Expression<Func<T, bool>> condition) where T : class
+        {
+            using (ExpressionCondition expression = new ExpressionCondition())
+            {
+                expression.Visit(field);
+                string sql = $"SELECT TOP 1 {expression.ToString()} FROM [{typeof(T).GetTableName()}]";
+                expression.Visit(condition);
+                sql += expression.ToCondition(out DynamicParameters parameters);
+                object value = db.ExecuteScalar(CommandType.Text, sql, parameters);
+                if (value == null) return default;
+
+                return (TValue)value;
+            }
+        }
+
+        /// <summary>
+        /// 数据是否存在
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static bool Exists<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class
+        {
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string sql = $"SELECT 0 WHERE EXISTS(SELECT 0 FROM [{typeof(T).GetTableName()}] { expression.ToCondition(out DynamicParameters parameters)} )";
+                object value = db.ExecuteScalar(CommandType.Text, sql, parameters);
+                return value != null;
+            }
+        }
+
+        /// <summary>
+        /// 只更新一个字段
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="field"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static int Update<T, TValue>(this DbExecutor db, Expression<Func<T, TValue>> field, TValue value, Expression<Func<T, bool>> condition)
+        {
+            using (ExpressionCondition expression = new ExpressionCondition())
+            {
+                expression.Visit(field);
+                string sql = $"UPDATE [{typeof(T).GetTableName()}] SET {expression.ToString()} = @Value ";
+                expression.Visit(condition);
+                sql += expression.ToCondition(out DynamicParameters parameters);
+                parameters.Add("@Value", value);
+                return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+            }
+        }
+
+        [Obsolete("未实现")]
+        public static int Update<T>(this DbExecutor db, T obj, Expression<Func<T, bool>> condition) where T : class, new()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("UPDATE [{0}] SET ", typeof(T).GetTableName());
+
+            using (ExpressionCondition expression = new ExpressionCondition())
+            {
+                expression.Visit(condition);
+                sb.AppendFormat(expression.ToCondition(out DynamicParameters parameters));
+
+                return db.ExecuteNonQuery(CommandType.Text, sb.ToString(), parameters);
+            }
+        }
+
+        /// <summary>
+        /// 刪除數據
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static int Delete<T>(this DbExecutor db, Expression<Func<T, bool>> condition) where T : class, new()
+        {
+            using (ExpressionCondition expression = new ExpressionCondition(condition))
+            {
+                string sql = $"DELETE FROM [{typeof(T).GetTableName()}] { expression.ToCondition(out DynamicParameters parameters) }";
+
+                return db.ExecuteNonQuery(CommandType.Text, sql, parameters);
+            }
+        }
+    }
+}

@@ -1,0 +1,148 @@
+﻿
+@keyframes bw-highlight {
+    0% { background-color: transparent; }
+    50% { background-color: yellow; }
+    100% { background-color: transparent; }
+}
+
+html, body { margin: 0px; height: 100%; position: relative; background: #fff; font-family: "Segoe UI","Lucida Grande",Helvetica,Arial,"Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,sans-serif; font-weight: 400; line-height: 1.6; color: #333; }
+    body.bw-mobile { font-size: 14px; }
+
+*, :after, :before { -webkit-box-sizing: border-box; box-sizing: border-box; }
+h1, h2, h3, h4, h5, h6, p, form, menu, header, ul, li { padding: 0px; margin: 0px; list-style-type: none; font-weight: normal; }
+input, button, textarea, select { outline: none; }
+    input[type="button"], input[type="submit"], button { cursor: pointer; }
+a { text-decoration: none; color: #333; }
+
+/* 布局 */
+.bw-clear::after { clear: both; content: " "; display: block; }
+.bw-pull-left { float: left; }
+.bw-pull-right { float: right; }
+.bw-pull-p50 { width: 50%; }
+.bw-pull-p95 { width: 95%; margin-left: auto; margin-right: auto; }
+
+/* 颜色 */
+.bw-text-red { color: #d65966; }
+.bw-text-blue { color: #108ee9; }
+.bw-text-gray { color: #666; }
+.bw-text-white { color: #fff; }
+.bw-text-green { color: #4bad4b; }
+.bw-bg-gray { background-color: #f7f7f7; }
+.bw-bg-white { background-color: #fff; }
+
+/* 字体大小 */
+.bw-text-f12 { font-size: 12px; }
+.bw-text-f14 { font-size: 14px; }
+.bw-text-f16 { font-size: 16px; }
+.bw-text-f18 { font-size: 18px; }
+.bw-text-f22 { font-size: 22px; }
+
+.bw-text-bold { font-weight: bold; }
+
+.bw-margin { margin: 10px; }
+.bw-margin-xs { margin: 5px; }
+.bw-margin-xl { margin: 20px; }
+.bw-margin-top { margin-top: 10px; }
+.bw-margin-top-xs { margin-top: 5px; }
+.bw-margin-top-xl { margin-top: 20px; }
+.bw-margin-right { margin-right: 10px; }
+.bw-margin-right-xs { margin-right: 5px; }
+.bw-margin-right-xl { margin-right: 20px; }
+.bw-margin-left { margin-left: 10px; }
+.bw-margin-left-xs { margin-left: 5px; }
+.bw-margin-left-xl { margin-left: 20px; }
+
+.bw-padding { padding: 10px; }
+.bw-padding-xs { padding: 5px; }
+.bw-padding-xl { padding: 20px; }
+.bw-padding-top { padding-top: 10px; }
+.bw-padding-top-xs { padding-top: 5px; }
+.bw-padding-bottom { padding-bottom: 10px; }
+.bw-padding-bottom-xs { padding-bottom: 5px; }
+.bw-padding-bottom-xl { padding-bottom: 20px; }
+.bw-padding-left { padding-left: 10px; }
+.bw-padding-right { padding-right: 10px; }
+
+
+.bw-align-left { text-align: left; }
+.bw-align-right { text-align: right; }
+.bw-align-center { text-align: center; }
+
+.bw-line-bottom { border-bottom: 1px solid #f5f5f5; }
+
+/* 动画 */
+.bw-fx-highlight { -webkit-animation: bw-highlight 0.5s 1 linear; animation: bw-highlight 0.5s 1 linear; }
+
+/* 按钮 */
+.bw-button { transition: all 0.25s; border-color: transparent; background-color: #f8f8f8; color: #444; text-align: center; position: relative; display: inline-block; margin: 0; padding: 0 12px; min-width: 52px; min-height: 47px; border-width: 1px; border-style: solid; border-radius: 4px; vertical-align: top; text-align: center; text-overflow: ellipsis; font-size: 16px; line-height: 42px; cursor: pointer; }
+    .bw-button.bw-blue { color: #fff; background: #108ee9; }
+    .bw-button.disabled, .bw-button[disabled] { box-shadow: none !important; background: #ccc; opacity: 1 !important; color: #fff; }
+    .bw-button.bw-block { display: block; width: 100%; }
+
+/* 控件布局 - 头部导航条 */
+.bw-header-nav { position: fixed; width: 100%; height: 44px; padding: 5px; box-shadow: 0px 2px 2px rgba(0,0,0,.2); line-height: 34px; top: 0px; left: 0px; z-index: 1; background-color: #fff; }
+    .bw-header-nav .bw-title { text-align: center; }
+    .bw-header-nav .bw-left { position: absolute; left: 0px; top: 5px; text-align: center; min-width: 44px; }
+    .bw-header-nav .bw-right { position: absolute; right: 0px; top: 5px; text-align: center; min-width: 44px; }
+
+/* 内容区域 */
+.bw-content { position: absolute; top: 0; right: 0; left: 0; overflow: hidden; margin-top: -1px; padding-top: 1px; margin-bottom: -1px; width: auto; height: auto; }
+.bw-header-nav ~ .bw-content { top: 44px; }
+
+/* 手机版页面框架 */
+.bw-frame-container { }
+.bw-frame-item { position: absolute; transition: all 0.5s; transform: translate3d(-30%,0,0); background-color: #fff; height: 100%; top: 0px; width: 100%; overflow: auto; }
+    .bw-frame-item.in-right { transform: translate3d(100%,0,0); }
+    .bw-frame-item.in-left { transform: translate3d(-100%,0,0); }
+    .bw-frame-item.active { transform: none; }
+        .bw-frame-item.active ~ .bw-frame-item { transform: translate3d(100%,0,0); }
+/* 侧滑菜单 */
+.bw-off-canvas { position: fixed; background-color: #fff; transition: all .3s ease-in-out; width: 0px; height: 0px; overflow: hidden; }
+    .bw-off-canvas.in-left { width: 80%; height: 100%; left: -80%; }
+    .bw-off-canvas.in-right { width: 80%; height: 100%; right: -80%; }
+    .bw-off-canvas.in-bottom { width: 100%; height: 50%; bottom: -50%; }
+/* 侧滑菜单的遮罩容器 */
+.bw-off-canvas-wrap { position: fixed; z-index: 100; background-color: rgba(0,0,0,.01); width: 100%; height: 100%; left: 0px; top: 0px; visibility: hidden; transition: visibility 0.5s,background-color 0.3s; }
+    .bw-off-canvas-wrap.active { visibility: visible; background-color: rgba(0,0,0,.2); }
+        .bw-off-canvas-wrap.active > .bw-off-canvas { }
+            .bw-off-canvas-wrap.active > .bw-off-canvas.in-left { left: 0%; box-shadow: 5px 0px 5px rgba(0,0,0,.2); }
+            .bw-off-canvas-wrap.active > .bw-off-canvas.in-right { right: 0%; box-shadow: -5px 0px 5px rgba(0,0,0,.2); }
+            .bw-off-canvas-wrap.active > .bw-off-canvas.in-bottom { bottom: 0%; box-shadow: 0px -5px 5px rgba(0,0,0,.2); }
+
+/* 移动端滚动条 */
+.bw-scroll { }
+
+/* 列表 */
+.bw-table-view { }
+.bw-table-view-cell { border-bottom: 1px solid #dedede; position: relative; }
+    .bw-table-view-cell:active { background-color: #efefef; }
+    .bw-table-view-cell.am-icon-chevron-right,
+    .bw-table-view-cell.am-icon-angle-right { display: block; padding-right: 15px; }
+        .bw-table-view-cell.am-icon-chevron-right::before,
+        .bw-table-view-cell.am-icon-angle-right::before { position: absolute; right: 7px; top: 50%; -webkit-transform: translateY(-50%); transform: translateY(-50%); color: #bbb; font-size: 16px; }
+
+/* 全局的等待样式 */
+body.bw-loading { }
+    body.bw-loading:before { content: " "; position: fixed; z-index: 999; width: 100%; height: 100%; top: 0px; left: 0px; right: 0px; background-color: rgba(0,0,0,.2); transition: all 0.2s; }
+    body.bw-loading:after { content: " "; z-index: 1000; width: 100px; height: 100px; position: absolute; left: 50%; top: 50%; margin: -50px auto auto -50px; background: rgba(0,0,0,.25) url(../images/loading-bar.gif) no-repeat center center; border-radius: 12px; }
+
+.bw-loading-bar { background: url(../images/loading-bar.gif) no-repeat center center; }
+    .bw-loading-bar > * { visibility: hidden; }
+
+/* alert 弹出框 */
+.bw-mobile .bw-tip { transition: top 0.5s,opacity 0.5s; z-index: 1000; border-radius: 10px; text-align: center; color: #000; font-size: 16px; background-color: rgba(255, 255, 255, 1); width: 250px; max-width: 100%; max-height: 90%; position: fixed; left: 50%; top: 50%; box-shadow: 0px 0px 10px rgba(0,0,0,.2); }
+    .bw-mobile .bw-tip.bw-tip-hide { opacity: 0; top: 40%; }
+    .bw-mobile .bw-tip > .title { display: none; }
+    .bw-mobile .bw-tip .content-msg { padding: 20px 15px; line-height: 30px; }
+    .bw-mobile .bw-tip .button { padding: 0; min-height: 45px; line-height: 45px; border-radius: 0 0 10px 10px; border-top: 1px solid #f1f1f1; }
+        .bw-mobile .bw-tip .button a { display: block; color: #157efb; }
+
+.bw-tip ~ .tip-mask { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; z-index: 200; background-color: rgba(0,0,0,.2); transition: opacity 0.5s; }
+    .bw-tip ~ .tip-mask.tip-mask-hide { opacity: 0; }
+
+.loading-form { background: url(../images/loading.gif) no-repeat center center; }
+    .loading-form > * { visibility: hidden; }
+
+/* 通用的遮罩效果 */
+.bw-mask { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background-color: rgba(0,0,0,.5); z-index: 100; }
+    .bw-mask.glass { }

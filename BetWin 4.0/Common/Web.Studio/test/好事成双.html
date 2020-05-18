@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="show.js"></script>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <script type="text/javascript">
+        var data = {
+            "一帆风顺": 0,
+            "好事成双": 0,
+            "三星报喜": 0,
+            "四季发财": 0
+        };
+        var input = 8;
+        var count = 0;
+        for (var i1 = 0; i1 < 10; i1++) {
+            for (var i2 = 0; i2 < 10; i2++) {
+                for (var i3 = 0; i3 < 10; i3++) {
+                    for (var i4 = 0; i4 < 10; i4++) {
+                        for (var i5 = 0; i5 < 10; i5++) {
+                            count++;
+                            var num = [i1, i2, i3, i4, i5];
+                            var number = {};
+                            for (var i = 0; i < num.length; i++) {
+                                var n = num[i];
+                                if (number[n]) {
+                                    number[n]++;
+                                } else {
+                                    number[n] = 1;
+                                }
+                            }
+
+                            if (number[input]) data["一帆风顺"]++;
+                            if (number[input] > 1) data["好事成双"]++;
+                            if (number[input] > 2) data["三星报喜"]++;
+                            if (number[input] > 3) {
+                                console.log(num);
+                                data["四季发财"]++;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        console.log(data);
+        ShowResult(data, count);
+    </script>
+</body>
+</html>

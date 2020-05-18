@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="../2.5/scripts/mootools.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+
+        //2018/5/8 22:13:03 200 /handler/api/log/get 172.31.33.243 POST =================  Header Begin  ================= Connection：close
+        //  Content-Length：77 Content-Type：application/x-www-form-urlencoded
+        // Authorization：c737130f12b04bf5b735aa8737bc7241 Host：es:9000 X-Real-IP：10.144.116.56 X-Forwarded-For：47.90.9.9 =================  Header End  =================
+        //  =================  POST Begin  ================= POST       StartAt : 2018/5/8 15:32:31      EndAt : 2018/5/8 16:02:31      PageSize : 1024      Type : UpdateAt =================  POST End  =================
+
+        new Request.JSON({
+            "url": "http://es.api.a8.to/handler/api/log/get",
+            "headers": {
+                "Authorization": "c737130f12b04bf5b735aa8737bc7241"
+            },
+            "onSuccess": function (result) {
+                console.log(result);
+            }
+        }).post({
+            "StartAt": "2018/5/8 15:32:31",
+            "EndAt": "2018/5/8 16:02:31",
+            "Type": "CreateAt"
+        })
+    </script>
+</body>
+</html>

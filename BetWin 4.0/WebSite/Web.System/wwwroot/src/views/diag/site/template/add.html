@@ -1,0 +1,111 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <form action="Merchant/Template/AddTemplate" class="layui-form" id="diag-site-template-add" lay-filter="diag-site-template-add">
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    模板名称：
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Name" class="layui-input" />
+                </div>
+                <label class="layui-form-label">
+                    模板类型：
+                </label>
+                <div class="layui-input-inline w100">
+                    <select name="Platform" data-enum="BW.Views.PlatformSource" lay-filter="diag-site-template-add-platform"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="IsDefault" title="默认模板" lay-filter="diag-site-template-add-default" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">适用域名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Domain" id="diag-site-template-add-domain" class="layui-input" placeholder="多个域名用逗号隔开，适配泛解析域名，域名必须在商户域名中已经登记" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <fieldset>
+                    <legend>来源模板</legend>
+                    <div id="diag-site-template-add-source"></div>
+                </fieldset>
+            </div>
+            <div class="layui-form-item">
+                <script type="text/html" template>
+                    <input type="hidden" name="SiteID" value="{{ d.params.SiteID }}" />
+                </script>
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-template-add-submit">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/html" id="diag-site-template-add-system-template">
+    <div class="layui-row view-index-content layui-col-space10">
+        {{# layui.each(d.info.list,function(index,item){ }}
+        <div class="layui-col-md2 model" data-templateid="{{ item.ID }}">
+            <a href="javascript:" class="preview" style="height:100px; background-image:url('{{ UI.GetImage(item.Preview) }}');"></a>
+            <em class="am-icon-eye" title="预览"></em>
+            <em class="am-icon-circle select" title="选择"></em>
+            <label>{{ item.Name }}</label>
+        </div>
+        {{# }) }}
+    </div>
+</script>
+
+<script type="text/javascript">
+    layui.use(["betwin", "form", "laytpl", "table"], function () {
+        var betwin = layui.betwin,
+            form = layui.form,
+            laytpl = layui.laytpl,
+            table = layui.table;
+        betwin.form.render("diag-site-template-add");
+
+        // 加载系统模板
+        var loadSystemTemplate = function (platform) {
+            betwin.admin.req({
+                url: "System/View/TemplateList",
+                data: {
+                    Platform: platform
+                },
+                success: function (res) {
+                    laytpl("diag-site-template-add-system-template".innerHTML()).render(res, function (html) {
+                        "diag-site-template-add-source".innerHTML(html);
+                    });
+                }
+            })
+        };
+        loadSystemTemplate("PC");
+
+        var template = document.getElementById("diag-site-template-add-source");
+        $(template).on("click", ".model", function () {
+            var selected = template.querySelector(".selected");
+            if (selected === this) return;
+            this.classList.add("selected");
+        });
+
+        form.on("checkbox(diag-site-template-add-default)", function (e) {
+            document.getElementById("diag-site-template-add-domain").disabled = e.elem.checked;
+        });
+
+        form.on("select(diag-site-template-add-platform)", function (e) {
+            loadSystemTemplate(e.value);
+        });
+
+        betwin.form.submit("diag-site-template-add-submit", function (data) {
+            var selected = template.querySelector(".selected");
+            if (!selected) {
+                layer.msg("没有选择来源模板", { icon: 2 });
+                return false;
+            }
+            data["TemplateID"] = selected ? selected.getAttribute("data-templateid") : 0;
+            return data;
+        }, {
+            success: function (res, data, index) {
+                layer.close(index);
+                table.reload("diag-site-template-list");
+                return false;
+            }
+        })
+    })
+</script>

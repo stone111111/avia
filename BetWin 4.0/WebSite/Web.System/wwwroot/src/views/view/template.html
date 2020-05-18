@@ -1,0 +1,71 @@
+﻿<title>模板管理</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <script type="text/html" template lay-done="BW.callback['view-template'](d)">
+                <div class="layui-tab layui-tab-brief" lay-filter="view-template-tab" id="view-template-tab">
+                    <ul class="layui-tab-title">
+                        {{# layui.each(GolbalSetting.enum["BW.Views.PlatformSource"],function(key,name){ }}
+                        <li lay-id="{{ key }}">{{ name }}</li>
+                        {{# }) }}
+                    </ul>
+                    <button class="layui-btn layui-btn-right" data-popup="view/templateinfo" data-area="lg"><i class="am-icon-plus"></i> 添加模板</button>
+
+                </div>
+            </script>
+            <hr class="sm" />
+            <table id="view-template" lay-filter="view-template"></table>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="view-template-preview">
+    <img src="{{ UI.GetImage(d.Preview) }}" />
+</script>
+<script type="text/javascript">
+    BW.callback['view-template'] = function (result) {
+        delete BW.callback['view-template'];
+
+        layui.use(["betwin", "table", "element"], function () {
+            var betwin = layui.betwin,
+                table = layui.table,
+                element = layui.element;
+
+            betwin.admin.popup("#view-template-tab");
+
+            table.render({
+                elem: "#view-template",
+                page: false,
+                data: [],
+                cols: [[
+                    { title: "ID", field: "ID", width: 100 },
+                    { title: "预览图", templet: "#view-template-preview", width: 100 },
+                    { title: "平台", field: "Platform", width: 150 },
+                    { title: "模板名称", field: "Name", width: 200 },
+                    {
+                        title: "操作", templet: GolbalSetting.templet.control({
+                            edit: {
+                                action: "view/templateinfo",
+                                area: "lg"
+                            },
+                            delete: "System/View/TemplateDelete"
+                        })
+                    }
+                ]]
+            });
+
+            betwin.table.tool("view-template");
+
+            element.on("tab(view-template-tab)", function (e) {
+                var platform = this.getAttribute("lay-id");
+                table.reload("view-template", {
+                    url: "System/View/TemplateList",
+                    where: {
+                        Platform: platform
+                    }
+                })
+            });
+
+            element.tabChange("view-template-tab", "PC");
+        });
+    }
+</script>

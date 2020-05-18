@@ -1,0 +1,36 @@
+﻿<div class="layui-card-body">
+    <script type="text/html" template lay-url="Merchant/site/Info" lay-type="post" lay-data="{'id':'{{ d.params.SiteID }}'}" lay-done="BW.callback['diag-site-updatestatus'](d)">
+        <form class="layui-form" action="Merchant/site/SaveStatus"  lay-filter="diag-site-updatestatus" id="diag-site-updatestatus">
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态：</label>
+                <div class="layui-input-inline w150">
+                    <select name="Status" data-enum="GM.Common.Sites.Site+SiteStatus" data-value="{{ d.info.Status }}"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-updatestatus-submit">保存</button>
+            </div>
+        </form>
+    </script>
+</div>
+
+<script type="text/javascript">
+
+    BW.callback['diag-site-updatestatus'] = function (result) {
+        delete BW.callback['diag-site-updatestatus'];
+        layui.use(["betwin"], function () {
+            var betwin = layui.betwin;
+
+            betwin.form.render("diag-site-updatestatus");
+
+            betwin.form.submit("diag-site-updatestatus-submit", null, {
+                success: function (res) {
+                    return false;
+                }
+            });
+
+        });
+    }
+
+</script>

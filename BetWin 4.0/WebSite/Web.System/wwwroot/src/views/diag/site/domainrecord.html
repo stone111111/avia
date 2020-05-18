@@ -1,0 +1,51 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-done="BW.callback['diag-site-domainrecord'](d);">
+            <form action="Merchant/Site/AddRecord" class="layui-form" lay-filter="diag-site-domainrecord" id="diag-site-domainrecord">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">子域名：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="SubName" class="layui-input" />
+                    </div>
+                    <div class="layui-form-mid">
+                        .{{ d.params.Domain }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-text-ft12">CDN供应商：</label>
+                    <div class="layui-input-inline">
+                        <select name="Provider" data-enum="SP.Provider.CDN.CDNProviderType" lay-ignore="select"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="SiteID" value="{{ d.params.SiteID }}" />
+                    <input type="hidden" name="DomainID" value="{{ d.params.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-domainrecord-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    BW.callback['diag-site-domainrecord'] = function (result) {
+        delete BW.callback['diag-site-domainrecord'];
+        layui.use(["table", "betwin", "admin"], function () {
+            var layui = this,
+                table = layui.table,
+                admin = layui.admin,
+                betwin = layui.betwin;
+
+            betwin.form.render("diag-site-domainrecord");
+
+            betwin.form.submit("diag-site-domainrecord-submit", null, {
+                success: function (res, data, index) {
+                    layer.close(index);
+                    BW.callback['diag-site-domain-reaload']();
+                    return false;
+                }
+            });
+        });
+    };
+</script>

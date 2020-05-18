@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="style.css" rel="stylesheet" />
+    <script src="show.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var data = {
+            "对子": 0
+        };
+        function unique(arr) {
+            return [...new Set(arr)];
+        }
+        var count = 0;
+        for (var i1 = 1; i1 <= 6; i1++) {
+            for (var i2 = 1; i2 <= 6; i2++) {
+                for (var i3 = 1; i3 <= 6; i3++) {
+                    var num = [i1, i2, i3];
+                    if (unique(num).length == 2) {
+                        console.log(num);
+                        data["对子"]++;
+                    }
+                    count++;
+                }
+            }
+        }
+        ShowResult(data, count);
+    </script>
+</body>
+</html>

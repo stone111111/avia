@@ -1,0 +1,58 @@
+﻿.layui-table .link-blue { color: #0094ff; padding: 4px; border-radius: 6px; }
+    .layui-table .link-blue:hover { background-color: #0094ff; color: white; }
+
+
+/* 公共弹出页面 */
+.layui-layer-admin.diag { border-radius: 8px; }
+    .layui-layer-admin.diag .layui-layer-title { border-radius: 8px 8px 0px 0px; background-color: rgb(3,155,229) !important; }
+    .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title { background-color: rgb(3,155,229) !important; border-bottom: none; height: 50px; }
+        .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title li { line-height: normal; height: 50px; }
+        .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title i { font-size: 25px; line-height: 32px; }
+        .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title span { display: block; font-size: 12px; line-height: 16px; }
+        .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title .layui-this { color: rgb(3,155,229); background-color: #fff; border-radius: 12px 12px 0px 0px; }
+            .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-title .layui-this::after { display: none; }
+    .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-tab-content { overflow: auto; padding: 0px; }
+    .layui-layer-admin.diag .layui-tab-brief.diagtab > .layui-layer-content { overflow: hidden; padding: 0px; }
+
+    /* 商户信息查看 */
+    .layui-layer-admin.diag.site .layui-layer-title,
+    .layui-layer-admin.diag.site .layui-tab-brief.diagtab > .layui-tab-title { background-color: #2F4056 !important; }
+        .layui-layer-admin.diag.site .layui-tab-brief.diagtab > .layui-tab-title .layui-this { color: #2F4056; }
+
+.layui-table tbody > tr th { width: 100px; text-align: right; background-color: #efefef; }
+
+.layui-form .layui-form-checkbox { margin-bottom: 5px; }
+.layui-form.layui-table-view .layui-form-checkbox { margin-bottom: 0px; }
+.layui-form-checked.layui-checkbox-disbaled span { background-color: #5FB878 !important; }
+.layui-form-checked.layui-checkbox-disbaled:hover i { color: #5FB878 !important; }
+
+
+/* 编辑模式切换 */
+.layui-form.editmode [data-edit="edit"],
+.layui-form.editmode[readonly] [data-edit="save"],
+.layui-form.editmode[readonly] [data-edit="reset"] { display: none; }
+.layui-form.editmode[readonly] [data-edit="edit"] { display: initial; }
+.layui-form.editmode .layui-input[readonly] { border-color: transparent !important; background-color: transparent !important; }
+.layui-form.editmode select[disabled] { border-color: transparent !important; background-color: transparent !important; }
+
+/* 视图管理 */
+.view-index-content { position: relative; }
+    .view-index-content.loading::after { position: absolute; content: " "; width: 32px; height: 32px; background: url(/images/loading.gif) no-repeat center center; left: 50%; top: 50%; }
+    .view-index-content .layui-card { width: 235px; }
+        .view-index-content .layui-card .layui-card-body { height: 180px; }
+    .view-index-content .layui-inline { padding: 5px; }
+    .view-index-content .model { position: relative; }
+        .view-index-content .model .preview { display: block; height: 60px; background: no-repeat center center; background-size: cover; border: 1px solid #ccc; box-shadow: 1px 1px 0px #ccc; }
+        .view-index-content .model label { position: absolute; left: 5px; right: 5px; bottom: 5px; background-color: rgba(0,0,0,.5); text-align: center; line-height: 22px; color: rgba(255,255,255,.8); font-size: 12px; text-shadow: 1px 1px 0px #000; }
+        .view-index-content .model em { position: absolute; right: 8px; top: 5px; font-size: 16px; color: #fff; text-shadow: 0px 0px 2px #000; height: 16px; line-height: 16px; }
+        .view-index-content .model.selected em.select { color: #5FB878; text-shadow: 0px 0px 4px #fff; transform: scale(1.5); }
+            .view-index-content .model.selected em.select:before { content: "\f058"; }
+        .view-index-content .model em.am-icon-eye { margin-right: 20px; }
+
+.layui-layer-admin[type="page"] .layui-layer-content { padding: 0px; }
+
+/* 表单扩展 */
+.layui-input[disabled] { background-color: #dedede; }
+
+/* 选项卡后跟一个按钮 */
+.layui-tab-title ~ .layui-btn.layui-btn-right { position: absolute; right: 10px; margin-top: -40px; }

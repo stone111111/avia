@@ -1,0 +1,88 @@
+﻿<title>视图管理</title>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="view-index-header">
+            视图管理
+            <button class="layui-btn layui-btn-right" data-action="System/View/Initialize">载入类库</button>
+        </div>
+        <div class="layui-card-body">
+            <script type="text/html" template lay-done="BW.callback['view-index-tab']()">
+                <div class="layui-tab layui-tab-brief" lay-filter="view-index-tab" id="view-index-tab">
+                    <ul class="layui-tab-title">
+                        {{# layui.each(GolbalSetting.enum["BW.Views.PlatformSource"],function(key,value){ }}
+                        <li lay-id="{{ key }}">{{ value }}</li>
+                        {{# }) }}
+                    </ul>
+                    <hr />
+                    <div class="layui-tab-content layui-bg-gray view-index-content" id="view-index-content"></div>
+                </div>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="view-index-template">
+    {{# layui.each(d.info.list,function(index,item){ }}
+    <div class=" layui-inline">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                {{ item.Name }}
+                <button class="layui-btn layui-btn-right layui-btn-normal layui-btn-xs" data-popup="view/modelinfo" title="添加模型" data-data='{"ViewID":"{{ item.ID }}"}' data-title="添加模型" data-area="sm"><i class="am-icon-plus"></i></button>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space10">
+                    {{# layui.each(item.Models,function(index,model){ }}
+                    <div class="layui-col-md6 model" data-popup="view/model" data-area="lg" data-title="{{ model.Name}}" data-data='{"ID":"{{ model.ID }}"}'>
+                        <a href="javascript:" class="preview" style="background-image:url('{{ UI.GetImage(model.Preview) }}');"></a>
+                        <label>{{ model.Name }}</label>
+                    </div>
+                    {{# }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{# }) }}
+</script>
+
+<script type="text/javascript">
+    BW.callback['view-index-tab'] = function () {
+        delete BW.callback['view-index-tab'];
+        layui.use(['element', "laytpl", "betwin"], function () {
+            var element = layui.element,
+                laytpl = layui.laytpl,
+                betwin = layui.betwin;
+
+            betwin.admin.popup("#view-index-header");
+            var template = document.getElementById("view-index-template").innerHTML;
+            var content = document.getElementById("view-index-content");
+            betwin.admin.popup(content);
+
+            BW.callback['view-index-tab-load'] = function (platform) {
+                if (!platform) {
+                    platform = document.getElementById("view-index-tab").querySelector(".layui-this").getAttribute("lay-id");
+                }
+                content.addClass("loading");
+                betwin.admin.req({
+                    url: "System/View/SettingList",
+                    data: {
+                        Platform: platform
+                    },
+                    success: function (res) {
+                        laytpl(template).render(res, function (html) {
+                            content.removeClass("loading");
+                            content.innerHTML = html;
+                        });
+                    }
+                });
+            }
+
+            //监听Tab切换，以改变地址hash值
+            element.on('tab(view-index-tab)', function () {
+                var type = this.getAttribute("lay-id");
+                BW.callback['view-index-tab-load'](type);
+            });
+            element.tabChange('view-index-tab', "PC");
+        });
+    };
+</script>

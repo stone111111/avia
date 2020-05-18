@@ -1,0 +1,41 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Setting/Provider/CDNInfo" lay-type="post" lay-data="{'Type':'{{ d.params.Type }}'}" lay-done="BW.callback['set-provider-cdninfo'](d);">
+            <form class="layui-form" action="Setting/Provider/SaveCDNInfo" id="set-provider-cdninfo" lay-filter="set-provider-cdninfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">接口：</label>
+                    <div class="layui-input-inline">
+                        <select name="Type" data-value="{{ d.info.Type }}" data-enum="SP.Provider.CDN.CDNProviderType"></select>
+                    </div>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="IsOpen" value="1" title="开启" {{ d.info.IsOpen ? "checked" : ""}} />
+                    </div>
+                </div>
+                <div id="set-provider-cdninfo-setting"></div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="set-provider-cdninfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['set-provider-cdninfo'] = function (result) {
+        delete BW.callback['set-provider-cdninfo'];
+
+        layui.use(["betwin","table"], function () {
+            var betwin = layui.betwin,
+                table = layui.table;
+
+            betwin.form.render("set-provider-cdninfo");
+            betwin.form.submit("set-provider-cdninfo-submit", function (data) {
+                Utils.GetSetting(data, "Setting.", "Setting");
+                return data;
+            }, {
+                success: function (res) {
+                    table.reload("set-provider-cdn");
+                }
+            });
+        });
+    }
+</script>

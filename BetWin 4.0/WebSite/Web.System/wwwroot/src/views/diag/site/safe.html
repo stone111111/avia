@@ -1,0 +1,163 @@
+﻿<div class="layui-tab layui-tab-brief" lay-filter="diag-site-safe-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">后台白名单</li>
+        <li>后台域名</li>
+        <li>后台管理员</li>
+    </ul>
+    <div class="layui-tab-content">
+        <!-- 后台白名单设定 -->
+        <div class="layui-card layui-tab-item layui-show">
+            <div class="layui-card-header">后台白名单设定</div>
+            <div class="layui-card-body">
+                <script type="text/html" template lay-url="Merchant/site/GetWhiteIP" lay-type="post" lay-data="{'id':'{{ d.params.SiteID }}'}" lay-done="BW.callback['diag-site-safe-whiteip'](d)">
+                    <form class="layui-form" action="Merchant/site/SaveWhiteIP">
+                        <div class="layui-form-item">
+                            <textarea name="WhiteIP" class="layui-input" style="height:150px;" placeholder="多个IP使用逗号隔开">{{ d.info.WhiteIP }}</textarea>
+                        </div>
+                        <div class="layui-form-item">
+                            <input type="hidden" name="ID" value="{{ d.info.SiteID }}" />
+                            <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-safe-whiteip-submit">保存IP白名单</button>
+                        </div>
+                    </form>
+                </script>
+            </div>
+        </div>
+
+        <!-- 后台域名设定 -->
+        <div class="layui-card layui-tab-item">
+            <div class="layui-card-header">后台域名设定</div>
+            <div class="layui-card-body">
+                <script type="text/html" template lay-url="Merchant/site/GetAdminUrl" lay-type="post" lay-data="{'id':'{{ d.params.SiteID }}'}" lay-done="BW.callback['diag-site-safe-adminurl'](d)">
+                    <form class="layui-form" action="Merchant/site/SaveAdminUrl" id="diag-site-safe-adminurl">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前地址： </label>
+                            {{# layui.each(d.info.Domain,function(index,domain){ }}
+                            <div class="layui-input-inline w300">
+                                <input type="text" readonly class="layui-input layui-btn layui-btn-primary" value="https://{{ d.info.AdminURL }}.{{ domain }}" />
+                            </div>
+                            {{# }) }}
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">后台地址：</label>
+                            <div class="layui-input-inline w100">
+                                <input type="text" name="AdminURL" class="layui-input" value="{{ d.info.AdminURL }}" maxlength="8" />
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="hidden" name="ID" value="{{ d.info.SiteID }}" />
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="diag-site-safe-adminurl-submit">更新后台地址</button>
+                            </div>
+                        </div>
+                    </form>
+                </script>
+            </div>
+        </div>
+
+        <!-- 后台管理员 -->
+        <div class="layui-card layui-tab-item">
+            <div class="layui-card-header">后台管理员</div>
+            <div class="layui-card">
+                <script type="text/html" template lay-done="BW.callback['diag-site-safe-admin'](d)">
+                    <div class="layui-card-body">
+                        <table class="layui-table" id="diag-site-safe-admin-list" lay-filter="diag-site-safe-admin-list"></table>
+                    </div>
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    layui.use('element', function () {
+        var element = layui.element;
+        element.tabChange('diag-site-safe-tab');
+    });
+
+    BW.callback['diag-site-safe-whiteip'] = function (result) {
+        delete BW.callback['diag-site-safe-whiteip'];
+        layui.use(["betwin"], function () {
+            var betwin = layui.betwin;
+            betwin.form.submit("diag-site-safe-whiteip-submit", null, {
+                success: function (res) {
+                    return false;
+                }
+            });
+        });
+    }
+
+    BW.callback['diag-site-safe-adminurl'] = function (result) {
+        delete BW.callback['diag-site-safe-adminurl'];
+        layui.use(["betwin"], function () {
+            var betwin = layui.betwin;
+            betwin.form.submit("diag-site-safe-adminurl-submit", null, {
+                success: function (res, data) {
+                    var domainObjs = document.getElementById("diag-site-safe-adminurl").querySelectorAll("input[readonly]");
+                    layui.each(result.info.Domain, function (index, domain) {
+                        domainObjs[index].value = "https://" + data.AdminURL + "." + domain;
+                    });
+                    return false;
+                }
+            });
+
+            layui.$("#diag-site-safe-adminurl").on("click", "input[readonly]", function (e) {
+                Utils.Clipboard(this.value);
+            });
+        });
+    }
+
+    BW.callback['diag-site-safe-admin'] = function (result) {
+        delete BW.callback['diag-site-safe-admin'];
+        layui.use(["betwin", "table"], function () {
+            var layui = this,
+                betwin = layui.betwin,
+                table = layui.table;
+
+            table.render({
+                elem: "#diag-site-safe-admin-list",
+                url: "Merchant/Site/GetAdminList",
+                where: result.params,
+                limit: 10000,
+                page: false,
+                cols: [[
+                    { title: "ID", field: "ID", width: 80 },
+                    { title: "用户名", field: "AdminName", width: 120 },
+                    { title: "创建时间", templet: "<div>{{ htmlFunction.datetime(d.CreateAt) }}</div>" },
+                    { title: "超管", templet: "<div>{{ htmlFunction.bool(d.IsDefault) }}</div>", width: 80 },
+                    { title: "验证码", templet: "<div>{{ htmlFunction.bool(d.IsSecretKey) }}</div>", width: 80 },
+                    { title: "上次登录", field: "LoginAt", width: 150 },
+                    { title: "登录IP", templet: "<div>{{ htmlFunction.IP(d.LoginIP,d.IPAddress) }}</div>", width: 180 },
+                    { title: "状态", templet: "<div>{{ GolbalSetting.enum['BW.Common.Sites.SiteAdmin+AdminStatus'][d.Status] }}</div>", width: 100 },
+                    {
+                        title: "操作", templet: GolbalSetting.templet.control({
+                            "password": {
+                                "action": "Merchant/Site/ResetPassword",
+                                "event": "confirm",
+                                "msg": "确认要重置密码吗？",
+                                "icon": "am-icon-key",
+                                "callback": "diag-site-safe-admin-password"
+                            },
+                            "code": {
+                                "action": "Merchant/Site/ResetSecretKey",
+                                "event": "confirm",
+                                "msg": "确认要清除验证码？",
+                                "icon": "am-icon-google",
+                                "callback": "diag-site-safe-admin-reload"
+                            }
+                        })
+                    }
+                ]]
+            });
+            betwin.table.tool("diag-site-safe-admin-list");
+
+            BW.callback["diag-site-safe-admin-password"] = function (res) {
+                layer.alert("密码已重置为：" + res.msg, { icon: 1 });
+            };
+
+            BW.callback["diag-site-safe-admin-reload"] = function (res) {
+                table.reload("diag-site-safe-admin-list");
+            };
+        });
+
+    };
+
+
+</script>

@@ -1,0 +1,64 @@
+﻿/* 彩票有关的通用样式 */
+.lottery16 { background: url(images/lottery128.png) no-repeat; background-size: 176px 176px; display: inline-block; width: 16px; height: 16px; }
+.lottery32 { background: url(images/lottery128.png) no-repeat; background-size: 352px 352px; display: inline-block; width: 32px; height: 32px; }
+.lottery64 { background: url(images/lottery128.png) no-repeat; background-size: 704px 704px; display: inline-block; width: 64px; height: 64px; }
+.lottery96 { background: url(images/lottery128.png) no-repeat; background-size: 1056px 1056px; display: inline-block; width: 96px; height: 96px; }
+.lottery128 { background: url(images/lottery128.png) no-repeat; background-size: 1408px 1408px; display: inline-block; width: 128px; height: 128px; }
+
+[class^=lottery].Second { background-position: 0% 0%; }
+[class^=lottery].Minute { background-position: 10% 0%; }
+[class^=lottery].Minute2 { background-position: 20% 0%; }
+[class^=lottery].Minute5 { background-position: 30% 0%; }
+[class^=lottery].Minute10 { background-position: 40% 0%; }
+[class^=lottery].TWBingo { background-position: 50% 0%; }
+[class^=lottery].BJKL8 { background-position: 60% 0%; }
+[class^=lottery].CAKeno { background-position: 70% 0%; }
+[class^=lottery].Japan15 { background-position: 80% 0%; }
+[class^=lottery].Second45 { background-position: 90% 0%; }
+
+[class^=lottery].ChungKing { background-position: 0% 10%; }
+[class^=lottery].Kiangsi { background-position: 10% 10%; }
+[class^=lottery].Sinkiang { background-position: 20% 10%; }
+[class^=lottery].Tianjin { background-position: 30% 10%; }
+[class^=lottery].SGKeno { background-position: 40% 10%; }
+[class^=lottery].Tencent { background-position: 50% 10%; }
+[class^=lottery].KRKeno { background-position: 60% 10%; }
+[class^=lottery].Minute15 { background-position: 70% 10%; }
+[class^=lottery].Tokyo15 { background-position: 80% 10%; }
+[class^=lottery].USBall45 { background-position: 90% 10%; }
+[class^=lottery].USBall15 { background-position: 100% 10%; }
+
+[class^=lottery].GD11x5 { background-position: 0% 20%; }
+[class^=lottery].JS11x5 { background-position: 10% 20%; }
+[class^=lottery].SX11x5 { background-position: 20% 20%; }
+[class^=lottery].SD11x5 { background-position: 30% 20%; }
+[class^=lottery].GZ11x5 { background-position: 40% 20%; }
+
+[class^=lottery].JSK3 { background-position: 0% 30%; }
+[class^=lottery].GXK3 { background-position: 10% 30%; }
+[class^=lottery].SHK3 { background-position: 20% 30%; }
+[class^=lottery].AHK3 { background-position: 30% 30%; }
+[class^=lottery].HEBEIK3 { background-position: 40% 30%; }
+[class^=lottery].HBK3 { background-position: 50% 30%; }
+[class^=lottery].JLK3 { background-position: 60% 30%; }
+[class^=lottery].GZK3 { background-position: 70% 30%; }
+
+[class^=lottery].ticaiP3 { background-position: 0% 40%; }
+[class^=lottery].MarkSix { background-position: 10% 40%; }
+[class^=lottery].PK10 { background-position: 20% 40%; }
+[class^=lottery].fucai3D { background-position: 30% 40%; }
+[class^=lottery].HKSM { background-position: 40% 40%; }
+[class^=lottery].Boat { background-position: 50% 40%; }
+
+[class^=lottery].VRVenus { background-position: 0% 50%; }
+[class^=lottery].VRMars { background-position: 10% 50%; }
+[class^=lottery].VR3 { background-position: 20% 50%; }
+[class^=lottery].VRRacing { background-position: 30% 50%; }
+[class^=lottery].VRBoat { background-position: 40% 50%; }
+[class^=lottery].VRBaccarat { background-position: 50% 50%; }
+[class^=lottery].VRRace { background-position: 60% 50%; }
+[class^=lottery].VRSwim { background-position: 70% 50%; }
+[class^=lottery].VRBike { background-position: 80% 50%; }
+
+[class^=lottery].SmallGame { background-position: 0% 60%; }
+[class^=lottery].SmallGame_Kawaii { background-position: 10% 60%; }

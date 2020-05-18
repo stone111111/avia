@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <script src="mootools.js"></script>
+    <script src="mootools-more.js"></script>
+    <script src="ui.tab.source.js"></script>
+    <style type="text/css">
+        .tab { overflow-x: auto; overflow-y: hidden; }
+            .tab::after { content: " "; clear: both; display: block; }
+            .tab .body { transition: margin-left ease-in-out 0.5s; }
+                .tab .body a { float: left; padding: 0px 10px; }
+                    .tab .body a.current { border-bottom: 2px solid #0094ff; color: #0094ff; }
+    </style>
+    <script type="text/javascript">
+        window.addEvent("domready", function () {
+            var list = $$("#body a");
+            var tab = new UI.Tab("tab", {
+                "container": $("body"),
+                "list": list
+            });
+
+            list.addEvent("click", function (e) {
+                tab.select(this);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="tab" id="tab">
+        <div class="body" id="body">
+            <a href="javascript:">全部</a>
+            <a href="javascript:">桌面游戏</a>
+            <a href="javascript:">老虎机</a>
+            <a href="javascript:">棋牌游戏</a>
+            <a href="javascript:">产品展示</a>
+            <a href="javascript:">新闻中心</a>
+            <a href="javascript:">服务支持</a>
+            <a href="javascript:">联系我们</a>
+            <a href="javascript:">人才招聘</a>
+        </div>
+    </div>
+</body>
+</html>

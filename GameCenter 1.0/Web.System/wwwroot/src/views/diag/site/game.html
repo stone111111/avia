@@ -1,0 +1,92 @@
+﻿<div class="layui-card">
+    <script type="text/html" template lay-done="BW.callback['diag-site-game'](d)">
+        <div class="layui-card-header" id="diag-site-game-header">
+            <button type="button" id="diag-site-game-paymul" class="layui-btn layui-btn-right">
+                <i class="am-icon-plus"></i> 上分
+            </button>
+            <button class="layui-btn layui-btn-right" data-action="merchant/Site/LoadSiteGameSetting" data-callback="diag-site-game-reaload"
+                    data-data='{"SiteID":"{{ d.params.SiteID }}"}'>
+                <i class="am-icon-refser"></i> 加载默认配置
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" id="diag-site-game-list" lay-filter="diag-site-game-list"></table>
+        </div>
+    </script>
+</div>
+<script type="text/javascript">
+    BW.callback['diag-site-game'] = function (result) {
+        delete BW.callback['diag-site-game'];
+        var siteId = result.params.SiteID;
+        layui.use(["betwin", "table"], function () {
+            var layui = this,
+                betwin = layui.betwin,
+                table = layui.table,
+                $ = layui.$;
+
+            betwin.admin.popup("#diag-site-game-header");
+
+            table.render({
+                elem: "#diag-site-game-list",
+                url: "merchant/Site/SiteGameList",
+                where: { SiteID: siteId },
+                page: false,
+                toolbar: "<div><button class='layui-btn layui-btn-normal layui-btn-sm' lay-event='plus'><i class='am-icon-plus'></i> 批量上分</button></div>",
+                cols: [[
+                    { type: 'checkbox', width: 60 },
+                    { title: "游戏", field: "GameName" },
+                    { title: "信用额度", field: "Credit" },
+                    { title: "剩余额度", field: "Paid" },
+                    { title: "条件", templet: "<div>{{ htmlFunction.p(d.Rate) }}</div>" },
+                    { title: "排序", field: "Sort" },
+                    { title: "状态", templet: "<div>{{ GolbalSetting.enum['GM.Common.Models.SiteGameSetting+SiteGameStatus'][d.Status] }}</div>" },
+                    {
+                        title: "操作", width: 100, templet: GolbalSetting.templet.control({
+                            edit: "diag/site/gameedit",
+                            "pay": {
+                                "title": "批量上分",
+                                "action": "diag/site/gamepay",
+                                "icon": "am-icon-plus"
+                            },
+                        })
+                    }
+                ]]
+            });
+            betwin.table.tool("diag-site-game-list", function (e) {
+                var selected = table.checkStatus('diag-site-game-list').data.map(function (item) { return item.ID; });
+                switch (e.event) {
+                    // 批量上分
+                    case "plus":
+                        if (!selected.length) {
+                            layer.alert("请选择要上分的游戏", { icon: 2 });
+                            return;
+                        }
+                        layer.prompt({
+                            title: "批量上分",
+                            maxlength: 10
+                        }, function (value, index, elem) {
+                                value = Number(value);
+                                if (isNaN(value) || value <= 0) {
+                                    layer.alert("请输入正确的上分额度", { icon: 2 });
+                                    return;
+                                }
+                                betwin.admin.req({
+                                    url: "merchant/Site/SitePay",
+                                    data: {
+                                        Money: value,
+                                        SiteID: siteId,
+                                        ID: selected.join(",")
+                                    },
+                                    success: function (res) {
+                                        layer.close(index);
+                                        table.reload("diag-site-game-list");
+                                    }
+                                });
+                        });
+                        break;
+                }
+            });
+        });
+    }
+
+</script>

@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        var betname = ["阿根廷", , "冰岛"];
+        var bet = [1.8, 1.8];
+        var rpt = [{ Money: 0, Reward: 0 }, { Money: 0, Reward: 0 }];
+
+        // 反奖率
+        Array.prototype.getRate = function () {
+            var value = 0;
+            var list = this;
+            for (var i = 0; i < list.length; i++) {
+                value += 1 / list[i];
+            }
+            return 1 / value;
+        };
+
+        Array.prototype.map = function (map) {
+            var list = this;
+            var array = new Array();
+            for (var i = 0; i < list.length; i++) {
+                array.push(map(list[i], i));
+            }
+            return array;
+        }
+
+        Array.prototype.sum = function (map) {
+            if (!map) map = function (item) { return item; }
+            var value = 0;
+            var list = this;
+            for (var i = 0; i < list.length; i++) {
+                value += map(list[i]);
+            }
+            return value;
+        };
+
+        var rate = bet.getRate();
+
+        function getTotalReward() {
+            var value = 0;
+            for (var i = 0; i < rpt.length; i++) {
+                value += rpt[i].Reward;
+            }
+            return value;
+        }
+
+        // 变动一项赔率，更改其他赔率
+        function GetNewOdds(index, newOdds) {
+            var win = bet.map(function (item) { return rate / item; });
+            bet[index] = newOdds;
+            var betNewWin = rate / bet[index];
+            var diff = win[index] - betNewWin;
+            var winSum = 0;
+            for (var i = 0; i < win.length; i++) {
+                if (i == index) continue;
+                winSum += win[i];
+            }
+            for (var i = 0; i < win.length; i++) {
+                if (i == index) continue;
+                win[i] += diff * (win[i] / winSum);
+            }
+            win[index] = betNewWin;
+            bet = win.map(function (item) { return rate / item; })
+        }
+
+        // 更新各项的预计收益
+        function UpdateReport() {
+            var money = rpt.sum(function (item) { return item.Money; });
+            var reward = 0;
+            for (var i = 0; i < rpt.length; i++) {
+
+                rpt[i]["Win"] = money - rpt[i].Reward;
+            }
+            console.log(rpt);
+            var list = rpt.map(function (item, index) { return rate / bet[index] * rpt[index].Reward; });
+            console.log("胜率×奖金：" + list.join(" + ") + "=" + list.sum());
+            console.log("正确结果：" + money * rate);
+
+            var list2 = rpt.map(function (item, index) { return rate / bet[index] * rpt[index].Win; });
+            console.log("预期盈利：" + list2.join(" + ") + "=" + list2.sum());
+            console.log("正确盈利：" + list2.sum() * (1 - rate));
+
+
+        }
+
+        function Bet(index, money) {
+            console.log("当前赔率：" + bet.join(" , "));
+            console.log("当前胜率：" + bet.map(function (item) { return rate / item; }).join(" , "));
+            var reward = money * bet[index];
+            console.log(betname[index] + "下注" + money + "元，预期奖金：" + reward);
+            rpt[index].Money += money;
+            rpt[index].Reward += reward;
+            var odds = bet[index] - (bet[index] - 1) * (reward / (getTotalReward() + 10000));
+            GetNewOdds(index, odds)
+            console.log("新赔率：" + bet.join(" , "));
+            console.log("新胜率：" + bet.map(function (item) { return rate / item; }).join(" , "));
+            console.log("==========================");
+            UpdateReport();
+            console.log("==========================");
+        }
+
+
+
+        //var win = [rate / 1.3, rate / 5, rate / 9];
+        //console.log("赔率：" + bet.join(" , "));
+        //console.log("反奖率：" + rate);
+        //console.log("胜率：" + win.join(" , "));
+
+        //console.log("1.3 变成 1.1");
+        //var newWin = [];
+        //bet[0] = 1.1;
+        //newWin[0] = rate / bet[0];
+        //var diff = win[0] - newWin[0];
+        //console.log("反奖率差:" + diff);
+
+        //newWin[1] = win[1] + diff * (win[1] / (win[1] + win[2]));
+        //newWin[2] = win[2] + diff * (win[2] / (win[1] + win[2]));
+
+        //console.log("新胜率:" + newWin.join(" , "));
+
+        //var newBet = [rate / newWin[0], rate / newWin[1], rate / newWin[2]]
+
+        //console.log("新赔率:" + newBet.join(" , "));
+
+
+    </script>
+</body>
+</html>

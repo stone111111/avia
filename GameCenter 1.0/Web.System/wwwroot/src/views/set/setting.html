@@ -1,0 +1,39 @@
+﻿<title>参数配置</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header">参数配置</div>
+        <div class="layui-card-body">
+            <script type="text/html" template lay-url="System/Config/GetSettings" lay-type="post" lay-done="BW.callback['set-setting'](d)">
+                <div class="layui-form" id="set-setting">
+                    {{# layui.each(GolbalSetting.enum["BW.Common.Systems.SystemSetting+SettingType"],function(key,name){ }}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">{{ name }}：</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="{{ key }}" class="layui-input" value="{{ d.info[key] || "" }}" />
+                        </div>
+                    </div>
+                    {{# }) }}
+                </div>
+            </script>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['set-setting'] = function (result) {
+        delete BW.callback['set-setting'];
+
+        layui.use(["betwin"], function () {
+            var betwin = layui.betwin;
+            document.getElementById("set-setting").addEvent("change", function (e) {
+                var obj = e.target;
+                betwin.admin.req({
+                    url: "System/Config/SaveSetting",
+                    data: {
+                        Type: obj.getAttribute("name"),
+                        Value: obj.value
+                    }
+                });
+            }, function (e) { return e.getAttribute("name"); });
+        });
+    }
+</script>

@@ -1,0 +1,63 @@
+﻿<title>游戏配置</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="setting-game-header">
+            游戏配置
+            <button class="layui-btn layui-btn-right" data-popup="setting/game/settinginfo" data-area="lg"><i class="am-icon-plus"></i> 添加配置</button>
+        </div>
+        <div class="layui-card-body">
+            <table id="setting-game-index" lay-filter="setting-game-index"></table>
+        </div>
+    </div>
+    <script type="text/html" id="setting-game-index-open">
+        <input type="checkbox" lay-skin="switch" lay-text="启用|关闭" data-id="{{ d.ID }}" lay-filter="setting-game-index-open" {{ d.IsOpen ? "checked" : "" }} />
+    </script>
+    <script type="text/html" id="setting-game-index-category-tmpl">
+        {{# var cate = layui.$.map(d.Category,function(n){ return GolbalSetting.enum['SP.Provider.Game.GameCategory'][n];}).join(','); }}
+        {{ cate }}
+    </script>
+</div>
+<script type="text/javascript">
+    layui.use(["betwin", "table","form","admin"], function () {
+        var betwin = layui.betwin,
+            form = layui.form,
+            admin = layui.admin,
+            table = layui.table;
+
+        table.render({
+            elem: "#setting-game-index",
+            url: "Setting/Game/GameSettingList",
+            page:false,
+            cols: [[
+                { title: "ID", field: "ID",width:80 },
+                { title: "所属供应商", field: "ProviderName" },
+                { title: "游戏名称", field: "Name" },
+                { title: "游戏类型", field: "Type" },
+                { title: "状态", templet: "#setting-game-index-open" },
+                { title: "包含分类", templet: "#setting-game-index-category-tmpl" },
+                {
+                    title: "操作", templet: GolbalSetting.templet.control({
+                        "edit": {
+                            action: "setting/game/settinginfo",
+                            area:"md"
+                        }, "delete":"Setting/Game/GameSettingDelete"
+                    })
+                }
+            ]]
+        });
+
+        form.on("switch(setting-game-index-open)", function (e) {
+            var obj = e.elem;
+            admin.req({
+                url: "Setting/Game/UpdateIsOpen",
+                data: { ID: obj.getAttribute("data-id"), IsOpen: obj.checked ? "True" : "False" },
+                success: function (res) {
+                    layer.msg(res.msg, { icon: res.success ? 1 : 2 });
+                }
+            });
+        });
+
+        betwin.admin.popup("#setting-game-header");
+        betwin.table.tool("setting-game-index");
+    });
+</script>

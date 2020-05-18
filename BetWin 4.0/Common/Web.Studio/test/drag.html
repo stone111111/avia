@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../layadmin/css/layui.css" rel="stylesheet" />
+    <style type="text/css">
+        .drag { width: 20px; height: 20px; background-color: #000; }
+        tr.over td { border-top: 2px solid #ff0000; }
+    </style>
+</head>
+<body>
+    <table class="layui-table">
+        <tbody id="tbody">
+            <tr id="tr1">
+                <td>
+                    <div class="drag" draggable="true"></div>
+                </td>
+                <td>
+                    1
+                </td>
+            </tr>
+            <tr id="tr2">
+                <td>
+                    <div class="drag" draggable="true"></div>
+                </td>
+                <td>
+                    2
+                </td>
+            </tr>
+            <tr id="tr3">
+                <td>
+                    <div class="drag" draggable="true"></div>
+                </td>
+                <td>
+                    3
+                </td>
+            </tr>
+            <tr id="tr4">
+                <td>
+                    <div class="drag" draggable="true"></div>
+                </td>
+                <td>
+                    4
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="width:200px; height:200px; border:1px solid #ccc;" id="target"></div>
+
+    <script type="text/javascript">
+        var tbody = document.getElementById("tbody");
+        var target = null;
+
+        var srcs = document.getElementsByClassName("drag");
+        for (var i = 0; i < srcs.length; i++) {
+            srcs[i].ondragend = function () {
+                var tr = this.parentNode.parentNode;
+                console.log(tr);
+                if (target != null && target != tr) {
+                    tbody.insertBefore(tr, target);
+                }
+                target = null;
+            };
+        }
+
+
+
+        var list = document.getElementsByTagName("tr");
+        for (var i = 0; i < list.length; i++) {
+            list[i].ondragenter = function (e) {
+                this.className = "over";
+                e.preventDefault();
+            }
+            list[i].ondragover = function (e) {
+                e.dataTransfer.dropEffect = "link"
+                e.preventDefault();
+            }
+            list[i].ondragleave = function (e) {
+                this.className = "";
+            }
+            list[i].ondrop = function (e) {
+                target = this;
+                this.className = "";
+                console.log("ondrop");
+            }
+        }
+    </script>
+</body>
+</html>

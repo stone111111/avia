@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>系统维护中</title>
+    <style type="text/css">
+        html, body, #LAY_app { height: 100%; }
+        body { height: 100%; background: url(../img/maintain-bg.png) no-repeat center center; background-size: cover; }
+        .ip-tit { position: absolute; left: 50%; top: 50%; width: 581px; text-align: center; transform: translate3d(-50%,-100%,0); padding-top: 160px; background: url(../img/maintain-tit.gif) no-repeat center top; }
+            .ip-tit p { padding: 4px 0; text-align: center; font-size: 18px; color: #dddee2; letter-spacing: 2px; }
+        a { color: #dddee2; }
+    </style>
+</head>
+<body>
+    <div class="ip-tit">
+        <p>
+            非常抱歉给您带来的不便
+        </p>
+        <p id="description"></p>
+        <p>
+            <a href="/">返回首页</a>
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        try {
+            var json = decodeURI(location.search.substring(1));
+            var info = JSON.parse(json) || {};
+            document.getElementById("description").innerText = info.Description || "";
+        } catch (ex) {
+            console.log(ex);
+        }
+    </script>
+</body>
+</html>

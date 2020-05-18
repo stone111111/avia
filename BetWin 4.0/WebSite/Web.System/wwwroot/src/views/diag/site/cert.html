@@ -1,0 +1,46 @@
+﻿<div class="layui-card">
+    <script type="text/html" template lay-done="BW.callback['site-cert']()">
+        <div class="layui-card-header" id="site-cert-header">
+            证书管理
+            <button class="layui-btn layui-btn-right" data-popup="diag/site/certinfo" data-data='{"ID":"{{ d.params.ID }}","SiteID":"{{ d.params.SiteID }}"}'><i class="am-icon-plus"></i> 添加证书</button>
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" id="site-cert-list" lay-filter="site-cert-list" data-siteid="{{ d.params.SiteID }}"></table>
+        </div>
+    </script>
+</div>
+<script type="text/javascript">
+    BW.callback['site-cert'] = function () {
+        delete BW.callback['site-cert'];
+
+        layui.use(["betwin", "table"], function () {
+            var layui = this,
+                betwin = layui.betwin,
+                table = layui.table,
+                $ = layui.$;
+            var siteId = $("#site-cert-list").data("siteid");
+
+            betwin.admin.popup("#site-cert-header");
+
+            table.render({
+                elem: "#site-cert-list",
+                url: "merchant/Site/CertList",
+                where: { SiteID: siteId },
+                cols: [[
+                    { title: "证书名", field: "Name",width:180 },
+                    { title: "更新时间", templet: "<div>{{ htmlFunction.datetime(d.CreateAt) }}</div>",width:150 },
+                    { title: "到期时间", templet: "<div>{{ htmlFunction.date(d.Expire) }}</div>",width:100 },
+                    { title: "域名", field: "Domain" },
+                    {
+                        title: "操作",width:100, templet: GolbalSetting.templet.control({
+                            edit: "diag/site/certinfo",
+                            delete: "Merchant/Site/CertDelete"
+                        })
+                    }
+                ]]
+            });
+            betwin.table.tool("site-cert-list");
+        });
+    }
+
+</script>

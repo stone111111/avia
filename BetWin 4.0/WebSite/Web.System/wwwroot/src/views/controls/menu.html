@@ -1,0 +1,74 @@
+﻿<div class="layui-side-scroll">
+    <script type="text/html" template lay-url="System/Admin/Menu" lay-type="post"
+            lay-done="layui.element.render('nav', 'layadmin-system-side-menu');" id="TPL_layout">
+
+        <div class="layui-logo" lay-href="">
+            <span>{{ layui.setter.name || '总后台' }}</span>
+        </div>
+
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+            {{#
+          var path =  layui.router().path
+          ,pathURL = layui.admin.correctRouter(path.join('/'))
+          ,dataName = layui.setter.response.dataName;
+          layui.each(d[dataName].menu, function(index, item){
+            var hasChildren = typeof item.menu === 'object' && item.menu.length > 0
+            ,classSelected = function(){
+              var match = path[0] == item.name || (index == 0 && !path[0])
+              || (item.jump && pathURL == layui.admin.correctRouter(item.jump)) || item.spread;
+              if(match){
+                return hasChildren ? 'layui-nav-itemed' : 'layui-this';
+              }
+              return '';
+            }
+            ,url = (item.href && typeof item.href === 'string') ? item.href : item.name;
+            }}
+            <li data-name="{{ item.name || '' }}" data-jump="{{ item.href || '' }}" class="layui-nav-item {{ classSelected() }}">
+                <a href="javascript:;" {{ hasChildren ? '' : 'lay-href="'+ url +'"' }} lay-tips="{{ item.name }}" lay-direction="2">
+                    <i class="layui-icon {{ item.icon }}"></i>
+                    <cite>{{ item.name }}</cite>
+                </a>
+                {{# if(hasChildren){ }}
+                <dl class="layui-nav-child">
+                    {{# layui.each(item.menu, function(index2, item2){
+                var hasChildren2 = typeof item2.menu == 'object' && item2.menu.length > 0
+                ,classSelected2 = function(){
+                  var match = (path[0] == item.name && path[1] == item2.name)
+                  || (item2.href && pathURL == layui.admin.correctRouter(item2.href)) || item2.spread;
+                  if(match){
+                    return hasChildren2 ? 'layui-nav-itemed' : 'layui-this';
+                  }
+                  return '';
+                }
+                ,url2 = (item2.href && typeof item2.href === 'string')
+                  ? item2.href
+                : [item.name, item2.name, ''].join('/');
+                    }}
+                    <dd data-name="{{ item2.name || '' }}" data-jump="{{ item2.href || '' }}"
+                        {{ classSelected2() ? ('class="'+ classSelected2() +'"') : '' }}>
+                        <a href="javascript:;" {{ hasChildren2 ? '' : 'lay-href="'+ url2 +'"' }}>{{ item2.name }}</a>
+                        {{# if(hasChildren2){ }}
+                        <dl class="layui-nav-child">
+                            {{# layui.each(item2.menu, function(index3, item3){
+                        var match = (path[0] == item.name && path[1] == item2.name && path[2] == item3.name)
+                        || (item3.href && pathURL == layui.admin.correctRouter(item3.href))
+                        ,url3 = (item3.href && typeof item3.href === 'string')
+                          ? item3.href
+                        : [item.name, item2.name, item3.name].join('/')
+                            }}
+                            <dd data-name="{{ item3.name || '' }}" data-jump="{{ item3.href || '' }}"
+                                {{ match ? 'class="layui-this"' : '' }}>
+                                <a href="javascript:;" lay-href="{{ url3 }}" {{ item3.iframe ? 'lay-iframe="true"' : '' }}>{{ item3.name }}</a>
+                            </dd>
+                            {{# }); }}
+                        </dl>
+                        {{# } }}
+                    </dd>
+                    {{# }); }}
+                </dl>
+                {{# } }}
+            </li>
+            {{# }); }}
+        </ul>
+    </script>
+</div>

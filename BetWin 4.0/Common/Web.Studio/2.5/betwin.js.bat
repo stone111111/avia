@@ -1,0 +1,3 @@
+copy /b /y scripts\mootools.source.js+scripts\mootools-more.source.js+bwui\js\betwin.js+bwui\js\betwin.callback.js+bwui\js\betwin.tip.js+bwui\js\betwin.diag.js+bwui\js\betwin.frame.js+bwui\js\betwin.offcanvas.js+bwui\js\betwin.tab.js scripts\betwin.source.js
+
+"C:\Program Files (x86)\Java\jre1.8.0_171\bin\java" -jar ..\tools\jscompiler.jar --js scripts\betwin.source.js --js_output_file scripts\betwin.js

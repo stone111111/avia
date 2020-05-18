@@ -1,0 +1,46 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">类型：</label>
+                <div class="layui-input-inline">
+                    <select name="Type"></select>
+                </div>
+                <label class="layui-form-label">名称：</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Name" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">说明：</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="Description" style="min-height:42px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">SQL <i class="layui-icon layui-icon-about" lay-tips="@SiteID 和 @UserID 为常量配置，表示携带入当前的商户和会员ID" offset="-24"></i>：</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="Condition"></textarea>
+                </div>
+            </div>
+            <fieldset>
+                <legend>@Money</legend>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" data-name="Name" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">参数类型</label>
+                    <div class="layui-input-inline w100">
+                        <select data-name="Type" lay-ignore="select"></select>
+                    </div>
+                    <label class="layui-form-label">可选项 <i class="layui-icon layui-icon-about" lay-tips="参数类型为Select时可供选择得内容，使用逗号隔开" offset="-24"></i></label>
+                    <div class="layui-input-inline w200">
+                        <input type="text" data-name="Options" class="layui-input" />
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

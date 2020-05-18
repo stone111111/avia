@@ -1,0 +1,38 @@
+﻿<title>游戏供应商</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="set-provider-game-header">
+            游戏供应商
+            <button class="layui-btn layui-btn-right" data-popup="set/provider/gameinfo" data-area="lg"><i class="am-icon-plus"></i> 添加供应商</button>
+        </div>
+        <div class="layui-card-body">
+            <table id="set-provider-game" lay-filter="set-provider-game"></table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(["betwin", "table"], function () {
+        var betwin = layui.betwin,
+            table = layui.table;
+
+        table.render({
+            elem: "#set-provider-game",
+            url: "Setting/Provider/GameList",
+            page:false,
+            cols: [[
+                { title: "供应商", field: "Name", width: 300 },
+                { title: "类型", templet: "<div>{{ GolbalSetting.enum['SP.Provider.Game.GameProviderType'][d.Type] }}</div>", width: 150 },
+                {
+                    title: "操作", templet: GolbalSetting.templet.control({
+                        "edit": {
+                            action: "set/provider/gameinfo",
+                            area:"md"
+                        }, "delete":"Setting/Provider/GameDelete"
+                    })
+                }
+            ]]
+        });
+        betwin.admin.popup("#set-provider-game-header");
+        betwin.table.tool("set-provider-game");
+    });
+</script>

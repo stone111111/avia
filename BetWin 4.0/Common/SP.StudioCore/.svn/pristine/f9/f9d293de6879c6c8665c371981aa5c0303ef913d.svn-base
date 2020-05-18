@@ -1,0 +1,64 @@
+﻿using SP.StudioCore.Json;
+using SP.StudioCore.Web;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace SP.StudioCore.Http
+{
+    /// <summary>
+    /// Https的解析类
+    /// </summary>
+    public static class HttpsHelper
+    {
+        /// <summary>
+        /// 读取证书文件内容
+        /// </summary>
+        /// <param name="content"></param>
+        public static void ReadCert(string content)
+        {
+            Regex regex = new Regex(@"-----BEGIN CERTIFICATE-----(?<Content>.+?)-----END CERTIFICATE-----", RegexOptions.Singleline);
+            foreach (Match match in regex.Matches(content))
+            {
+                string base64 = match.Groups["Content"].Value;
+                using (X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(base64)))
+                {
+                    Console.WriteLine(cert.Subject);
+                    Console.WriteLine(cert.HasPrivateKey);
+                    Console.WriteLine(cert.Thumbprint);
+                    Console.WriteLine(cert.GetExpirationDateString());
+                    foreach (X509Extension ext in cert.Extensions)
+                    {
+                        if (ext.Oid.FriendlyName == "使用者可选名称" || ext.Oid.FriendlyName == "Subject Alternative Name")
+                        {
+                            string dnsnames = "";
+                            for (int i = 0; i < ext.RawData.Length; i++)
+                            {
+                                dnsnames += ext.RawData[i].ToString("X2");
+                            }
+                            string[] dnsname = Regex.Split(dnsnames, @"82dw", RegexOptions.None);
+
+                            foreach (string dns in dnsname)
+                            {
+                                if (dns.Length > 6)
+                                {
+                                    //16进制转换为字符串
+                                    var arr = Regex.Matches(dns, @"ww").Cast<Match>().Select(m => m.Value);
+                                    foreach (var m in arr)
+                                    {
+                                        char c = (char)Int32.Parse(m, System.Globalization.NumberStyles.HexNumber);
+                                        Console.WriteLine(c);
+                                    }
+                                }
+                            }
+                            Console.WriteLine("");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,58 @@
+﻿using SP.StudioCore.Cache.Memory;
+using SP.StudioCore.Model;
+using SP.StudioCore.Security;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+
+namespace SP.StudioCore.API.CDN
+{
+    /// <summary>
+    /// CDN供应商
+    /// </summary>
+    public abstract class ICDNProvider : ISetting
+    {
+    }
+
+    /// <summary>
+    /// CDN供应商枚举
+    /// </summary>
+    public enum CDNProviderType : byte
+    {
+        /// <summary>
+        /// 手动管理
+        /// </summary>
+        [Description("手动管理")]
+        Manual,
+        [Description("CDNBest")]
+        CDNBest,
+        [Description("阿里云")]
+        ALIYUN
+    }
+
+    /// <summary>
+    /// CDN供应商的工厂模式
+    /// </summary>
+    public static class CDNFactory
+    {
+        /// <summary>
+        /// 创建DNS供应商工厂
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public static ICDNProvider GetFactory(CDNProviderType type, string setting)
+        {
+            /// 手动配置
+            if (type == CDNProviderType.Manual) return null;
+            string key = $"{type}{setting.GetHash(8)}";
+            return MemoryUtils.Get(key, TimeSpan.FromHours(1), () =>
+            {
+                Type assembly = typeof(CDNFactory).Assembly.GetType($"SP.StudioCore.API.CDN.{type}");
+                if (assembly == null) return null;
+                return (ICDNProvider)Activator.CreateInstance(assembly, setting);
+            });
+        }
+    }
+}

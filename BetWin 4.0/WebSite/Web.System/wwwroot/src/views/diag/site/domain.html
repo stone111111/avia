@@ -1,0 +1,112 @@
+﻿<div class="layui-card" id="diag-site-domain">
+    <script type="text/html" template lay-done="BW.callback['diag-site-domain'](d);">
+        <div class="layui-card-header">
+            商户域名管理
+            <button class="layui-btn layui-btn-right" data-popup="diag/site/domaininfo" data-data='{"SiteID":"{{ d.params.SiteID }}"}' data-area="sm"><i class="am-icon-plus"></i> 添加域名</button>
+        </div>
+        <div class="layui-card-body">
+            <table cellspacing="0" cellpadding="0" border="0" class="layui-table" lay-skin="auto" lay-size="sm">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:150px;">域名</th>
+                        <th colspan="5">域名记录</th>
+                        <th rowspan="2" style="width:120px;">操作</th>
+                    </tr>
+                    <tr>
+                        <th>子域名</th>
+                        <th>别名地址</th>
+                        <th>CDN供应商</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="diag-site-domain-list">
+                    <tr>
+                        <td colspan="7"><div class="layui-table-body"><div class="layui-none">暂无数据</div></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </script>
+</div>
+
+<script type="text/html" id="diag-site-domain-templete">
+    {{# layui.each(d.info.list,function(index,domain){ }}
+    <tr class="layui-text-center">
+        <td rowspan="{{ domain.Records.length || 1 }}" class="layui-text-ft16 layui-text-blue">
+            {{ domain.Domain }}
+            <a href="javascript:" class="am-icon-copy" data-action="Merchant/Site/GetDomainClipboard" data-data='{"SiteID":"{{ domain.SiteID }}","DomainID":"{{ domain.ID }}"}' data-callback="diag-site-domain-clipboard"></a>
+        </td>
+        {{# if(!domain.Records.length){ }}
+        <td colspan="5">没有记录</td>
+        {{# }else{ }}
+        <td>{{ domain.Records[0].SubName }}</td>
+        <td>{{ domain.Records[0].CName }}</td>
+        <td>
+            {{ GolbalSetting.enum["SP.Provider.CDN.CDNProviderType"][domain.Records[0].CDNType] }}
+            <a href="javascript:" class="am-icon-edit" title="切换供应商" data-popup="diag/site/domaincdn" data-title="切换供应商" data-area="xs" data-data='{"SiteID":"{{ domain.SiteID }}","ID":"{{ domain.Records[0].ID }}"}'></a>
+        </td>
+        <td>{{ GolbalSetting.enum["BW.Common.Sites.DomainRecord+RecordStatus"][domain.Records[0].Status] }}</td>
+        <td><button class="layui-btn layui-btn-xs layui-btn-danger am-icon-close"></button></td>
+        {{# } }}
+        <td rowspan="{{ domain.Records.length || 1 }}">
+            <div class="layui-table-cell">
+                <button class="layui-btn layui-btn-xs am-icon-plus" data-popup="diag/site/domainrecord" data-area="xs" data-data='{{ JSON.stringify(domain) }}' data-title="添加记录"></button>
+                <button class="layui-btn layui-btn-danger layui-btn-xs"  data-data='{{ JSON.stringify(domain) }}' lay-event="delete" data-action="Merchant/Site/DeleteDomain" data-callback="diag-site-domain-reaload" title="删除"><i class="am-icon-times"></i></button>
+            </div>
+        </td>
+    </tr>
+    {{# layui.each(domain.Records,function(index,record){ }}
+    {{# if(index){ }}
+    <tr class="layui-text-center">
+        <td>{{ record.SubName }}</td>
+        <td>{{ record.CName }}</td>
+        <td>
+            {{ GolbalSetting.enum["SP.Provider.CDN.CDNProviderType"][record.CDNType] }}
+            <a href="javascript:" class="am-icon-edit" title="切换供应商" data-popup="diag/site/domaincdn" data-title="切换供应商" data-area="xs" data-data='{"SiteID":"{{ domain.SiteID }}","ID":"{{ record.ID }}"}'></a>
+        </td>
+        <td>{{ GolbalSetting.enum["BW.Common.Sites.DomainRecord+RecordStatus"][record.Status] }}</td>
+        <td><button class="layui-btn layui-btn-xs layui-btn-danger am-icon-close"  data-data='{{ JSON.stringify(record) }}'  lay-event="delete" data-action="Merchant/Site/DeleteRecord" data-callback="diag-site-domain-reaload" ></button></td>
+    </tr>
+    {{# } }}
+    {{# }) }}
+    {{# }) }}
+</script>
+
+
+
+<script type="text/javascript">
+    BW.callback['diag-site-domain'] = function (result) {
+        delete BW.callback['diag-site-domain'];
+        var siteId = result.params.SiteID;
+
+        layui.use(["betwin", "laytpl"], function () {
+            var layui = this,
+                laytpl = layui.laytpl,
+                betwin = layui.betwin;
+
+            // 重新加载数据
+            var loadData = BW.callback['diag-site-domain-reaload'] = function () {
+                betwin.admin.req({
+                    url: "Merchant/Site/DomainList",
+                    data: { ID: siteId },
+                    success: function (res) {
+                        laytpl(document.getElementById("diag-site-domain-templete").innerHTML).render(res, function (html) {
+                            document.getElementById("diag-site-domain-list").innerHTML = html;
+                        });
+                    }
+                });
+            };
+            loadData();
+            betwin.admin.popup("#diag-site-domain");
+        });
+    }
+
+    BW.callback['diag-site-domain-clipboard'] = function (xhr) {
+        var result = xhr.responseJSON;
+        if (result.success) {
+            var content = result.info.join("\n");
+            Utils.Clipboard(content, result.info.join("<br />") + "<hr />已复制到剪切板");
+        }
+    }
+</script>

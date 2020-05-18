@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="../scripts/mootools.js"></script>
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        new Request.JSON({
+            "url": "/handler/payment/DPay",
+            "onSuccess": function (result) {
+                console.log(result);
+            }
+        }).post('{"MERCHANT_ID":"SP20180709143726","PAY_TIME":"20180711123430","REMARK":"","SIGNED_MSG":"53a6b58d575dff65bcf6e935de8f630e","STATUS":"1","SYS_CODE":"PA20180711123353AINON3445","TRAN_AMT":"11100","TRAN_CODE":"20180711123352192","TYPE":"4"}');
+    </script>
+</body>
+</html>

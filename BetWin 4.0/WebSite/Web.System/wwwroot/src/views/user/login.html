@@ -1,0 +1,84 @@
+<script type="text/html" template>
+    <link rel="stylesheet" href="{{ layui.setter.base }}style/login.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2>BetWin 4.0</h2>
+            <p>系统管理员登录</p>
+        </div>
+        <form action="System/Admin/Login" class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon am-icon-user"></label>
+                <input type="text" name="username" placeholder="用户名" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon am-icon-key"></label>
+                <input type="password" name="password" placeholder="密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon am-icon-google"></label>
+                <input type="text" name="Code" maxlength="6" placeholder="验证码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-block layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="layui-trans layadmin-user-login-footer">
+        <p>&copy; 2020 <a href="https://www.google.com/" target="_blank">Google LLC</a> 1600 Amphitheatre Parkway, Mountain View, CA 94043, United States</p>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['admin', 'form', "table"], function () {
+        var $ = layui.$
+            , setter = layui.setter
+            , admin = layui.admin
+            , form = layui.form
+            , table = layui.table
+            , router = layui.router()
+            , search = router.search;
+
+        //提交
+        form.on('submit(LAY-user-login-submit)', function (obj) {
+            var loadIndex = layer.load(2, { time: 10 * 1000 });
+            //请求登入接口
+            admin.req({
+                url: 'System/Admin/Login' //实际使用请改成服务端真实接口
+                , data: obj.field
+                , success: function (res) {
+                    layer.close(loadIndex);
+                    if (!res.success) {
+                        layer.alert(res.msg, {
+                            icon: 2
+                        });
+                        return;
+                    }
+                    //请求成功后，写入 access_token
+                    layui.data(setter.tableName, {
+                        key: setter.request.tokenName
+                        , value: res.info.Token
+                    });
+
+                    var headers = {};
+                    headers["Authorization"] = res.info.Token;
+                    table.set({
+                        "headers": headers
+                    });
+
+                    //登入成功的提示与跳转
+                    layer.msg('登入成功', {
+                        offset: '15px'
+                        , icon: 1
+                        , time: 1000
+                    }, function () {
+                        location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,11 @@
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\bin\Debug\netcoreapp3.1\GM.Games.deps.json
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\bin\Debug\netcoreapp3.1\GM.Games.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\bin\Debug\netcoreapp3.1\GM.Games.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\bin\Debug\netcoreapp3.1\SP.StudioCore.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\bin\Debug\netcoreapp3.1\SP.StudioCore.pdb
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.csprojAssemblyReference.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.AssemblyInfoInputs.cache
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.AssemblyInfo.cs
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.csproj.CopyComplete
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.dll
+D:\泛亚电竞\svn\MicroService\GameCenter 1.0\GM.Games\obj\Debug\netcoreapp3.1\GM.Games.pdb

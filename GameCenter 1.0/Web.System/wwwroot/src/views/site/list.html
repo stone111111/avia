@@ -1,0 +1,63 @@
+﻿<title>商户列表</title>
+<div class="layui-text-tip debug">
+    <ol>
+        <li>列出平台全部的商户（Site）表</li>
+        <li>商户点击打开商户弹窗，调用 Common.Site 方法，弹窗页面位于 views/diag/site/</li>
+    </ol>
+</div>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header" id="site-list-header">
+            商户列表
+            <button class="layui-btn layui-btn-right" data-popup="site/addsite" data-area="sm">
+                <i class="am-icon-plus"></i> 添加商户
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form layui-form-sm" id="site-list-search" lay-filter="site-list-search">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">编号：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="SiteID" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">名称：</label>
+                    <div class="layui-input-inline w100">
+                        <input type="text" name="Name" class="layui-input" />
+                    </div>
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-inline w100">
+                        <select name="Status" data-enum="GM.Common.Sites.Site+SiteStatus"><option value="">全部</option></select>
+                    </div>
+                    <div class="layui-input-inline" data-submit></div>
+                </div>
+            </form>
+            <table class="layui-table" id="site-list" lay-filter="site-list"></table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(["betwin", "table"], function () {
+        var layui = this,
+            betwin = layui.betwin,
+            table = layui.table;
+
+        // 绑定表单数据
+        table.render({
+            elem: "#site-list",
+            url: "Merchant/Site/List",
+            cols: [[
+                { title: '商户', width: 150, templet: "<div>{{ htmlFunction.Site(d.ID,d.Name) }}</div>" },
+                { title: "状态", templet: "<div>{{ GolbalSetting.enum['GM.Common.Sites.Site+SiteStatus'][d.Status] }}</div>" },
+                { title: "默认语种", templet: "<div>{{ GolbalSetting.enum['SP.StudioCore.Enums.Language'][d.Language] }}</div>" },
+                { title: "默认币种", templet: "<div>{{ GolbalSetting.enum['SP.StudioCore.Enums.Currency'][d.Currency] }}</div>" },
+                { title: "前缀", field: "Prefix" }
+            ]]
+        });
+
+        // 绑定搜索事件
+        betwin.form.search("site-list-search", "site-list");
+
+        // 绑定头部点击事件
+        betwin.admin.popup("#site-list-header");
+    });
+</script>

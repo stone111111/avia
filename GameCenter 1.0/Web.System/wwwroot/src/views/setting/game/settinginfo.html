@@ -1,0 +1,95 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Setting/Game/GameSettingInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['setting-game-settinginfo'](d);">
+            <form class="layui-form" action="Setting/Game/SaveSetting" id="settting-game-settinginfo-form" lay-filter="settting-game-settinginfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏编号：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="number" name="ID" readonly="readonly" placeholder="请输入游戏编号" autocomplete="off" class="layui-input" value="{{ d.info.ID||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏名称：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Name" placeholder="请输入游戏名称" autocomplete="off" class="layui-input" value="{{ d.info.Name||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏代码：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Code" placeholder="请输入游戏代码" autocomplete="off" class="layui-input" value="{{ d.info.Code||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Remark" placeholder="请输入备注" autocomplete="off" class="layui-input" value="{{ d.info.Remark||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏类型：</label>
+                    <div class="layui-input-inline w150">
+                        <select id="settting-game-settinginfo-type" lay-filter="settting-game-settinginfo-type" name="Type" data-enum="GM.Common.Games.GameType" data-value="{{ d.info.Type||'' }}"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item" id="settting-game-settinginfo-setting"></div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="settting-game-settinginfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['setting-game-settinginfo'] = function (result) {
+        delete BW.callback['setting-game-settinginfo'];
+
+        layui.use(["admin","betwin","form","table", "laydate"], function () {
+            var betwin = layui.betwin,
+                admin = layui.admin,
+                form = layui.form,
+                table = layui.table,
+                laydate = layui.laydate,
+                $ = layui.$;
+
+            laydate.render({
+                elem: '#settting-game-settinginfo-form-maintainTime'
+                ,type: 'datetime'
+            });
+
+            var loadSetting = function (type) {
+                var index = layer.load(2, { time: 3000 });
+                admin.req({
+                    url: "Setting/Game/GameGetSetting",
+                    data: { Type: type },
+                    success: function (res) {
+                        layer.close(index);
+                        res.info.Setting.getSetting("settting-game-settinginfo-setting", "Setting", form);
+                    }
+                })
+            }
+
+            if (result.success && result.info.ID != 0) {
+                result.info.Setting.getSetting("settting-game-settinginfo-setting", "Setting", form);
+            }
+
+            form.on("select(settting-game-settinginfo-type)", function (e) {
+                loadSetting(e.value);
+            })
+            
+            betwin.form.submit("settting-game-settinginfo-submit",
+                function (data) {
+                    debugger;
+                    data = Utils.GetSetting(data, "Setting.");
+                    return data;
+                }, {
+                success: function (res) {
+                    table.reload("setting-game-index");
+                }
+            });
+
+            betwin.form.render("settting-game-settinginfo");
+
+        });
+    }
+</script>

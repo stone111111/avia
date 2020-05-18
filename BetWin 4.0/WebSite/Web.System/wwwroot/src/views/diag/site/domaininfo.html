@@ -1,0 +1,61 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-done="BW.callback['diag-site-domaininfo'](d);">
+            <form action="Merchant/Site/AddDomain" class="layui-form" lay-filter="diag-site-domaininfo" id="diag-site-domaininfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">根域名：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Domain" placeholder="请输入域名,格式 xxx.com" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">子域名：</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="SubName" value="@" title="@">
+                        <input type="checkbox" name="SubName" value="www" title="www">
+                        <input type="checkbox" name="SubName" value="*" title="*">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">CDN供应：</label>
+                    <div class="layui-input-inline">
+                        <select name="Provider" data-enum="SP.Provider.CDN.CDNProviderType" lay-ignore="select"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="SiteID" value="{{d.params.SiteID}}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="diag-site-domaininfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+
+    BW.callback['diag-site-domaininfo'] = function (d) {
+        delete BW.callback['diag-site-domaininfo'];
+        layui.use(["betwin"], function () {
+            var layui = this,
+                betwin = layui.betwin;
+
+            betwin.form.render("diag-site-domaininfo");
+
+            betwin.form.submit("diag-site-domaininfo-submit", function (data) {
+                var subname = new Array();
+                var list = document.getElementById("diag-site-domaininfo").querySelectorAll("[name='SubName']:checked");
+                for (var i = 0; i < list.length; i++) {
+                    subname.push(list[i].value);
+                }
+                data["SubName"] = subname.join(",");
+                return data;
+            }, {
+                success: function (res, data, index) {
+                    layer.close(index);
+                    BW.callback['diag-site-domain-reaload']();
+                    return false;
+                }
+            });
+        });
+
+    };
+</script>

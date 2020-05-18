@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="ckplayer.min.js"></script>
+</head>
+<body>
+    <div class="video" style="width: 1000px;height: 600px;"></div>
+    <script type="text/javascript">
+    var videoObject = {
+        container: '.video',//“#”代表容器的ID，“.”或“”代表容器的class
+        variable: 'player',//该属性必需设置，值等于下面的new chplayer()的对象
+        autoplay: true,
+        html5m3u8: true,
+        video: 'http://sg.live.dnsow.pw/avia/game.flv?auth_key=1540555814-0-0-05613c48a779c73dee859a15b8efd1e4'//视频地址
+        //http://play.live.dnsow.pw/test/001.flv?auth_key=1540553435-0-0-0fc44c8f9d2d52f3567e3ccafb1f95b3
+    };
+    var player = new ckplayer(videoObject);
+    </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+﻿.diag { transition: opacity 0.25s,transform 0.25s; }
+.diag-dispose { opacity: 0; transform: scale(0); }

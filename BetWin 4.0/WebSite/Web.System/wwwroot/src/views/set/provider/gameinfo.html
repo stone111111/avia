@@ -1,0 +1,72 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Setting/Provider/GameInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['set-provider-gameinfo'](d);">
+            <form class="layui-form" action="Setting/Provider/SaveGameInfo" id="set-provider-gameinfo" lay-filter="set-provider-gameinfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">供应商：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Name" placeholder="请输入供应商名称" autocomplete="off" class="layui-input" value="{{ d.info.Name }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型：</label>
+                    <div class="layui-input-inline w150">
+                        <select name="Type" id="set-provider-gameinfo-type" lay-filter="set-provider-gameinfo-type" data-enum="SP.Provider.Game.GameProviderType" data-value="{{ d.info.Type || "" }}"><option value="">请选择</option></select>
+                    </div>
+                </div>
+                <div class="layui-form-item" id="set-provider-gameinfo-setting"></div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="set-provider-gameinfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['set-provider-gameinfo'] = function (result) {
+        delete BW.callback['set-provider-gameinfo'];
+
+        layui.use(["admin","betwin","form","table"], function () {
+            var betwin = layui.betwin,
+                admin = layui.admin,
+                form = layui.form,
+                table = layui.table;
+
+            var loadSetting = function (type) {
+                var index = layer.load(2, { time: 3000 });
+                admin.req({
+                    url: "Setting/Provider/GameGetSetting",
+                    data: { Type: type },
+                    success: function (res) {
+                        layer.close(index);
+                        res.info.Setting.getSetting("set-provider-gameinfo-setting", "Setting", form);
+                    }
+                })
+            }
+
+            if (result.success && result.info.ID != 0) {
+                result.info.Setting.getSetting("set-provider-gameinfo-setting", "Setting", form);
+            } else {
+                //loadSetting(1);
+            }
+
+            form.on("select(set-provider-gameinfo-type)", function (e) {
+                loadSetting(e.value);
+            })
+            
+            betwin.form.submit("set-provider-gameinfo-submit",
+                function (data) {
+                    data = Utils.GetSetting(data, "Setting.");
+                    return data;
+                }, {
+                success: function (res) {
+                    table.reload("set-provider-game");
+                }
+            });
+
+            betwin.form.render("set-provider-gameinfo");
+
+        });
+    }
+</script>

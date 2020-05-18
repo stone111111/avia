@@ -1,0 +1,53 @@
+﻿<div class="layui-card-body">
+    <script type="text/html" template lay-url="merchant/Site/GetSiteGameSetting" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['setting-gameedit-setting'](d)">
+        <form class="layui-form" action="merchant/Site/SaveSiteGameSetting" id="setting-gameedit-setting" lay-filter="setting-gameedit-setting">
+            <div class="layui-card-header">
+                游戏维护
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">游戏状态：</label>
+                <div class="layui-input-inline w150">
+                    <select name="Status" data-enum="GM.Common.Models.SiteGameSetting+SiteGameStatus" data-value="{{ d.info.Status||'' }}"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序：</label>
+                <div class="layui-input-inline w150">
+                    <input type="number" name="Sort" placeholder="请输入排序" autocomplete="off" class="layui-input" value="{{ d.info.Sort||'1' }}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">条件：</label>
+                <div class="layui-input-inline w150">
+                    <input type="number" name="Rate" placeholder="请输入条件" autocomplete="off" class="layui-input" value="{{ d.info.Rate||'0.1' }}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                <button class="layui-btn layui-btn-block" lay-submit lay-filter="setting-gameedit-setting-submit">保存</button>
+            </div>
+        </form>
+    </script>
+</div>
+<script type="text/javascript">
+
+    BW.callback['setting-gameedit-setting'] = function (result) {
+        delete BW.callback['setting-gameedit-setting'];
+        layui.use(["betwin", "table"], function () {
+            var betwin = layui.betwin,
+                table = layui.table;
+
+            betwin.form.render("setting-gameedit-setting");
+
+            betwin.form.submit("setting-gameedit-setting-submit",
+                null, {
+                    success: function (res, data, index) {
+                        layer.close(index);
+                        table.reload("site-game-list");
+                        return false;
+                }
+            });
+        });
+    }
+
+</script>

@@ -1,0 +1,99 @@
+﻿<div class="layui-card">
+    <div class="layui-card-body">
+        <script type="text/html" template lay-url="Setting/Game/GameSettingInfo" lay-type="post" lay-data="{'ID':'{{ d.params.ID }}'}" lay-done="BW.callback['setting-game-settinginfo'](d);">
+            <form class="layui-form" action="Setting/Game/SaveSetting" id="settting-game-settinginfo-form" lay-filter="settting-game-settinginfo">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">供应商：</label>
+                    <div class="layui-input-inline w150">
+                        <select name="ProviderID" id="setting-game-settinginfo-provider" lay-filter="setting-game-settinginfo-provider" data-value="{{ d.info.ProviderID }}" lay-done="dom-select" date-name="ID"></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏名称：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Name" placeholder="请输入游戏名称" autocomplete="off" class="layui-input" value="{{ d.info.Name||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">游戏类型：</label>
+                    <div class="layui-input-inline w150">
+                        <input type="text" name="Type" placeholder="请输入游戏类型" autocomplete="off" class="layui-input" value="{{ d.info.Type||'' }}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="IsOpen" lay-skin="switch" lay-text="启用|关闭" value="True" lay-filter="setting-game-isopen" {{ d.info.IsOpen ? "checked" : "" }} />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">包含分类：</label>
+                    <div class="layui-input-block">
+                        <input type="hidden" id="setting-game-settinginfo-category" name="Category" />
+                        {{# layui.each(GolbalSetting.enum['SP.Provider.Game.GameCategory'],function(key,item){ }}
+                        <input type="checkbox" lay-skin="primary" value="{{ key }}" {{ d.info.Category.indexOf(key) > -1?"checked":"" }} lay-filter="setting-game-settinginfo-category" title="{{ item }}" />
+                        {{# }) }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="ID" value="{{ d.info.ID }}" />
+                    <button class="layui-btn layui-btn-block" lay-submit lay-filter="settting-game-settinginfo-submit">保存</button>
+                </div>
+            </form>
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    BW.callback['setting-game-settinginfo'] = function (result) {
+        delete BW.callback['setting-game-settinginfo'];
+
+        layui.use(["admin","betwin","form","table"], function () {
+            var betwin = layui.betwin,
+                admin = layui.admin,
+                form = layui.form,
+                table = layui.table,
+                $ = layui.$;
+
+            //游戏分类
+            var categroy = result.info.Category;
+            var _form = $("#settting-game-settinginfo-form");
+
+            var setCategroy = function () {
+                if (categroy.length > 0) {
+                    _form.find("#setting-game-settinginfo-category").val(categroy.join(','));
+                } else {
+                    _form.find("#setting-game-settinginfo-category").val("");
+                }
+            }
+
+            setCategroy();
+
+            form.on('checkbox(setting-game-settinginfo-category)', function (data) {
+                if (data.elem.checked) {
+                    categroy.push(data.value);
+                } else {
+                    var index = categroy.indexOf(data.value);
+                    if (index > -1) {
+                        categroy.splice(index, 1);
+                    }
+                }
+                setCategroy();
+            });
+
+            document.getElementById('setting-game-settinginfo-provider').select('Setting/Provider/GameList', 'ID', 'Name', '请选择');
+            
+            betwin.form.submit("settting-game-settinginfo-submit",
+                function (data) {
+                    //data = Utils.GetSetting(data, "Setting.");
+                    return data;
+                }, {
+                success: function (res) {
+                    table.reload("setting-game-index");
+                }
+            });
+
+            betwin.form.render("settting-game-settinginfo");
+
+        });
+    }
+</script>
